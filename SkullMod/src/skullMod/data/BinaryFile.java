@@ -1,0 +1,18 @@
+package skullMod.data;
+
+import java.io.Serializable;
+
+/**
+ * A single file held in memory, used for exporting
+ */
+public class BinaryFile implements Serializable {
+    public final String filename;
+    public final byte[] data;
+
+    public BinaryFile(String filename, byte[] data){
+        if(filename == null || filename.equals("")){ throw new IllegalArgumentException("Given filename is null or empty"); }
+        if(data == null){ throw new IllegalArgumentException("Given data is null"); }
+        this.filename = filename;
+        this.data = data;
+    }
+}
