@@ -1,23 +1,41 @@
 package skullMod;
 
-import skullMod.data.GFS;
+import skullMod.data.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 
 /**
  * SkullMod, mod tools for Skullgirls, Steam version
  *
+ * Extracts all files in .gfs file
  * Hi there. Have fun.
- *
- * Currently limted functionality
- * Reads metadata of a gfs file, only tested with very small files
  */
 public class Application {
     public static void main(String[] args){
         try {
-            GFS.splitGFS(readFile("D:\\ui.gfs"));
+            DataStreamIn data = new DataStreamIn("D:\\characters-art.gfs");
+            String base = "D:\\";
+            InternalFileReference[] files = GFS.getReferencesGFS(data);
+            data.close();
+            data = new DataStreamIn("D:\\characters-art.gfs");
+            data.s.skipBytes(files[0].offset);
+
+            for(int i = 0;i < files.length;i++){
+                String basePath = base + "\\";
+                File tempFile = new File(basePath + files[i].path);
+                tempFile.mkdirs();
+
+                System.out.println(basePath);
+                System.out.println(files[i].path);
+                System.out.println(files[i].name);
+                System.out.println(basePath + files[i].path + files[i].name);
+                DataStreamOut dataOut = new DataStreamOut(basePath + files[i].path + files[i].name);
+                for(int j = 0;j < files[i].length;j++){
+                    dataOut.s.writeByte(data.s.readByte()); //Oh java why
+                }
+                dataOut.s.flush();
+                dataOut.close();
+            }
         } catch (IOException e) {
         }
     }
@@ -28,8 +46,7 @@ public class Application {
 
     public static byte[] readFile(File file) throws IOException {
         // Open file
-        RandomAccessFile f = new RandomAccessFile(file, "r");
-        try {
+        try (RandomAccessFile f = new RandomAccessFile(file, "r")) {
             // Get and check length
             long longlength = f.length();
             int length = (int) longlength;
@@ -39,8 +56,6 @@ public class Application {
             byte[] data = new byte[length];
             f.readFully(data);
             return data;
-        } finally {
-            f.close();
         }
     }
 }
