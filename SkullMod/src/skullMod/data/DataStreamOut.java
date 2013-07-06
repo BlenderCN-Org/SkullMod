@@ -31,5 +31,11 @@ public class DataStreamOut {
             System.out.println("Uknown error while closing streams");
         }
     }
+    //I don't get why there is no straightforward way to write byte arrays without offset, length and the other stuff
+    public void writeBytes(byte[] data) throws IOException{
+        for(int i = 0;i < data.length;i++){
+            s.writeByte(data[i]);
+        }
+    }
 
 }
