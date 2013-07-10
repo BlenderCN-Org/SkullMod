@@ -11,7 +11,7 @@ public class GFS {
     public static final String KNOWN_VERSION_NUMBER = "1.1";
 
     //Assumes correct file is choosen, currently doesn't check for errors thouroughly
-    public static InternalFileReference[] getReferencesGFS(DataStreamIn data) throws IOException {
+    public static GFSInternalFileReference[] getReferencesGFS(DataStreamIn data) throws IOException {
 
         int dataOffset = data.s.readInt();
         System.out.println("Offset to data portion of GFS: " + dataOffset);
@@ -34,23 +34,35 @@ public class GFS {
         //Length of one entry:
         //Pascal String
         //Length of file (long)
-        //Unknown (4 bytes), always 1?
+        //Byte alignment (int)
 
         //Running offset
         int fileOffset = dataOffset;
-        InternalFileReference[] result = new InternalFileReference[nOfFiles];
+        GFSInternalFileReference[] result = new GFSInternalFileReference[nOfFiles];
 
         for(int i = 0;i < nOfFiles;i++){
             File file = new File(readPascalString(data));
             int fileLength = (int) data.s.readLong();
-            data.s.readInt(); //Unknown, always 1
+            int alignment = data.s.readInt(); //Alignment in bytes
+
+            if(i == 0){
+                if(dataOffset % alignment != 0){
+                    fileOffset += alignment - dataOffset % alignment;
+                }
+                System.out.println("Header ends at" + fileOffset);
+            }
+
             //Create new InternalFileReference
-            result[i] = new InternalFileReference(file.getParent(),file.getName(),fileLength,fileOffset,null); //Last param doesn't matter in this case
+            result[i] = new GFSInternalFileReference(file.getParent(),file.getName(),fileLength,fileOffset,null,alignment);
             fileOffset += fileLength; //The new fileOffset after the current file
+            if(fileOffset % alignment != 0){
+                fileOffset += alignment - fileOffset % alignment;
+            }
+
         }
 
         if(fileOffset != data.fileLength){
-            throw new IllegalArgumentException("The accumulated file length does not match with the real file length");
+            throw new IllegalArgumentException("The accumulated file length does not match with the real file length: Calc: " + fileOffset + " Actual Length: " + data.fileLength);
         }else{
             System.out.println("Calculated file length and actual file length match");
         }

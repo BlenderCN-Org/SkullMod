@@ -18,7 +18,7 @@ public class DataStreamOut {
         fileName = file.getName();
         fis = new FileOutputStream(file);
         bis = new BufferedOutputStream(fis);
-        s = new java.io.DataOutputStream(bis);
+        s = new DataOutputStream(bis);
     }
 
     public void close(){

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * A single file held in memory, used for exporting
+ * Use only for files lower than 50 MB
  */
 public class BinaryFile implements Serializable {
     public final String filename;
