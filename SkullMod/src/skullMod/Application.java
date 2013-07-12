@@ -17,17 +17,14 @@ import java.util.LinkedList;
  *
  * Reading portion is now aware of the alignment field
  * Writing portion pads file to given boundary
- *
- * TODO references have to be prepared for padding?
- * TODO pad files when writing
  */
 public class Application {
     public static void main(String[] args){
-
+        /*
         int alignment = 1;
 
         LinkedList<GFSExternalFileReference> referencesList = new LinkedList<>();
-        walk("D:\\temp\\","music-win.gfs",referencesList,alignment);
+        walk("D:\\temp\\",referencesList,alignment);
         GFSExternalFileReference[] references = referencesList.toArray(new GFSExternalFileReference[0]);
 
         byte[] header = { 0,0,0,0, 0,0,0,0x14, 0x52,0x65,0x76,0x65,0x72,0x67,0x65,0x20,0x50,0x61,0x63,0x6b,0x61,0x67,0x65,0x20,0x46,0x69,0x6c,0x65,
@@ -41,7 +38,6 @@ public class Application {
             offset += 8; //The file size long
             offset += 4; //The alignment
         }
-        System.out.println(offset);
         try {
             DataStreamOut output = new DataStreamOut("D:\\test.gfs");
             output.s.writeInt(offset);
@@ -51,17 +47,18 @@ public class Application {
             for(int i = 0;i < references.length;i++){
                 output.s.writeLong(references[i].internalPath.length());
                 output.s.writeBytes(references[i].internalPath);
-                output.s.writeLong(references[i].length);
-                output.s.writeInt(1);
+                output.s.writeLong(references[i].lengthAndPadding);
+                output.s.writeInt(alignment);
             }
 
-            if(offset % references[0].alignment != 0){ output.writeBytes(new byte[references[0].alignment - offset & references[0].alignment]); }
+            if(offset % alignment != 0){ output.writeBytes(new byte[alignment - offset % alignment]); }
 
             for(int i = 0;i < references.length;i++){
                 DataStreamIn input = new DataStreamIn(references[i].absolutePath);
                 for(int j = 0;j < references[i].length;j++){
                     output.s.writeByte(input.s.readByte());
                 }
+                if(references[i].padding != 0){ output.writeBytes(new byte[references[i].padding]);} //Padd stuff
             }
             output.close();
         } catch (FileNotFoundException e) {
@@ -69,8 +66,8 @@ public class Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        */
 
-        /*
 
         //gfs read and write with alignment
         //Also alignment of header if first file is 4k aligned!?
@@ -79,11 +76,11 @@ public class Application {
         long inputFileSize = 0;
         long offset = 0;
         try {
-            DataStreamIn data = new DataStreamIn("D:\\data01\\music-win.gfs");
-            String base = "D:\\data01\\";
+            DataStreamIn data = new DataStreamIn("D:\\data01\\dev.gfs");
+            String base = "D:\\temp\\";
             GFSInternalFileReference[] files = GFS.getReferencesGFS(data);
             data.close();
-            data = new DataStreamIn("D:\\data01\\music-win.gfs");
+            data = new DataStreamIn("D:\\data01\\dev.gfs");
 
             inputFileSize = data.fileLength;  //Get's written way too often
 
@@ -123,7 +120,7 @@ public class Application {
         }else{
             System.out.println("read data and filesize is not fine");
         }
-        */
+
     }
 
     public static byte[] readFile(String file) throws IOException {
@@ -145,11 +142,11 @@ public class Application {
         }
     }
     //http://stackoverflow.com/questions/2056221/recursively-list-files-in-java
-    //TODO Add additional params for alignment and wether to include the current directory or not
-    public static void walk( String basePath,String outputFileName,LinkedList<GFSExternalFileReference> references,int alignment) {
+    //TODO wether to include the current directory or not
+    public static void walk( String basePath,LinkedList<GFSExternalFileReference> references,int alignment) {
         File root = new File( basePath );
 
-        String fileBasePath = root.getParentFile().getName();
+        String fileBasePath = root.getParentFile().getAbsolutePath();
 
         File[] list = root.listFiles();
 
@@ -159,14 +156,14 @@ public class Application {
 
         for ( File f : list ) {
             if ( f.isDirectory() ) {
-                walk( f.getAbsolutePath(),outputFileName,references,alignment);
+                walk( f.getAbsolutePath(),references,alignment);
                 //System.out.println( "Dir:" + f.getAbsoluteFile() );
             }
             else {
-                //System.out.println( "File:" + f.getAbsoluteFile() );
-
                 String absPath = f.getAbsolutePath();
-                references.add(new GFSExternalFileReference(absPath,absPath.substring(fileBasePath.length()-1,absPath.length()).replaceAll("\\\\","/"),f.getName(),f.length(),alignment));
+
+
+                references.add(new GFSExternalFileReference(absPath,absPath.substring(fileBasePath.length(),absPath.length()).replaceAll("\\\\","/"),f.getName(),f.length(),alignment));
             }
         }
     }
