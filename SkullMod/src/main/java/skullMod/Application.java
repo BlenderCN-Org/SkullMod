@@ -76,11 +76,11 @@ public class Application {
         long inputFileSize = 0;
         long offset = 0;
         try {
-            DataStreamIn data = new DataStreamIn("D:\\data01\\dev.gfs");
+            DataStreamIn data = new DataStreamIn("D:\\data01\\levels.gfs");
             String base = "D:\\temp\\";
             GFSInternalFileReference[] files = GFS.getReferencesGFS(data);
             data.close();
-            data = new DataStreamIn("D:\\data01\\dev.gfs");
+            data = new DataStreamIn("D:\\data01\\levels.gfs");
 
             inputFileSize = data.fileLength;  //Get's written way too often
 
