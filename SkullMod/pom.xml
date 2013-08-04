@@ -6,7 +6,7 @@
 
     <groupId>skullMod</groupId>
     <artifactId>SkullMod</artifactId>
-    <version>0.1</version>
+    <version>0.5</version>
 
     <dependencies>
         <dependency>
@@ -14,10 +14,43 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
-        <dependency>
+        <!--Currently not used
+         <dependency>
             <groupId>uk.co.caprica</groupId>
             <artifactId>vlcj</artifactId>
             <version>2.3.1</version>
         </dependency>
+        -->
     </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Require Java 1.7 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.1</version>
+                    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
+
+                    </configuration>
+                </plugin>
+                <!-- Executable jar file -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addClasspath>true</addClasspath>
+                                <mainClass>skullMod.gfsEdit.Application</mainClass>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

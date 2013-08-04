@@ -1,0 +1,67 @@
+//--------------------------------------
+// Skullgirls level, index file
+// TODO figure out missing 66 bytes
+//
+// File: .sgi.msb
+// Author: 0xFAIL
+// Revision: 0.1
+//--------------------------------------
+BigEndian();
+
+typedef struct{
+    uint64 count <hidden=true,fgcolor=cLtGray,bgcolor=cWhite>;
+    char chars[count] <hidden=true>;
+} Pascal64String <read=Pascal64String_Read>;
+
+string Pascal64String_Read(Pascal64String &v){ return v.chars; }
+
+struct FILE{
+    Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
+    uint64 nOfElements <fgcolor=cGreen,hidden=true>;
+    struct ELEMENT{
+        Pascal64String elementName <bgcolor=cGreen,hidden=true>;
+        Pascal64String shapeName <fgcolor=cGreen>;
+        char unknown[66] <fgcolor=cGray,hidden=true>;
+        uint64 nOfAnimations <fgcolor=cGreen,hidden=true>;
+        struct ANIMATION{
+            Pascal64String animationName <bgcolor=cRed,hidden=true>;
+            Pascal64String animationFileName <fgcolor=cRed>;
+        } animation[nOfAnimations] <optimize=false,read=ANIMATION_read>;        
+    } element[nOfElements] <optimize=false,read=ELEMENT_read>;
+} file <read=FILE_read>;
+
+
+//http://www.intrepid-web.net/010-editor/
+char[] get_filename(char full_path[], char delimiter[])
+{
+    
+    int     i;
+    int     length, deli_len, del_index;
+    char    file_name[];
+
+    deli_len = Strlen(delimiter);
+
+    length = Strlen(full_path);
+    file_name = full_path;
+    i=0;
+    while(Strstr(file_name, delimiter) > -1)
+    {
+        del_index = Strstr(file_name, delimiter);
+        file_name = SubStr(file_name, del_index+deli_len, -1);
+    }
+    
+    return file_name;
+}
+
+string FILE_read(FILE &f){
+    return get_filename(GetFileName(),"\\");
+}
+
+string ELEMENT_read(ELEMENT &e){
+    return e.elementName.chars;
+}
+
+string ANIMATION_read(ANIMATION &a){
+    return a.animationName.chars;
+}
+

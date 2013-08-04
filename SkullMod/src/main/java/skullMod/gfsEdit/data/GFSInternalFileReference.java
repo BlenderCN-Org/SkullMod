@@ -1,4 +1,4 @@
-package skullMod.data;
+package skullMod.gfsEdit.data;
 
 /**
  * A reference of a file inside another file
@@ -24,5 +24,8 @@ public class GFSInternalFileReference {
         this.offset = offset;
         this.originalFileName = originalFileName;
         this.alignment = alignment;
+    }
+    public String toString(){
+        return path + name;
     }
 }

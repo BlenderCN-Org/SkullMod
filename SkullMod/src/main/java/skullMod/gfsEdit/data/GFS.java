@@ -1,7 +1,9 @@
-package skullMod.data;
+package skullMod.gfsEdit.data;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * GFS file format
@@ -90,5 +92,43 @@ public class GFS {
             result[i] = data.s.readByte();
         }
         return result;
+    }
+
+
+    /**
+     *
+     * @param gfsFile File to unpack
+     * @param newFolder Create a new folder with the filename
+     * @param overwrite Overwrite files
+     */
+    public static void unpack(File gfsFile, boolean newFolder, boolean overwrite) throws FileNotFoundException{
+
+        //String outputDirectory = FilenameUtils.removeExtension(inputFile) + File.pathSeparator;
+    }
+
+    public static GFSInternalFileReference[] getInternalFileReferences(File gfsFile) throws FileNotFoundException{
+        if(gfsFile == null){ throw new IllegalArgumentException("No file given"); }
+        if(!gfsFile.exists()){ throw new FileNotFoundException("File does not exist"); }
+        if(!gfsFile.isFile()){ throw new IllegalArgumentException("Not a file"); }
+
+        int filesExtracted, filesSkipped, errors;
+
+        String inputFile = FilenameUtils.normalize(gfsFile.getAbsolutePath());
+
+
+        DataStreamIn data = new DataStreamIn(inputFile);
+
+        GFSInternalFileReference[] files = null;
+
+        try {
+             files = GFS.getReferencesGFS(data);
+        } catch (IllegalArgumentException iae){
+            System.out.println("IAE");
+        } catch (IOException e) {
+            System.out.println("IOE");
+        } finally {
+            data.close();
+            return files;
+        }
     }
 }

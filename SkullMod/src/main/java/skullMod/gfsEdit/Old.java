@@ -1,6 +1,6 @@
-package skullMod;
+package skullMod.gfsEdit;
 
-import skullMod.data.*;
+import skullMod.gfsEdit.data.*;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -18,7 +18,7 @@ import java.util.LinkedList;
  * Reading portion is now aware of the alignment field
  * Writing portion pads file to given boundary
  */
-public class Application {
+public class Old {
     public static void main(String[] args){
         /*
         int alignment = 1;
@@ -76,11 +76,11 @@ public class Application {
         long inputFileSize = 0;
         long offset = 0;
         try {
-            DataStreamIn data = new DataStreamIn("D:\\data01\\levels.gfs");
+            DataStreamIn data = new DataStreamIn("D:\\data01\\music-win.gfs");
             String base = "D:\\temp\\";
             GFSInternalFileReference[] files = GFS.getReferencesGFS(data);
             data.close();
-            data = new DataStreamIn("D:\\data01\\levels.gfs");
+            data = new DataStreamIn("D:\\data01\\music-win.gfs");
 
             inputFileSize = data.fileLength;  //Get's written way too often
 
