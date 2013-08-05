@@ -1,4 +1,4 @@
-package skullMod.gfsEdit.data;
+package skullMod.gfsEdit.dataStructures;
 
 /**
  * Reference to an external file with all metadata already attached, does not account for changes

@@ -1,4 +1,4 @@
-package skullMod.gfsEdit.data;
+package skullMod.gfsEdit.utility;
 
 import java.text.NumberFormat;
 

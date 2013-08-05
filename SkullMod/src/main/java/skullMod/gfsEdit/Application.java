@@ -4,8 +4,9 @@ import skullMod.gfsEdit.gui.MainWindow;
 
 /**
  * GFS edit
+ *
  * Written by 0xFAIL
- * Version: 1.0
+ * Version: 0.6
  *
  * Requires Java 7 (for DataFlavor consistency, diamond generics)
  */

@@ -1,6 +1,7 @@
 package skullMod.gfsEdit;
 
-import skullMod.gfsEdit.data.*;
+import skullMod.gfsEdit.dataStructures.*;
+import skullMod.gfsEdit.processing.GFS;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -30,7 +31,7 @@ public class Old {
         byte[] header = { 0,0,0,0, 0,0,0,0x14, 0x52,0x65,0x76,0x65,0x72,0x67,0x65,0x20,0x50,0x61,0x63,0x6b,0x61,0x67,0x65,0x20,0x46,0x69,0x6c,0x65,
                           0,0,0,0, 0,0,0,3,0x31,0x2e,0x31}; //Hardcoded header, if you're lazy and you know it clap your hands
 
-        int offset = 4+header.length+8; //Offset for data, 51
+        int offset = 4+header.length+8; //Offset for dataStructures, 51
 
         for(int i = 0;i < references.length;i++){
             offset += 8; //The string size long
@@ -118,7 +119,7 @@ public class Old {
             System.out.println("everyting went fine");
 
         }else{
-            System.out.println("read data and filesize is not fine");
+            System.out.println("read dataStructures and filesize is not fine");
         }
 
     }
@@ -135,7 +136,7 @@ public class Old {
             int length = (int) longlength;
             if (length != longlength)
                 throw new IOException("File size >= 2 GB");
-            // Read file and return data
+            // Read file and return dataStructures
             byte[] data = new byte[length];
             f.readFully(data);
             return data;

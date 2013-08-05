@@ -1,4 +1,4 @@
-package skullMod.gfsEdit.data;
+package skullMod.gfsEdit.dataStructures;
 
 import java.io.*;
 

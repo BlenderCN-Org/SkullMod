@@ -28,10 +28,15 @@ class FileListTransferHandler extends TransferHandler {
             List data = (List) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
             if (data.size() < 1) { return false; }
 
+            guiElement.removeAllItems(); //TODO add checkbox decision here
+
+
             for (Object item : data) {
 
                 File file = (File) item;
 
+
+                //TODO check for duplicates
                 if(file.getName().endsWith(".gfs")){
                     System.out.println("File added: " + file.getAbsoluteFile());
                     guiElement.addItem(file);

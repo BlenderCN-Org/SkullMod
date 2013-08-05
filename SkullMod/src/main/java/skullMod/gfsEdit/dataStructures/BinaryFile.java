@@ -1,4 +1,4 @@
-package skullMod.gfsEdit.data;
+package skullMod.gfsEdit.dataStructures;
 
 import java.io.Serializable;
 
@@ -12,7 +12,7 @@ public class BinaryFile implements Serializable {
 
     public BinaryFile(String filename, byte[] data){
         if(filename == null || filename.equals("")){ throw new IllegalArgumentException("Given filename is null or empty"); }
-        if(data == null){ throw new IllegalArgumentException("Given data is null"); }
+        if(data == null){ throw new IllegalArgumentException("Given dataStructures is null"); }
         this.filename = filename;
         this.data = data;
     }

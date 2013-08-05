@@ -1,4 +1,4 @@
-package skullMod.gfsEdit.gui;
+package skullMod.gfsEdit.dataStructures;
 
 import java.io.File;
 import java.io.FileNotFoundException;

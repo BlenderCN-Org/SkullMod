@@ -1,9 +1,13 @@
-package skullMod.gfsEdit.data;
+package skullMod.gfsEdit.processing;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.apache.commons.io.FilenameUtils;
+import skullMod.gfsEdit.dataStructures.DataStreamIn;
+import skullMod.gfsEdit.dataStructures.DataStreamOut;
+import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
+import skullMod.gfsEdit.utility.Statistics;
 
 /**
  * GFS file format
@@ -16,7 +20,7 @@ public class GFS {
     public static GFSInternalFileReference[] getReferencesGFS(DataStreamIn data) throws IOException {
 
         int dataOffset = data.s.readInt();
-        System.out.println("Offset to data portion of GFS: " + dataOffset);
+        System.out.println("Offset to dataStructures portion of GFS: " + dataOffset);
 
         if(readPascalString(data).equals(MAGIC_STRING)){  //Read magic string
             System.out.println("Found Magic string");
@@ -94,16 +98,65 @@ public class GFS {
         return result;
     }
 
-
     /**
-     *
      * @param gfsFile File to unpack
      * @param newFolder Create a new folder with the filename
-     * @param overwrite Overwrite files
+     * @param overwrite Overwrite files TODO currently ignored
      */
     public static void unpack(File gfsFile, boolean newFolder, boolean overwrite) throws FileNotFoundException{
+        GFSInternalFileReference[] files = getInternalFileReferences(gfsFile);
 
-        //String outputDirectory = FilenameUtils.removeExtension(inputFile) + File.pathSeparator;
+        String outputDirectory = null;
+        if(newFolder){
+            outputDirectory = FilenameUtils.removeExtension(gfsFile.getAbsolutePath()) + File.separator;
+        }else{
+            outputDirectory = gfsFile.getParent();
+        }
+
+        int headerOffset = 0;
+        long inputFileSize = 0;
+        long offset = 0;
+        try{
+        DataStreamIn data = new DataStreamIn(gfsFile.getAbsolutePath());
+
+        inputFileSize = data.fileLength;  //Get's written way too often
+
+        headerOffset = files[0].offset + files[0].offset % files[0].alignment; //Includes enforced alignment TODO headerOffset includes padding make two variables out of it
+        offset += headerOffset;
+        data.s.skipBytes(headerOffset); //Skip to alignment after the header if ther is any alignment
+
+        for(int i = 0;i < files.length;i++){
+            String basePath = outputDirectory;
+            File tempFile = new File(basePath + files[i].path);
+            tempFile.mkdirs();
+
+            System.out.println(basePath + files[i].path + files[i].name);
+            DataStreamOut dataOut = new DataStreamOut(basePath + files[i].path + files[i].name);
+
+            for(int j = 0;j < files[i].length;j++){
+                dataOut.s.writeByte(data.s.readByte());
+            }
+            offset += files[i].length;
+
+            long alignmentSkip = offset % files[i].alignment;
+            data.s.skip(alignmentSkip);
+            offset += alignmentSkip;
+
+            System.out.println("Skipped " + alignmentSkip + " bytes");
+
+            dataOut.s.flush();
+            dataOut.close();
+        }
+    } catch (IOException e) {
+        System.out.println("An excetpion occured");
+    }
+
+    if(offset == inputFileSize){
+        System.out.println("everyting went fine");
+
+    }else{
+        System.out.println("read dataStructures and filesize is not fine");
+    }
     }
 
     public static GFSInternalFileReference[] getInternalFileReferences(File gfsFile) throws FileNotFoundException{
@@ -111,7 +164,7 @@ public class GFS {
         if(!gfsFile.exists()){ throw new FileNotFoundException("File does not exist"); }
         if(!gfsFile.isFile()){ throw new IllegalArgumentException("Not a file"); }
 
-        int filesExtracted, filesSkipped, errors;
+
 
         String inputFile = FilenameUtils.normalize(gfsFile.getAbsolutePath());
 

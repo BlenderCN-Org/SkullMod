@@ -1,9 +1,9 @@
 package skullMod.gfsEdit.gui;
 
-import skullMod.gfsEdit.data.DataStreamIn;
-import skullMod.gfsEdit.data.DataStreamOut;
-import skullMod.gfsEdit.data.GFS;
-import skullMod.gfsEdit.data.GFSInternalFileReference;
+import skullMod.gfsEdit.dataStructures.DataStreamIn;
+import skullMod.gfsEdit.dataStructures.DataStreamOut;
+import skullMod.gfsEdit.processing.GFS;
+import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
 
 import javax.swing.*;
 import java.awt.*;
@@ -251,11 +251,7 @@ public class MainWindow extends JFrame{
             }
         });
 
-        unpackButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null,"UNPACK");
-            }
-        });
+        unpackButton.addActionListener(new UnpackActionListener(fileList));
         directoryListener = new SelectDirectoryListener(this,selectDirectoryLabel);
         selectDirectoryButton.addActionListener(directoryListener);
 
@@ -351,7 +347,7 @@ public class MainWindow extends JFrame{
             System.out.println("everyting went fine");
 
         }else{
-            System.out.println("read data and filesize is not fine");
+            System.out.println("read dataStructures and filesize is not fine");
         }
 
     }
