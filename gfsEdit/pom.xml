@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>skullMod</groupId>
-    <artifactId>SkullMod</artifactId>
+    <groupId>gfsEdit</groupId>
+    <artifactId>gfsEdit</artifactId>
     <version>0.5</version>
 
     <dependencies>
@@ -14,13 +14,6 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
-        <!--Currently not used
-         <dependency>
-            <groupId>uk.co.caprica</groupId>
-            <artifactId>vlcj</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        -->
     </dependencies>
 
     <build>
@@ -45,7 +38,7 @@
                         <archive>
                             <manifest>
                                 <addClasspath>true</addClasspath>
-                                <mainClass>skullMod.gfsEdit.Application</mainClass>
+                                <mainClass>Application</mainClass>
                             </manifest>
                         </archive>
                     </configuration>

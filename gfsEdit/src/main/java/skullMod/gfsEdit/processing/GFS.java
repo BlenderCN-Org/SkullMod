@@ -3,11 +3,12 @@ package skullMod.gfsEdit.processing;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.apache.commons.io.FilenameUtils;
+
 import skullMod.gfsEdit.dataStructures.DataStreamIn;
 import skullMod.gfsEdit.dataStructures.DataStreamOut;
 import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
 import skullMod.gfsEdit.utility.Statistics;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * GFS file format

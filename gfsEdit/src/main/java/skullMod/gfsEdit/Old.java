@@ -1,6 +1,9 @@
 package skullMod.gfsEdit;
 
-import skullMod.gfsEdit.dataStructures.*;
+import skullMod.gfsEdit.dataStructures.DataStreamIn;
+import skullMod.gfsEdit.dataStructures.DataStreamOut;
+import skullMod.gfsEdit.dataStructures.GFSExternalFileReference;
+import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
 import skullMod.gfsEdit.processing.GFS;
 
 import java.io.*;
