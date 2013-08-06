@@ -1,22 +1,18 @@
 package skullMod.gfsEdit.gui;
 
-import skullMod.gfsEdit.dataStructures.DataStreamOut;
 import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
-import skullMod.gfsEdit.dataStructures.DataStreamIn;
-import skullMod.gfsEdit.processing.GFS;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
+import java.awt.event.*;
+import java.io.*;
 
 public class MainWindow extends JFrame{
     public static final String APPLICATION  = "GFS edit";
     public static final String AUTHOR       = "0xFAIL";
     public static final String VERSION      = "0.5";
-    public static final String DATE         = "2013-08-04";
+    public static final String DATE         = "2013-08-06";
 
     public static final String GAME         = "Skullgirls PC";
 
@@ -34,14 +30,21 @@ public class MainWindow extends JFrame{
     public MainWindow(){
         super(APPLICATION + " " + VERSION);
 
+        //Set icon
+        try {
+            InputStream io = Thread.currentThread().getContextClassLoader().getResourceAsStream("appIcon.png");
+            this.setIconImage(ImageIO.read(io));
+        } catch (IOException e) {
+            System.err.println("Couldn't load application icon");
+        }
+
         /*Set look of the application to mimic the OS GUI*/
         try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
-        catch (UnsupportedLookAndFeelException e) {}
-        catch (ClassNotFoundException e) {}
-        catch (InstantiationException e) {}
-        catch (IllegalAccessException e) {}
+        catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+            System.err.println("Setting look and feel failed");
+        }
 
         //Main pane and sub panes
         JTabbedPane mainPane = new JTabbedPane();
@@ -56,7 +59,7 @@ public class MainWindow extends JFrame{
 
         aboutPanel.add(new JLabel("<html>Made by " + AUTHOR + "<br><br>Current version: " + VERSION + " " + DATE +
                 "<br>Newest version at: www.github.com/0xFAIL<br><br>Tested on Win 7 64-bit with 32-bit Java<br><br>" +
-                "Game: " + GAME + "</html>"));
+                "Game: " + GAME + "<br><br><br>Icon by junglemoonicons.weebly.com/icons.html<br>Icon license is CC Attribution Non-Commerical Share Alike </html>"));
 
         unpackPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
         packPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
@@ -262,7 +265,7 @@ public class MainWindow extends JFrame{
         fileList.addItemListener(new FileItemListener(currentFileList));
 
         //*****DISABLE non functional stuff
-        disableAllSubComponents(packPanel);
+        disableAllComponents(packPanel);
 
         //*****Misc stuff and layout of the JFrame*****
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -272,12 +275,12 @@ public class MainWindow extends JFrame{
         this.setResizable(false);
     }
 
-    private void disableAllSubComponents(JComponent component) {
+    private void disableAllComponents(JComponent component) {
         Component[] com = component.getComponents();
 
         for (int a = 0; a < com.length; a++) {
             try{
-            disableAllSubComponents((JComponent) com[a]);
+                disableAllComponents((JComponent) com[a]);
             }catch(ClassCastException cce){}
             com[a].setEnabled(false);
         }
@@ -295,60 +298,5 @@ public class MainWindow extends JFrame{
         setAlignmentTopLeft(result);
         setPreferredHeightToMaxHeight(result);
         return result;
-    }
-
-
-
-    //TEMP GFS stuff
-    public void unpack(){
-        int headerOffset = 0;
-        long inputFileSize = 0;
-        long offset = 0;
-        try {
-            DataStreamIn data = new DataStreamIn("D:\\data01\\ui-storyart.gfs");
-            String base = "D:\\temp\\";
-            GFSInternalFileReference[] files = GFS.getReferencesGFS(data);
-            data.close();
-            data = new DataStreamIn("D:\\data01\\ui-storyart.gfs");
-
-            inputFileSize = data.fileLength;  //Get's written way too often
-
-            headerOffset = files[0].offset + files[0].offset % files[0].alignment; //Includes enforced alignment TODO headerOffset includes padding make two variables out of it
-            offset += headerOffset;
-            data.s.skipBytes(headerOffset); //Skip to alignment after the header if ther is any alignment
-
-            for(int i = 0;i < files.length;i++){
-                String basePath = base;
-                File tempFile = new File(basePath + files[i].path);
-                tempFile.mkdirs();
-
-                System.out.println(basePath + files[i].path + files[i].name);
-                DataStreamOut dataOut = new DataStreamOut(basePath + files[i].path + files[i].name);
-
-                for(int j = 0;j < files[i].length;j++){
-                    dataOut.s.writeByte(data.s.readByte());
-                }
-                offset += files[i].length;
-
-                long alignmentSkip = offset % files[i].alignment;
-                data.s.skip(alignmentSkip);
-                offset += alignmentSkip;
-
-                System.out.println("Skipped " + alignmentSkip + " bytes");
-
-                dataOut.s.flush();
-                dataOut.close();
-            }
-        } catch (IOException e) {
-            System.out.println("An excetpion occured");
-        }
-
-        if(offset == inputFileSize){
-            System.out.println("everyting went fine");
-
-        }else{
-            System.out.println("read dataStructures and filesize is not fine");
-        }
-
     }
 }

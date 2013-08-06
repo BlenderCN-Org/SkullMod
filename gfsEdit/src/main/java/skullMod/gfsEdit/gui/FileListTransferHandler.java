@@ -1,17 +1,17 @@
 package skullMod.gfsEdit.gui;
 
 import javax.swing.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.File;
-import java.io.IOException;
+import java.awt.datatransfer.*;
+import java.io.*;
 import java.util.List;
 
 class FileListTransferHandler extends TransferHandler {
     private JComboBox<File> guiElement;
+    private JCheckBox integrateOrReplace;
 
-    public FileListTransferHandler(JComboBox<File> guiElement,JCheckBox replaceOrIntegrate) {
+    public FileListTransferHandler(JComboBox<File> guiElement,JCheckBox integrateOrReplace) {
         this.guiElement = guiElement;
+        this.integrateOrReplace = integrateOrReplace;
     }
 
     public int getSourceActions(JComponent c) {
@@ -28,23 +28,39 @@ class FileListTransferHandler extends TransferHandler {
             List data = (List) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
             if (data.size() < 1) { return false; }
 
-            guiElement.removeAllItems(); //TODO add checkbox decision here
-
+            //Checkbox
+            if(!integrateOrReplace.isSelected()){
+                guiElement.removeAllItems();
+            }
 
             for (Object item : data) {
 
                 File file = (File) item;
 
+                if(file.getName().endsWith(".gfs") && file.isFile()){
+                    ComboBoxModel<File> internalList = guiElement.getModel();
+                    int size = internalList.getSize();
 
-                //TODO check for duplicates
-                if(file.getName().endsWith(".gfs")){
-                    System.out.println("File added: " + file.getAbsoluteFile());
-                    guiElement.addItem(file);
+                    boolean foundCurrentFile = false;
+
+                    for(int i=0;i < size;i++){
+                        File currentFile = internalList.getElementAt(i);
+                        if(currentFile.getAbsolutePath().equals(file.getAbsolutePath())){
+                           foundCurrentFile = true;
+                        }
+                    }
+
+                    if(foundCurrentFile){
+                        System.out.println("File already exists in list");
+                    }else{
+                        //TODO file validation
+                        System.out.println("File added: " + file.getAbsoluteFile());
+                        guiElement.addItem(file);
+                    }
                 }else{
                     System.out.println("File not added: " + file.getAbsolutePath());
                 }
             }
-
             return true;
 
         } catch (UnsupportedFlavorException e) {
