@@ -102,22 +102,22 @@ public class GFS {
     /**
      * @param gfsFile File to unpack
      * @param newFolder Create a new folder with the filename
-     * @param overwrite Overwrite files TODO currently ignored
+     * @param overwrite Overwrite files
      */
-    public static void unpack(File gfsFile, boolean newFolder, boolean overwrite) throws FileNotFoundException{
+    public static void unpack(File gfsFile, boolean newFolder, boolean overwrite) throws IOException{
         GFSInternalFileReference[] files = getInternalFileReferences(gfsFile);
 
-        String outputDirectory = null;
+        String outputDirectory;
         if(newFolder){
             outputDirectory = FilenameUtils.removeExtension(gfsFile.getAbsolutePath()) + File.separator;
         }else{
-            outputDirectory = gfsFile.getParent();
+            outputDirectory = gfsFile.getParent() + File.separator;
         }
 
         int headerOffset = 0;
         long inputFileSize = 0;
         long offset = 0;
-        try{
+
         DataStreamIn data = new DataStreamIn(gfsFile.getAbsolutePath());
 
         inputFileSize = data.fileLength;  //Get's written way too often
@@ -127,37 +127,58 @@ public class GFS {
         data.s.skipBytes(headerOffset); //Skip to alignment after the header if ther is any alignment
 
         for(int i = 0;i < files.length;i++){
+            boolean noWriting = false;
+
             String basePath = outputDirectory;
-            File tempFile = new File(basePath + files[i].path);
-            tempFile.mkdirs();
+            File currentDirectory = new File(basePath + files[i].path);
+            String filePath = basePath + files[i].path + files[i].name;
+            File currentFile = new File(filePath);
+
+            if(currentFile.isDirectory()){
+                throw new IllegalArgumentException("File can not be written, a folder is in place and won't be overwritten:\n" + currentFile.getAbsolutePath());
+            }
+
+            if(currentFile.exists() && !overwrite){
+                noWriting = true; //Skip file if it exists
+            }
 
             System.out.println(basePath + files[i].path + files[i].name);
-            DataStreamOut dataOut = new DataStreamOut(basePath + files[i].path + files[i].name);
+            if(noWriting){
+                //TODO remove duplicated code
+                data.s.skip(files[i].length);
+                offset += files[i].length;
 
-            for(int j = 0;j < files[i].length;j++){
-                dataOut.s.writeByte(data.s.readByte());
+                long alignmentSkip = offset % files[i].alignment;
+                data.s.skip(alignmentSkip);
+                offset += alignmentSkip;
+                System.out.println("Skipping file: " + files[i].name);
+            }else{
+                System.out.println("Writing file: " + files[i].name);
+                currentDirectory.mkdirs();
+                DataStreamOut dataOut = new DataStreamOut(basePath + files[i].path + files[i].name);
+
+                for(int j = 0;j < files[i].length;j++){
+                    dataOut.s.writeByte(data.s.readByte());
+                }
+                offset += files[i].length;
+
+                long alignmentSkip = offset % files[i].alignment;
+                data.s.skip(alignmentSkip);
+                offset += alignmentSkip;
+
+                System.out.println("Skipped " + alignmentSkip + " bytes (" + files[i].name + ")");
+
+                dataOut.s.flush();
+                dataOut.close();
             }
-            offset += files[i].length;
-
-            long alignmentSkip = offset % files[i].alignment;
-            data.s.skip(alignmentSkip);
-            offset += alignmentSkip;
-
-            System.out.println("Skipped " + alignmentSkip + " bytes");
-
-            dataOut.s.flush();
-            dataOut.close();
         }
-    } catch (IOException e) {
-        System.out.println("An excetpion occured");
-    }
 
-    if(offset == inputFileSize){
-        System.out.println("everyting went fine");
+        if(offset == inputFileSize){
+            System.out.println("Everyting went fine");
 
-    }else{
-        System.out.println("read dataStructures and filesize is not fine");
-    }
+        }else{
+            throw new IllegalArgumentException("Data was extracted, but file length does not match with calculated file length");
+        }
     }
 
     public static GFSInternalFileReference[] getInternalFileReferences(File gfsFile) throws FileNotFoundException{
@@ -165,10 +186,7 @@ public class GFS {
         if(!gfsFile.exists()){ throw new FileNotFoundException("File does not exist"); }
         if(!gfsFile.isFile()){ throw new IllegalArgumentException("Not a file"); }
 
-
-
         String inputFile = FilenameUtils.normalize(gfsFile.getAbsolutePath());
-
 
         DataStreamIn data = new DataStreamIn(inputFile);
 
@@ -176,10 +194,7 @@ public class GFS {
 
         try {
              files = GFS.getReferencesGFS(data);
-        } catch (IllegalArgumentException iae){
-            System.out.println("IAE");
         } catch (IOException e) {
-            System.out.println("IOE");
         } finally {
             data.close();
             return files;

@@ -3,19 +3,21 @@ package skullMod.gfsEdit.gui;
 import skullMod.gfsEdit.processing.GFS;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.awt.event.*;
+import java.io.*;
 
 public class UnpackActionListener implements ActionListener{
     private JComboBox<File> files;
+    private JCheckBox dropTargetCheckboxCreateDirectoryWithFilename,dropTargetCheckboxOverwriteFiles;
+    private JFrame parent;
 
-    //TODO Add other gui elements (checkboxes)
+    public UnpackActionListener(JComboBox<File> files,JCheckBox dropTargetCheckboxCreateDirectoryWithFilename,JCheckBox dropTargetCheckboxOverwriteFiles,JFrame parent){
+        if(files == null || dropTargetCheckboxCreateDirectoryWithFilename == null || dropTargetCheckboxOverwriteFiles == null){ throw new IllegalArgumentException("Missing UI element"); }
 
-    public UnpackActionListener(JComboBox<File> files){
-        if(files == null){ throw new IllegalArgumentException("Missing UI element"); }
         this.files = files;
+        this.dropTargetCheckboxCreateDirectoryWithFilename = dropTargetCheckboxCreateDirectoryWithFilename;
+        this.dropTargetCheckboxOverwriteFiles = dropTargetCheckboxOverwriteFiles;
+        this.parent = parent;
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -23,11 +25,14 @@ public class UnpackActionListener implements ActionListener{
         int size = model.getSize();
 
         for(int i=0;i < size;i++){
-            //TODO handle exception
             try {
-                GFS.unpack(model.getElementAt(i), true, true);
-            } catch (FileNotFoundException e1) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                GFS.unpack(model.getElementAt(i), dropTargetCheckboxCreateDirectoryWithFilename.isSelected(), dropTargetCheckboxOverwriteFiles.isSelected());
+            } catch (FileNotFoundException fnfe ) {
+                JOptionPane.showMessageDialog(parent,fnfe.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ioe){
+                JOptionPane.showMessageDialog(parent,ioe.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException iae){
+                JOptionPane.showMessageDialog(parent,iae.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
             }
         }
     }

@@ -6,7 +6,7 @@
 
     <groupId>gfsEdit</groupId>
     <artifactId>gfsEdit</artifactId>
-    <version>0.5</version>
+    <version>0.6</version>
 
     <dependencies>
         <dependency>

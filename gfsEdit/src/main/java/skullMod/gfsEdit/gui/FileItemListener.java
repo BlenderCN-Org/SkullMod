@@ -16,6 +16,7 @@ public class FileItemListener implements ItemListener{
         this.fileList = fileList;
     }
     public void itemStateChanged(ItemEvent e) {
+        fileList.setListData(new GFSInternalFileReference[0]);
         if(e.getStateChange() == ItemEvent.SELECTED){
             System.out.println("SELECTED");
             File item = (File) e.getItem();

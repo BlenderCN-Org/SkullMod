@@ -18,6 +18,9 @@ public class GFSInternalFileReference {
     public GFSInternalFileReference(String path, String name, int length, int offset, String originalFileName,int alignment){
         if(length < 0){ throw new IllegalArgumentException("length is smaller than 0!"); }
         if(offset < 0){ throw new IllegalArgumentException("offset is smaller than 0!"); }
+        if(path.contains(":") || path.contains("..")){ //There is no escape!
+            throw new IllegalArgumentException("Security exception");
+        }
         this.path = path.replaceAll("/","\\")+ "\\";
         this.name = name;
         this.length = length;

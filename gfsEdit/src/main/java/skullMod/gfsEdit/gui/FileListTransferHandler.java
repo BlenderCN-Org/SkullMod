@@ -1,5 +1,8 @@
 package skullMod.gfsEdit.gui;
 
+import skullMod.gfsEdit.dataStructures.DataStreamIn;
+import skullMod.gfsEdit.processing.GFS;
+
 import javax.swing.*;
 import java.awt.datatransfer.*;
 import java.io.*;
@@ -7,11 +10,14 @@ import java.util.List;
 
 class FileListTransferHandler extends TransferHandler {
     private JComboBox<File> guiElement;
-    private JCheckBox integrateOrReplace;
+    private JCheckBox integrateOrReplace,unpackImmediatlyCheckBox;
+    private JButton unpackButton;
 
-    public FileListTransferHandler(JComboBox<File> guiElement,JCheckBox integrateOrReplace) {
+    public FileListTransferHandler(JComboBox<File> guiElement,JCheckBox integrateOrReplace,JCheckBox unpackImmediatlyCheckBox,JButton unpackButton) {
         this.guiElement = guiElement;
         this.integrateOrReplace = integrateOrReplace;
+        this.unpackButton = unpackButton;
+        this.unpackImmediatlyCheckBox = unpackImmediatlyCheckBox;
     }
 
     public int getSourceActions(JComponent c) {
@@ -53,16 +59,31 @@ class FileListTransferHandler extends TransferHandler {
                     if(foundCurrentFile){
                         System.out.println("File already exists in list");
                     }else{
-                        //TODO file validation
-                        System.out.println("File added: " + file.getAbsoluteFile());
-                        guiElement.addItem(file);
+                        //Minimal file validation
+                        if(file.length() > 32){ //Minimal size
+                            //Check if magic string is present
+                            DataStreamIn tempStream = new DataStreamIn(file.getAbsolutePath());
+                            tempStream.s.skipBytes(12);
+
+                            byte[] tempData = new byte[GFS.MAGIC_STRING.length()];
+                            int returnValue = tempStream.s.read(tempData);
+                            String str = new String(tempData, "UTF-8");
+
+                            if(returnValue != -1 && str.equals(GFS.MAGIC_STRING)){
+                                //After the file passed validation add it
+                                System.out.println("File added: " + file.getAbsoluteFile());
+                                guiElement.addItem(file);
+                            }
+                        }
                     }
                 }else{
                     System.out.println("File not added: " + file.getAbsolutePath());
                 }
             }
+            if(unpackImmediatlyCheckBox.isSelected()){
+                unpackButton.doClick();
+            }
             return true;
-
         } catch (UnsupportedFlavorException e) {
             return false;
         } catch (IOException e) {

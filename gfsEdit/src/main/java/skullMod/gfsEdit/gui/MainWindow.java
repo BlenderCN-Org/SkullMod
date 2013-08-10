@@ -1,6 +1,8 @@
 package skullMod.gfsEdit.gui;
 
+import skullMod.gfsEdit.Old;
 import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
+import skullMod.gfsEdit.processing.GFS;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,8 +13,8 @@ import java.io.*;
 public class MainWindow extends JFrame{
     public static final String APPLICATION  = "GFS edit";
     public static final String AUTHOR       = "0xFAIL";
-    public static final String VERSION      = "0.5";
-    public static final String DATE         = "2013-08-06";
+    public static final String VERSION      = "0.6";
+    public static final String DATE         = "2013-08-10";
 
     public static final String GAME         = "Skullgirls PC";
 
@@ -190,12 +192,13 @@ public class MainWindow extends JFrame{
         dropTargetCheckboxPanel.setLayout(new BoxLayout(dropTargetCheckboxPanel,BoxLayout.Y_AXIS));
         setAlignmentTopLeft(dropTargetCheckboxPanel);
         //FILL
-        dropTargetCheckbox = new JCheckBox("Unpack immediatly after dropping");
+        dropTargetCheckbox = new JCheckBox("Unpack all files immediatly after dropping");
         dropTargetCheckboxCreateDirectoryWithFilename = new JCheckBox("Create directory with filename");
         dropTargetCheckboxAddFiles = new JCheckBox("Add files (uncheck to replace) after drag and drop");
-        dropTargetCheckboxOverwriteFiles = new JCheckBox("Overwrite files (unchecked = ask user)");
+        dropTargetCheckboxOverwriteFiles = new JCheckBox("Overwrite files");
 
         dropTargetCheckboxCreateDirectoryWithFilename.setSelected(true);
+        dropTargetCheckboxOverwriteFiles.setSelected(true);
 
         dropTargetCheckboxPanel.add(dropTargetCheckbox);
         dropTargetCheckboxPanel.add(dropTargetCheckboxCreateDirectoryWithFilename);
@@ -254,11 +257,11 @@ public class MainWindow extends JFrame{
             }
         });
 
-        unpackButton.addActionListener(new UnpackActionListener(fileList));
+        unpackButton.addActionListener(new UnpackActionListener(fileList,dropTargetCheckboxCreateDirectoryWithFilename,dropTargetCheckboxOverwriteFiles,this));
         directoryListener = new SelectDirectoryListener(this,selectDirectoryLabel);
         selectDirectoryButton.addActionListener(directoryListener);
 
-        fileListTransferHandler = new FileListTransferHandler(fileList,dropTargetCheckboxAddFiles);
+        fileListTransferHandler = new FileListTransferHandler(fileList,dropTargetCheckboxAddFiles,dropTargetCheckbox,unpackButton);
         dropTarget.setTransferHandler(fileListTransferHandler);
 
 

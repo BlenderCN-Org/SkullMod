@@ -23,12 +23,12 @@ import java.util.LinkedList;
  * Writing portion pads file to given boundary
  */
 public class Old {
-    public static void main(String[] args){
-        /*
+    public static void test(){
+
         int alignment = 1;
 
         LinkedList<GFSExternalFileReference> referencesList = new LinkedList<>();
-        walk("D:\\temp\\",referencesList,alignment);
+        walk("D:\\temp\\levels",referencesList,alignment,"D:\\temp\\levels\\");
         GFSExternalFileReference[] references = referencesList.toArray(new GFSExternalFileReference[0]);
 
         byte[] header = { 0,0,0,0, 0,0,0,0x14, 0x52,0x65,0x76,0x65,0x72,0x67,0x65,0x20,0x50,0x61,0x63,0x6b,0x61,0x67,0x65,0x20,0x46,0x69,0x6c,0x65,
@@ -70,8 +70,9 @@ public class Old {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        */
 
+
+        /*
 
         //gfs read and write with alignment
         //Also alignment of header if first file is 4k aligned!?
@@ -88,7 +89,7 @@ public class Old {
 
             inputFileSize = data.fileLength;  //Get's written way too often
 
-            headerOffset = files[0].offset + files[0].offset % files[0].alignment; //Includes enforced alignment TODO headerOffset includes padding make two variables out of it
+            headerOffset = files[0].offset + files[0].offset % files[0].alignment; //Includes enforced alignment
             offset += headerOffset;
             data.s.skipBytes(headerOffset); //Skip to alignment after the header if ther is any alignment
 
@@ -124,7 +125,7 @@ public class Old {
         }else{
             System.out.println("read dataStructures and filesize is not fine");
         }
-
+        */
     }
 
     public static byte[] readFile(String file) throws IOException {
@@ -146,8 +147,8 @@ public class Old {
         }
     }
     //http://stackoverflow.com/questions/2056221/recursively-list-files-in-java
-    //TODO wether to include the current directory or not
-    public static void walk( String basePath,LinkedList<GFSExternalFileReference> references,int alignment) {
+    //wether to include the current directory or not
+    public static void walk( String basePath,LinkedList<GFSExternalFileReference> references,int alignment,String originalPath) {
         File root = new File( basePath );
 
         String fileBasePath = root.getParentFile().getAbsolutePath();
@@ -160,14 +161,14 @@ public class Old {
 
         for ( File f : list ) {
             if ( f.isDirectory() ) {
-                walk( f.getAbsolutePath(),references,alignment);
+                walk( f.getAbsolutePath(),references,alignment,originalPath);
                 //System.out.println( "Dir:" + f.getAbsoluteFile() );
             }
             else {
                 String absPath = f.getAbsolutePath();
 
 
-                references.add(new GFSExternalFileReference(absPath,absPath.substring(fileBasePath.length(),absPath.length()).replaceAll("\\\\","/"),f.getName(),f.length(),alignment));
+                references.add(new GFSExternalFileReference(absPath,absPath.substring(originalPath.length(),absPath.length()).replaceAll("\\\\","/"),f.getName(),f.length(),alignment));
             }
         }
     }
