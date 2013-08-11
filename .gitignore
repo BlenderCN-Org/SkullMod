@@ -8,3 +8,8 @@
 # IntelliJ IDEA #
 *.iml
 .idea
+
+# Specific directorys #
+
+#build exe for windows
+gfsEdit/launch4j/launch4j/
