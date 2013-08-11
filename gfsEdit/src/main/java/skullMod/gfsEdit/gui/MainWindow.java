@@ -1,6 +1,7 @@
 package skullMod.gfsEdit.gui;
 
 import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
+import skullMod.gfsEdit.utility.Utility;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -8,11 +9,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
+/**
+ * TODO find a fix for the JFileChooser InterruptedException which is caused by a lingering bug in Swing, maybe immediate dereferencing does the trick, as well as forced gc?
+ */
 public class MainWindow extends JFrame{
     public static final String APPLICATION  = "GFS edit";
     public static final String AUTHOR       = "0xFAIL";
-    public static final String VERSION      = "0.7";
-    public static final String DATE         = "2013-08-11";
+    public static final String VERSION      = "0.8";
+    public static final String DATE         = "2013-08-12";
 
     public static final String GAME         = "Skullgirls PC";
 
@@ -265,15 +269,17 @@ public class MainWindow extends JFrame{
 
         fileList.addItemListener(new FileItemListener(currentFileList));
 
-        //*****DISABLE non functional stuff
-        disableAllComponents(packPanel);
-
         //*****Misc stuff and layout of the JFrame*****
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.pack();
         this.setVisible(true);
         this.setResizable(false);
+
+        //Issue a warning if Java is not up to date
+        if(Utility.JAVA_VERSION < 1.7){
+            JOptionPane.showMessageDialog(this,"Your Java version(" + System.getProperty("java.version") +") is too low.\nJava 1.7 is required for this application to work properly!\nDrag and drop might not work.","Warning",JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     private void disableAllComponents(JComponent component) {

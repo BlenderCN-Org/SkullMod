@@ -1,8 +1,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>..\..\..\target\gfsEdit-0.7.jar</jar>
-  <outfile>..\..\..\target\gfsEdit-0.7-withJRE.exe</outfile>
+  <jar>..\..\..\target\gfsEdit-0.8.jar</jar>
+  <outfile>..\..\..\target\gfsEdit-0.8.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>
@@ -14,21 +14,21 @@
   <manifest></manifest>
   <icon>..\resources\appIcon.ico</icon>
   <jre>
-    <path>jre7</path>
+    <path></path>
     <minVersion>1.7.0</minVersion>
     <maxVersion></maxVersion>
-    <jdkPreference>jdkOnly</jdkPreference>
+    <jdkPreference>jreOnly</jdkPreference>
   </jre>
   <versionInfo>
-    <fileVersion>0.7.0.0</fileVersion>
-    <txtFileVersion>0.7</txtFileVersion>
+    <fileVersion>0.8.0.0</fileVersion>
+    <txtFileVersion>0.8</txtFileVersion>
     <fileDescription>gfs packer/unpacker</fileDescription>
     <copyright>0xFAIL</copyright>
-    <productVersion>0.7.0.0</productVersion>
-    <txtProductVersion>0.7</txtProductVersion>
+    <productVersion>0.8.0.0</productVersion>
+    <txtProductVersion>0.8</txtProductVersion>
     <productName>gfsEdit</productName>
     <companyName></companyName>
     <internalName>gfsEdit</internalName>
-    <originalFilename>gfsEdit-withJRE.exe</originalFilename>
+    <originalFilename>gfsEdit-0.8.exe</originalFilename>
   </versionInfo>
 </launch4jConfig>

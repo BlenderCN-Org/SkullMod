@@ -1,4 +1,5 @@
 gfsEdit
 ========
 
-See releases tab for binaries for Windows (may not available till everything is in place)
+Packer/Unpacker for .gfs files
+See "releases" tab

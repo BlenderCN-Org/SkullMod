@@ -7,7 +7,7 @@ import java.io.IOException;
 import skullMod.gfsEdit.dataStructures.DataStreamIn;
 import skullMod.gfsEdit.dataStructures.DataStreamOut;
 import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
-import skullMod.gfsEdit.utility.Statistics;
+import skullMod.gfsEdit.utility.Utility;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -74,7 +74,7 @@ public class GFS {
             System.out.println("Calculated file length and actual file length match");
         }
 
-        Statistics.getMemoryUsage();
+        Utility.getMemoryUsage();
         return result;
     }
     private static String byteArray2String(byte[] data){

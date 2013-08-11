@@ -5,7 +5,9 @@ import java.text.NumberFormat;
 /**
  * Statistics
  */
-public class Statistics {
+public class Utility {
+    public static double JAVA_VERSION = getVersion ();
+
     public static void getMemoryUsage(){
         Runtime runtime = Runtime.getRuntime();
 
@@ -21,5 +23,10 @@ public class Statistics {
         sb.append("max memory: " + format.format(maxMemory / 1024) + "\n");
         sb.append("total free memory: " + format.format((freeMemory + (maxMemory - allocatedMemory)) / 1024) + "\n");
         System.out.print(sb.toString());
+    }
+
+    static double getVersion () {
+        String version = System.getProperty("java.version");
+        return Double.parseDouble (version.substring (0, 3));
     }
 }
