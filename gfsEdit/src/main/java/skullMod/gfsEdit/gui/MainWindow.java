@@ -1,8 +1,6 @@
 package skullMod.gfsEdit.gui;
 
-import skullMod.gfsEdit.Old;
 import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
-import skullMod.gfsEdit.processing.GFS;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

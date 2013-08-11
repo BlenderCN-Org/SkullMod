@@ -35,5 +35,6 @@ public class UnpackActionListener implements ActionListener{
                 JOptionPane.showMessageDialog(parent,iae.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
             }
         }
+        JOptionPane.showMessageDialog(parent,"Extraction finished\nFiles are in the same directory as the .gfs files were","Info",JOptionPane.INFORMATION_MESSAGE);
     }
 }
