@@ -3,9 +3,11 @@ package skullMod.gfsEdit.processing;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import skullMod.gfsEdit.dataStructures.DataStreamIn;
 import skullMod.gfsEdit.dataStructures.DataStreamOut;
+import skullMod.gfsEdit.dataStructures.GFSExternalFileReference;
 import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
 import skullMod.gfsEdit.utility.Utility;
 import org.apache.commons.io.FilenameUtils;
@@ -198,6 +200,92 @@ public class GFS {
         } finally {
             data.close();
             return files;
+        }
+    }
+
+    public static void pack(String directoryPath, String outputName, boolean includeDirectoryName, boolean align4k) {
+        int alignment;
+        if(align4k){
+            alignment = 4096;
+        }else{
+            alignment = 1;
+        }
+        return; //bail for now
+        //TODO path modification
+        /*
+        LinkedList<GFSExternalFileReference> referencesList = new LinkedList<>();
+        walk("D:\\temp\\levels",referencesList,alignment,"D:\\temp\\levels\\");
+        GFSExternalFileReference[] references = referencesList.toArray(new GFSExternalFileReference[0]);
+
+        byte[] header = { 0,0,0,0, 0,0,0,0x14, 0x52,0x65,0x76,0x65,0x72,0x67,0x65,0x20,0x50,0x61,0x63,0x6b,0x61,0x67,0x65,0x20,0x46,0x69,0x6c,0x65,
+                0,0,0,0, 0,0,0,3,0x31,0x2e,0x31}; //Hardcoded header, if you're lazy and you know it clap your hands
+
+        int offset = 4+header.length+8; //Offset for dataStructures, 51
+
+        for(int i = 0;i < references.length;i++){
+            offset += 8; //The string size long
+            offset += references[i].internalPath.length();
+            offset += 8; //The file size long
+            offset += 4; //The alignment
+        }
+        try {
+            DataStreamOut output = new DataStreamOut("D:\\test.gfs");
+            output.s.writeInt(offset);
+            output.writeBytes(header);
+            output.s.writeLong(references.length);
+
+            for(int i = 0;i < references.length;i++){
+                output.s.writeLong(references[i].internalPath.length());
+                output.s.writeBytes(references[i].internalPath);
+                output.s.writeLong(references[i].lengthAndPadding);
+                output.s.writeInt(alignment);
+            }
+
+            if(offset % alignment != 0){ output.writeBytes(new byte[alignment - offset % alignment]); }
+
+            for(int i = 0;i < references.length;i++){
+                DataStreamIn input = new DataStreamIn(references[i].absolutePath);
+                for(int j = 0;j < references[i].length;j++){
+                    output.s.writeByte(input.s.readByte());
+                }
+                if(references[i].padding != 0){ output.writeBytes(new byte[references[i].padding]);} //Padd stuff
+            }
+            output.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+    }
+
+
+
+
+    //http://stackoverflow.com/questions/2056221/recursively-list-files-in-java
+    //wether to include the current directory or not
+    public static void walk( String basePath,LinkedList<GFSExternalFileReference> references,int alignment,String originalPath) {
+        File root = new File( basePath );
+
+        String fileBasePath = root.getParentFile().getAbsolutePath();
+
+        File[] list = root.listFiles();
+
+        if (list == null){
+            return;
+        }
+
+        for ( File f : list ) {
+            if ( f.isDirectory() ) {
+                walk( f.getAbsolutePath(),references,alignment,originalPath);
+                //System.out.println( "Dir:" + f.getAbsoluteFile() );
+            }
+            else {
+                String absPath = f.getAbsolutePath();
+
+
+                references.add(new GFSExternalFileReference(absPath,absPath.substring(originalPath.length(),absPath.length()).replaceAll("\\\\","/"),f.getName(),f.length(),alignment));
+            }
         }
     }
 }

@@ -3,7 +3,8 @@ PalEd
 
 This would edit the palettes
 
-But won't look into this if the Skullgirls team is selling DLC colors (which they are?)
+But I won't look into this if the Skullgirls team is selling DLC colors (which they are)
+Maybe a few months after release...
 
 PalEd (the original one) is mentioned in the TODO list of Skullgirls
 

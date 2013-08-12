@@ -27,6 +27,10 @@ public class MainWindow extends JFrame{
     private JButton packButton, unpackButton, selectDirectoryButton;
     private SelectDirectoryListener directoryListener;
 
+
+    private JTextField outputNameTextField;
+    private JRadioButton alignment4kbyte,alignmentNone;
+    private JLabel selectDirectoryLabel;
     //Data elements
     private FileListTransferHandler fileListTransferHandler;
     private JList<GFSInternalFileReference> currentFileList;
@@ -70,7 +74,7 @@ public class MainWindow extends JFrame{
         aboutPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
 
         mainPane.add("Unpack",unpackPanel);
-        mainPane.add("Pack (in development)",packPanel);
+        mainPane.add("Pack",packPanel);
         mainPane.add("About",aboutPanel);
         this.add(mainPane);
 
@@ -90,7 +94,7 @@ public class MainWindow extends JFrame{
         JPanel selectDirectoryPanel = new FixedSizeJPanel(new FlowLayout(FlowLayout.LEFT));
 
         selectDirectoryButton = new JButton("Select directory");
-        JLabel selectDirectoryLabel = new JLabel("No directory selected");
+        selectDirectoryLabel = new JLabel("No directory selected");
 
         setAlignmentTopLeft(selectDirectoryPanel);
         selectDirectoryPanel.add(selectDirectoryButton);
@@ -107,7 +111,7 @@ public class MainWindow extends JFrame{
         JPanel outputNamePanel = new FixedSizeJPanel(new FlowLayout(FlowLayout.LEFT));
         outputNamePanel.setAlignmentX(JLabel.LEFT_ALIGNMENT);
 
-        JTextField outputNameTextField = new JTextField(25);
+        outputNameTextField = new JTextField(25);
 
         JLabel outputNameLabel = new JLabel("Output filename: ");
 
@@ -144,8 +148,8 @@ public class MainWindow extends JFrame{
         JPanel alignmentGroupPanel = new FixedSizeJPanel(new FlowLayout(FlowLayout.LEFT));
         ButtonGroup alignmentGroup = new ButtonGroup();
 
-        JRadioButton alignmentNone = new JRadioButton("None");
-        JRadioButton alignment4kbyte = new JRadioButton("4 kbyte");
+        alignmentNone = new JRadioButton("None");
+        alignment4kbyte = new JRadioButton("4 kbyte");
         alignmentNone.setSelected(true);
 
         alignmentGroup.add(alignmentNone);
@@ -253,11 +257,7 @@ public class MainWindow extends JFrame{
         unpackPanel.add(unpackButtonPanel);
 
         //*****Add listeners and handlers
-        packButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null,"PACK");
-            }
-        });
+        packButton.addActionListener(new PackActionListener(selectDirectoryLabel,outputNameTextField,includeDirectoryNameCheckbox,alignment4kbyte));
 
         unpackButton.addActionListener(new UnpackActionListener(fileList,dropTargetCheckboxCreateDirectoryWithFilename,dropTargetCheckboxOverwriteFiles,this));
         directoryListener = new SelectDirectoryListener(this,selectDirectoryLabel);
