@@ -118,11 +118,18 @@ public class MainWindow extends JFrame{
         outputNamePanel.add(outputNameLabel);
         outputNamePanel.add(outputNameTextField);
 
+        //TODO One label is enought
         JLabel outputNameHelpLabel = new JLabel("Leave empty to use selected directory name");
+        JLabel outputNameHelpLabel2 = new JLabel("Allowed letters: a-z A-Z 0-9 _ -");
+        JLabel outputNameHelpLabel3 = new JLabel("Spaces are not allowed "); //If there is no space at the end of this string the 'd' is cut off
         outputNameHelpLabel.setFont(italicFont);
+        outputNameHelpLabel2.setFont(italicFont);
+        outputNameHelpLabel3.setFont(italicFont);
 
         packPanel.add(outputNamePanel);
         packPanel.add(outputNameHelpLabel);
+        packPanel.add(outputNameHelpLabel2);
+        packPanel.add(outputNameHelpLabel3);
         packPanel.add(getFixedSizeHorizontalJSeparator());
 
         //Include directory name
@@ -257,7 +264,7 @@ public class MainWindow extends JFrame{
         unpackPanel.add(unpackButtonPanel);
 
         //*****Add listeners and handlers
-        packButton.addActionListener(new PackActionListener(selectDirectoryLabel,outputNameTextField,includeDirectoryNameCheckbox,alignment4kbyte));
+        packButton.addActionListener(new PackActionListener(this,selectDirectoryLabel,outputNameTextField,includeDirectoryNameCheckbox,alignment4kbyte));
 
         unpackButton.addActionListener(new UnpackActionListener(fileList,dropTargetCheckboxCreateDirectoryWithFilename,dropTargetCheckboxOverwriteFiles,this));
         directoryListener = new SelectDirectoryListener(this,selectDirectoryLabel);

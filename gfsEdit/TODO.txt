@@ -1,0 +1,17 @@
+Goals for 1.0
+=============
+
+Pack/Unpack
+
+Check if there is enough space on the harddrive
+
+Pack
+
+Check if accumulated data is > 1 GB
+Check if accumulated files are above 5000
+
+Misc
+
+JDialogs for pack/unpack? Maybe
+General cleanup
+Format "About"
