@@ -24,6 +24,8 @@ public class PackActionListener implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
+        //TODO can the jtextfield return null?
+
         String directoryPath = pathLabel.getToolTipText();
         if(directoryPath == null){
             JOptionPane.showMessageDialog(parent,"No directory selected","Error",JOptionPane.ERROR_MESSAGE);
@@ -44,14 +46,18 @@ public class PackActionListener implements ActionListener {
 
         String outputName = outputFilennameTextField.getText();
 
-        if(outputName != null && !(outputName.matches("[\\w\\-]+"))){
-            JOptionPane.showMessageDialog(parent,"Given output filename is not valid","Error",JOptionPane.ERROR_MESSAGE);
+        if(outputName != null && !outputName.equals("") && !(outputName.matches("[\\w\\-\\.]+"))){
+            if(outputName.startsWith(".") || outputName.endsWith(".")){
+                JOptionPane.showMessageDialog(parent,"Leading or tailing dots are not allowed in the output name","Error",JOptionPane.ERROR_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(parent,"Given output filename is not valid","Error",JOptionPane.ERROR_MESSAGE);
+            }
             return;
         }
 
         //TODO check if there is a file in place of the file to create, ask user to overwrite, extra checkbox?
 
-        if(outputName == null && !directory.getName().matches("[\\w\\-]+")){
+        if(outputName == null && !directory.getName().matches("[\\w\\-\\.]+")){
             JOptionPane.showMessageDialog(parent,"Input folder name is not valid, rules for it are below \"Output filename\"","Error",JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -59,8 +65,9 @@ public class PackActionListener implements ActionListener {
         boolean includeDirectoryName = includeDirectoryNameCheckbox.isSelected();
         boolean align4k = alignment4kRadioButton.isSelected();
 
-        //output name may be null
+        //outputName may be null
+        GFS.pack(directory,outputName,includeDirectoryName,align4k);
 
-        GFS.pack(directory.getAbsolutePath(),outputName,includeDirectoryName,align4k);
+        JOptionPane.showMessageDialog(parent,"File was written in the parent directory of the given directory","Success",JOptionPane.INFORMATION_MESSAGE);
     }
 }

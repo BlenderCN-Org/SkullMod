@@ -3,6 +3,7 @@ package skullMod.gfsEdit.processing;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.LinkedList;
 
 import skullMod.gfsEdit.dataStructures.DataStreamIn;
@@ -203,18 +204,28 @@ public class GFS {
         }
     }
 
-    public static void pack(String directoryPath, String outputName, boolean includeDirectoryName, boolean align4k) {
+    public static void pack(File directory, String outputName, boolean includeDirectoryName, boolean align4k) {
         int alignment;
         if(align4k){
             alignment = 4096;
         }else{
             alignment = 1;
         }
-        return; //bail for now
+
+
+        String outFilePath;
+
+        if(outputName == null || outputName.equals("")){
+            outFilePath = directory.getAbsolutePath() + ".gfs";
+        }else{
+            outFilePath = directory.getParentFile().getAbsolutePath() + File.separator + outputName;
+        }
+
         //TODO path modification
-        /*
         LinkedList<GFSExternalFileReference> referencesList = new LinkedList<>();
-        walk("D:\\temp\\levels",referencesList,alignment,"D:\\temp\\levels\\");
+
+        //TODO Make another walk method without the last argument
+        walk(directory.getAbsolutePath(),referencesList,alignment,includeDirectoryName,directory.getAbsolutePath() + File.separator);
         GFSExternalFileReference[] references = referencesList.toArray(new GFSExternalFileReference[0]);
 
         byte[] header = { 0,0,0,0, 0,0,0,0x14, 0x52,0x65,0x76,0x65,0x72,0x67,0x65,0x20,0x50,0x61,0x63,0x6b,0x61,0x67,0x65,0x20,0x46,0x69,0x6c,0x65,
@@ -229,7 +240,7 @@ public class GFS {
             offset += 4; //The alignment
         }
         try {
-            DataStreamOut output = new DataStreamOut("D:\\test.gfs");
+            DataStreamOut output = new DataStreamOut(outFilePath);
             output.s.writeInt(offset);
             output.writeBytes(header);
             output.s.writeLong(references.length);
@@ -256,18 +267,12 @@ public class GFS {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        */
+        //TODO care about the exceptions
     }
 
-
-
-
     //http://stackoverflow.com/questions/2056221/recursively-list-files-in-java
-    //wether to include the current directory or not
-    public static void walk( String basePath,LinkedList<GFSExternalFileReference> references,int alignment,String originalPath) {
+    public static void walk( String basePath,LinkedList<GFSExternalFileReference> references,int alignment,boolean addBaseDirectory, String originalPath) {
         File root = new File( basePath );
-
-        String fileBasePath = root.getParentFile().getAbsolutePath();
 
         File[] list = root.listFiles();
 
@@ -277,15 +282,40 @@ public class GFS {
 
         for ( File f : list ) {
             if ( f.isDirectory() ) {
-                walk( f.getAbsolutePath(),references,alignment,originalPath);
-                //System.out.println( "Dir:" + f.getAbsoluteFile() );
+                walk( f.getAbsolutePath(),references,alignment,addBaseDirectory,originalPath);
             }
             else {
                 String absPath = f.getAbsolutePath();
+                String internalPath = absPath.substring(originalPath.length(),absPath.length()).replaceAll("\\\\","/");
 
+                //TODO ugly code, make it better
+                if(addBaseDirectory){
+                    internalPath = new File(originalPath).getName() + '\\' + internalPath;
+                }
 
-                references.add(new GFSExternalFileReference(absPath,absPath.substring(originalPath.length(),absPath.length()).replaceAll("\\\\","/"),f.getName(),f.length(),alignment));
+                System.out.println(internalPath);
+
+                references.add(new GFSExternalFileReference(absPath,internalPath,f.getName(),f.length(),alignment));
             }
+        }
+    }
+
+    public static byte[] readFile(String file) throws IOException {
+        return readFile(new File(file));
+    }
+
+    public static byte[] readFile(File file) throws IOException {
+        // Open file
+        try (RandomAccessFile f = new RandomAccessFile(file, "r")) {
+            // Get and check length
+            long longlength = f.length();
+            int length = (int) longlength;
+            if (length != longlength)
+                throw new IOException("File size >= 2 GB");
+            // Read file and return dataStructures
+            byte[] data = new byte[length];
+            f.readFully(data);
+            return data;
         }
     }
 }

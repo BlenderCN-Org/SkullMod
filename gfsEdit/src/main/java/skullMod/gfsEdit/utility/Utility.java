@@ -2,9 +2,6 @@ package skullMod.gfsEdit.utility;
 
 import java.text.NumberFormat;
 
-/**
- * Statistics
- */
 public class Utility {
     public static double JAVA_VERSION = getVersion ();
 

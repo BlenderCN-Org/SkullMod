@@ -3,7 +3,8 @@ Goals for 1.0
 
 Pack/Unpack
 
-Check if there is enough space on the harddrive
+Check if there is enough space on the HDD
+More output on error (see exceptions)
 
 Pack
 
@@ -15,3 +16,9 @@ Misc
 JDialogs for pack/unpack? Maybe
 General cleanup
 Format "About"
+Add disclaimer
+
+Add AWT exception handler
+http://stackoverflow.com/questions/740418/how-do-i-catch-this-exception-in-swing
+
+Remove debug output to console

@@ -120,7 +120,7 @@ public class MainWindow extends JFrame{
 
         //TODO One label is enought
         JLabel outputNameHelpLabel = new JLabel("Leave empty to use selected directory name");
-        JLabel outputNameHelpLabel2 = new JLabel("Allowed letters: a-z A-Z 0-9 _ -");
+        JLabel outputNameHelpLabel2 = new JLabel("Allowed letters: a-z A-Z 0-9 _ - .");
         JLabel outputNameHelpLabel3 = new JLabel("Spaces are not allowed "); //If there is no space at the end of this string the 'd' is cut off
         outputNameHelpLabel.setFont(italicFont);
         outputNameHelpLabel2.setFont(italicFont);

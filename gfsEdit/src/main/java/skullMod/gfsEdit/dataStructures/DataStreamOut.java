@@ -28,7 +28,7 @@ public class DataStreamOut {
             fis.close();
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Uknown error while closing streams");
+            System.out.println("Unknown error while closing streams");
         }
     }
     //I don't get why there is no straightforward way to write byte arrays without offset, length and the other stuff
