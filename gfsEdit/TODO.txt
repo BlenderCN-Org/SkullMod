@@ -1,10 +1,11 @@
-Goals for 1.0
-=============
+Stuff for when I'm bored
+========================
 
 Pack/Unpack
 
 Check if there is enough space on the HDD
-More output on error (see exceptions)
+Check if there is a file in place of the file to create, ask user to overwrite, extra checkbox?
+
 
 Pack
 
@@ -13,12 +14,11 @@ Check if accumulated files are above 5000
 
 Misc
 
-JDialogs for pack/unpack? Maybe
-General cleanup
-Format "About"
-Add disclaimer
+JDialogs for pack/unpack
+Probably only works on Windows because of the path separator used in some places, test that
+
+find a fix for the JFileChooser InterruptedException which is caused by a lingering bug in Swing, maybe immediate dereferencing does the trick, as well as forced gc?
+
 
 Add AWT exception handler
 http://stackoverflow.com/questions/740418/how-do-i-catch-this-exception-in-swing
-
-Remove debug output to console

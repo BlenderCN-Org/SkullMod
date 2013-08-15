@@ -1,6 +1,4 @@
 gfsEdit
 ========
 
-Packer/Unpacker for .gfs files
-
-See "releases" tab
+Packer/Unpacker for .gfs files found in the data01 directory

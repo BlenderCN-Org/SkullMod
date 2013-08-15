@@ -6,19 +6,15 @@ import skullMod.gfsEdit.utility.Utility;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 
-/**
- * TODO find a fix for the JFileChooser InterruptedException which is caused by a lingering bug in Swing, maybe immediate dereferencing does the trick, as well as forced gc?
- */
 public class MainWindow extends JFrame{
     public static final String APPLICATION  = "GFS edit";
     public static final String AUTHOR       = "0xFAIL";
-    public static final String VERSION      = "0.8";
-    public static final String DATE         = "2013-08-12";
+    public static final String VERSION      = "1.0";
+    public static final String DATE         = "2013-08-15";
 
-    public static final String GAME         = "Skullgirls PC";
+    public static final String GAME         = "Skullgirls (PC)";
 
     //UI elements
     private JCheckBox includeDirectoryNameCheckbox,dropTargetCheckbox, dropTargetCheckboxCreateDirectoryWithFilename,
@@ -36,25 +32,30 @@ public class MainWindow extends JFrame{
     private JList<GFSInternalFileReference> currentFileList;
 
     public MainWindow(){
-        super(APPLICATION + " " + VERSION);
+        super(APPLICATION + " " + VERSION); //Set title
 
-        //Set icon
+        /**Set icon*/
         try {
             InputStream io = Thread.currentThread().getContextClassLoader().getResourceAsStream("appIcon.png");
             this.setIconImage(ImageIO.read(io));
         } catch (IOException e) {
-            System.err.println("Couldn't load application icon");
+            JOptionPane.showMessageDialog(this,"Couldn't load application icon","Error",JOptionPane.ERROR_MESSAGE);
         }
 
-        /*Set look of the application to mimic the OS GUI*/
+        /**Set look of the application to mimic the OS GUI*/
         try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-            System.err.println("Setting look and feel failed");
+            System.err.println("Setting look and feel failed"); //This should happen silently
         }
 
-        //Main pane and sub panes
+        /**Get default font and make a bold/italic copy of it*/
+        Font defaultFont = UIManager.getDefaults().getFont("Label.font");
+        Font boldFont = defaultFont.deriveFont(Font.BOLD);
+        Font italicFont = defaultFont.deriveFont(Font.ITALIC);
+
+        /**Main pane and sub panes*/
         JTabbedPane mainPane = new JTabbedPane();
 
         JPanel packPanel = new JPanel();
@@ -65,9 +66,16 @@ public class MainWindow extends JFrame{
         unpackPanel.setLayout(new BoxLayout(unpackPanel,BoxLayout.Y_AXIS));
         aboutPanel.setLayout(new BoxLayout(aboutPanel,BoxLayout.Y_AXIS));
 
-        aboutPanel.add(new JLabel("<html>Made by " + AUTHOR + "<br><br>Current version: " + VERSION + " " + DATE +
-                "<br>Newest version at: www.github.com/0xFAIL<br><br>Tested on Win 7 64-bit with 32-bit Java<br><br>" +
-                "Game: " + GAME + "<br><br><br>Icon by junglemoonicons.weebly.com/icons.html<br>Icon license is CC Attribution Non-Commerical Share Alike </html>"));
+        JLabel aboutLabel1 = new JLabel("<html>Made by " + AUTHOR + "<br><br>Current version: " + VERSION + " " + DATE + "<br>Game: " + GAME + "<html>");
+        JLabel aboutLabel2 = new JLabel("<html><br>Newest version at: www.github.com/0xFAIL (Click here)<html>");
+        JLabel aboutLabel3 = new JLabel("<html><br>For the license see LICENSE.txt (BSD 2-Clause License)<br><br><br>Icon by junglemoonicons.weebly.com/icons.html<br>Icon license is CC Attribution Non-Commerical Share Alike<html>");
+
+        aboutLabel1.setFont(boldFont);
+        aboutLabel3.setFont(italicFont);
+
+        aboutPanel.add(aboutLabel1);
+        aboutPanel.add(aboutLabel2);
+        aboutPanel.add(aboutLabel3);
 
         unpackPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
         packPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
@@ -78,17 +86,12 @@ public class MainWindow extends JFrame{
         mainPane.add("About",aboutPanel);
         this.add(mainPane);
 
-        //Get default font and make a bold/italic copy of it
-        Font defaultFont = UIManager.getDefaults().getFont("Label.font");
-        Font boldFont = new Font(defaultFont.getFontName(),Font.BOLD,defaultFont.getSize());
-        Font italicFont = new Font(defaultFont.getFontName(),Font.ITALIC,defaultFont.getSize());
-
         //Pack label
         JLabel packLabel = new JLabel("Pack .gfs");
         packLabel.setFont(boldFont);
 
         packPanel.add(packLabel);
-        packPanel.add(getFixedSizeHorizontalJSeparator());
+        packPanel.add(Utility.getFixedSizeHorizontalJSeparator());
 
         //Directory input
         JPanel selectDirectoryPanel = new FixedSizeJPanel(new FlowLayout(FlowLayout.LEFT));
@@ -96,7 +99,7 @@ public class MainWindow extends JFrame{
         selectDirectoryButton = new JButton("Select directory");
         selectDirectoryLabel = new JLabel("No directory selected");
 
-        setAlignmentTopLeft(selectDirectoryPanel);
+        Utility.setAlignmentTopLeft(selectDirectoryPanel);
         selectDirectoryPanel.add(selectDirectoryButton);
         selectDirectoryPanel.add(selectDirectoryLabel);
 
@@ -105,7 +108,7 @@ public class MainWindow extends JFrame{
 
         packPanel.add(selectDirectoryPanel);
         packPanel.add(selectDirectoryHelpLabel);
-        packPanel.add(getFixedSizeHorizontalJSeparator());
+        packPanel.add(Utility.getFixedSizeHorizontalJSeparator());
 
         //Output name
         JPanel outputNamePanel = new FixedSizeJPanel(new FlowLayout(FlowLayout.LEFT));
@@ -118,19 +121,12 @@ public class MainWindow extends JFrame{
         outputNamePanel.add(outputNameLabel);
         outputNamePanel.add(outputNameTextField);
 
-        //TODO One label is enought
-        JLabel outputNameHelpLabel = new JLabel("Leave empty to use selected directory name");
-        JLabel outputNameHelpLabel2 = new JLabel("Allowed letters: a-z A-Z 0-9 _ - .");
-        JLabel outputNameHelpLabel3 = new JLabel("Spaces are not allowed "); //If there is no space at the end of this string the 'd' is cut off
+        JLabel outputNameHelpLabel = new JLabel("<html>Leave empty to use selected directory name<br>Allowed letters: a-z A-Z 0-9 _ - .<br>Spaces are not allowed <html>");
         outputNameHelpLabel.setFont(italicFont);
-        outputNameHelpLabel2.setFont(italicFont);
-        outputNameHelpLabel3.setFont(italicFont);
 
         packPanel.add(outputNamePanel);
         packPanel.add(outputNameHelpLabel);
-        packPanel.add(outputNameHelpLabel2);
-        packPanel.add(outputNameHelpLabel3);
-        packPanel.add(getFixedSizeHorizontalJSeparator());
+        packPanel.add(Utility.getFixedSizeHorizontalJSeparator());
 
         //Include directory name
         JPanel includeDirectoryPanel = new FixedSizeJPanel();
@@ -139,14 +135,14 @@ public class MainWindow extends JFrame{
                 "Uncheck if there is no temp directory (just loose files)</html>");
         includeDirectoryHelpLabel.setFont(italicFont);
 
-        //FILL
+        //Checkbox if the directory name should be included in the inernal name inside the file
         includeDirectoryNameCheckbox = new JCheckBox("Include directory name");
 
         includeDirectoryPanel.add(includeDirectoryNameCheckbox);
         includeDirectoryPanel.add(includeDirectoryHelpLabel);
 
         packPanel.add(includeDirectoryPanel);
-        packPanel.add(getFixedSizeHorizontalJSeparator());
+        packPanel.add(Utility.getFixedSizeHorizontalJSeparator());
 
         //Alignment radio buttons
         JPanel alignmentPanel = new FixedSizeJPanel();
@@ -164,24 +160,24 @@ public class MainWindow extends JFrame{
 
         JLabel alignmentLabel = new JLabel("Alignment: ");
 
-        setAlignmentTopLeft(alignmentGroupPanel);
+        Utility.setAlignmentTopLeft(alignmentGroupPanel);
         alignmentGroupPanel.add(alignmentLabel);
         alignmentGroupPanel.add(alignmentNone);
         alignmentGroupPanel.add(alignment4kbyte);
 
-        JLabel alignmentHelpLabel = new JLabel("Alignment is only needed when packing \"characters-art-pt.gfs\"");
+        JLabel alignmentHelpLabel = new JLabel("Alignment is only needed when packing 'characters-art-pt.gfs\"");
         alignmentHelpLabel.setFont(italicFont);
 
         alignmentPanel.add(alignmentGroupPanel);
         alignmentPanel.add(alignmentHelpLabel);
 
         packPanel.add(alignmentPanel);
-        packPanel.add(getFixedSizeHorizontalJSeparator());
+        packPanel.add(Utility.getFixedSizeHorizontalJSeparator());
 
         //"Pack" button
         JPanel packButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        setAlignmentTopLeft(packButtonPanel);
-        packButton = new JButton("Pack .gfs");
+        Utility.setAlignmentTopLeft(packButtonPanel);
+        packButton = new JButton("Pack");
 
         packButtonPanel.add(packButton);
 
@@ -193,17 +189,17 @@ public class MainWindow extends JFrame{
         unpackLabel.setFont(boldFont);
 
         unpackPanel.add(unpackLabel);
-        unpackPanel.add(getFixedSizeHorizontalJSeparator());
+        unpackPanel.add(Utility.getFixedSizeHorizontalJSeparator());
         //Drag and Drop zone (Win + Linux http://stackoverflow.com/questions/811248/how-can-i-use-drag-and-drop-in-swing-to-get-file-path)
         JPanel dropTarget = new FixedSizeJPanel();
 
         dropTarget.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),"Drag and drop"));
-        setAlignmentTopLeft(dropTarget);
+        Utility.setAlignmentTopLeft(dropTarget);
         JLabel dropTargetLabel = new JLabel("Drag .gsf file(s) here");
 
         JPanel dropTargetCheckboxPanel = new FixedSizeJPanel();
         dropTargetCheckboxPanel.setLayout(new BoxLayout(dropTargetCheckboxPanel,BoxLayout.Y_AXIS));
-        setAlignmentTopLeft(dropTargetCheckboxPanel);
+        Utility.setAlignmentTopLeft(dropTargetCheckboxPanel);
         //FILL
         dropTargetCheckbox = new JCheckBox("Unpack all files immediatly after dropping");
         dropTargetCheckboxCreateDirectoryWithFilename = new JCheckBox("Create directory with filename");
@@ -222,12 +218,12 @@ public class MainWindow extends JFrame{
 
         unpackPanel.add(dropTarget);
         unpackPanel.add(dropTargetCheckboxPanel);
-        unpackPanel.add(getFixedSizeHorizontalJSeparator());
+        unpackPanel.add(Utility.getFixedSizeHorizontalJSeparator());
 
         //List of recieved files
         JPanel fileListPanel = new JPanel();
         fileListPanel.setLayout(new BoxLayout(fileListPanel,BoxLayout.Y_AXIS));
-        setAlignmentTopLeft(fileListPanel);
+        Utility.setAlignmentTopLeft(fileListPanel);
 
         JLabel fileListLabel = new JLabel("Valid files");
 
@@ -238,7 +234,7 @@ public class MainWindow extends JFrame{
 
         JLabel fileInternalListLabel = new JLabel("Internal files");
         JPanel fileInternalListPanel = new JPanel(new BorderLayout());
-        setAlignmentTopLeft(fileInternalListPanel);
+        Utility.setAlignmentTopLeft(fileInternalListPanel);
 
 
         currentFileList = new JList<>();
@@ -251,13 +247,13 @@ public class MainWindow extends JFrame{
         fileListPanel.add(fileInternalListPanel);
 
         unpackPanel.add(fileListPanel);
-        unpackPanel.add(getFixedSizeHorizontalJSeparator());
+        unpackPanel.add(Utility.getFixedSizeHorizontalJSeparator());
 
         //Unpack button
         JPanel unpackButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        setAlignmentTopLeft(unpackButtonPanel);
+        Utility.setAlignmentTopLeft(unpackButtonPanel);
 
-        unpackButton = new JButton("Unpack .gfs file(s)");
+        unpackButton = new JButton("Unpack");
 
         unpackButtonPanel.add(unpackButton);
 
@@ -276,6 +272,9 @@ public class MainWindow extends JFrame{
 
         fileList.addItemListener(new FileItemListener(currentFileList));
 
+        aboutLabel2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        aboutLabel2.addMouseListener(new MouseURLAdapter("http://github.com/0xFAIL"));
+
         //*****Misc stuff and layout of the JFrame*****
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -284,33 +283,8 @@ public class MainWindow extends JFrame{
         this.setResizable(false);
 
         //Issue a warning if Java is not up to date
-        if(Utility.JAVA_VERSION < 1.7){
-            JOptionPane.showMessageDialog(this,"Your Java version(" + System.getProperty("java.version") +") is too low.\nJava 1.7 is required for this application to work properly!\nDrag and drop might not work.","Warning",JOptionPane.WARNING_MESSAGE);
+        if (Utility.JAVA_VERSION < 1.7) {
+            JOptionPane.showMessageDialog(this, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 1.7 is required for this application to work properly!\nDrag and drop might not work.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
-    }
-
-    private void disableAllComponents(JComponent component) {
-        Component[] com = component.getComponents();
-
-        for (int a = 0; a < com.length; a++) {
-            try{
-                disableAllComponents((JComponent) com[a]);
-            }catch(ClassCastException cce){}
-            com[a].setEnabled(false);
-        }
-    }
-
-    public static void setAlignmentTopLeft(JComponent c){
-        c.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-        c.setAlignmentY(JComponent.TOP_ALIGNMENT);
-    }
-    public static void setPreferredHeightToMaxHeight(Component c){
-        c.setMaximumSize(new Dimension(c.getMaximumSize().width,c.getPreferredSize().height));
-    }
-    public static JSeparator getFixedSizeHorizontalJSeparator(){
-        JSeparator result = new JSeparator(JSeparator.HORIZONTAL);
-        setAlignmentTopLeft(result);
-        setPreferredHeightToMaxHeight(result);
-        return result;
     }
 }

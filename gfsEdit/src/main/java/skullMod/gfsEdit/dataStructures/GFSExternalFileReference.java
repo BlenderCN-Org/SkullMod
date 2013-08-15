@@ -29,7 +29,5 @@ public class GFSExternalFileReference {
         }
 
         this.lengthAndPadding = (int) length + padding;
-
-        System.out.println(internalPath);
     }
 }

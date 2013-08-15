@@ -33,7 +33,6 @@ public class DataStreamOut {
     }
     //I don't get why there is no straightforward way to write byte arrays without offset, length and the other stuff
     public void writeBytes(byte[] data) throws IOException{
-        System.out.println("Writing bytes" + data.length);
         for(int i = 0;i < data.length;i++){
             s.writeByte(data[i]);
         }

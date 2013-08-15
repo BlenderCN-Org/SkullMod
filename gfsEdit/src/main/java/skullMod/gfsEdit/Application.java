@@ -7,7 +7,7 @@ import skullMod.gfsEdit.gui.MainWindow;
  *
  * Written by 0xFAIL
  *
- * Requires Java 7 (for DataFlavor consistency, diamond generics)
+ * Requires Java 7 (DataFlavor consistency, diamond generics)
  */
 public class Application {
     public static void main(String[] args){

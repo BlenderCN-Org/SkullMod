@@ -15,7 +15,9 @@ public class PackActionListener implements ActionListener {
     private JFrame parent;
 
     public PackActionListener(JFrame parent, JLabel pathLabel, JTextField outputFilennameTextField, JCheckBox includeDirectoryNameCheckbox,JRadioButton alignment4kRadioButton){
-        //TODO null check
+        if(parent == null || pathLabel == null || outputFilennameTextField == null || includeDirectoryNameCheckbox == null || alignment4kRadioButton == null){
+            throw new IllegalArgumentException("An UI element is null");
+        }
         this.pathLabel = pathLabel;
         this.outputFilennameTextField = outputFilennameTextField;
         this.includeDirectoryNameCheckbox = includeDirectoryNameCheckbox;
@@ -24,8 +26,6 @@ public class PackActionListener implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        //TODO can the jtextfield return null?
-
         String directoryPath = pathLabel.getToolTipText();
         if(directoryPath == null){
             JOptionPane.showMessageDialog(parent,"No directory selected","Error",JOptionPane.ERROR_MESSAGE);
@@ -55,8 +55,6 @@ public class PackActionListener implements ActionListener {
             return;
         }
 
-        //TODO check if there is a file in place of the file to create, ask user to overwrite, extra checkbox?
-
         if(outputName == null && !directory.getName().matches("[\\w\\-\\.]+")){
             JOptionPane.showMessageDialog(parent,"Input folder name is not valid, rules for it are below \"Output filename\"","Error",JOptionPane.ERROR_MESSAGE);
             return;
@@ -65,9 +63,15 @@ public class PackActionListener implements ActionListener {
         boolean includeDirectoryName = includeDirectoryNameCheckbox.isSelected();
         boolean align4k = alignment4kRadioButton.isSelected();
 
-        //outputName may be null
         GFS.pack(directory,outputName,includeDirectoryName,align4k);
 
-        JOptionPane.showMessageDialog(parent,"File was written in the parent directory of the given directory","Success",JOptionPane.INFORMATION_MESSAGE);
+        String outputFile;
+        if(outputName == null || outputName.equals("")){
+            outputFile = directory.getAbsolutePath() + ".gfs";
+        }else{
+            outputFile = directory.getAbsolutePath() + File.separator + outputName;
+        }
+
+        JOptionPane.showMessageDialog(parent,"File created at:\n" + outputFile,"Success",JOptionPane.INFORMATION_MESSAGE);
     }
 }

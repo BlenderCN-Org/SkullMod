@@ -28,7 +28,7 @@ public class DataStreamIn {
             fis.close();
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Uknown error while closing streams");
+            System.out.println("Unknown error while closing streams");
         }
     }
 

@@ -13,6 +13,8 @@ import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
 import skullMod.gfsEdit.utility.Utility;
 import org.apache.commons.io.FilenameUtils;
 
+import javax.swing.*;
+
 /**
  * GFS file format
  */
@@ -123,7 +125,7 @@ public class GFS {
 
         DataStreamIn data = new DataStreamIn(gfsFile.getAbsolutePath());
 
-        inputFileSize = data.fileLength;  //Get's written way too often
+        inputFileSize = data.fileLength;
 
         headerOffset = files[0].offset + files[0].offset % files[0].alignment; //Includes enforced alignment TODO headerOffset includes padding make two variables out of it
         offset += headerOffset;
@@ -147,7 +149,6 @@ public class GFS {
 
             System.out.println(basePath + files[i].path + files[i].name);
             if(noWriting){
-                //TODO remove duplicated code
                 data.s.skip(files[i].length);
                 offset += files[i].length;
 
@@ -221,7 +222,6 @@ public class GFS {
             outFilePath = directory.getParentFile().getAbsolutePath() + File.separator + outputName;
         }
 
-        //TODO path modification
         LinkedList<GFSExternalFileReference> referencesList = new LinkedList<>();
 
         //TODO Make another walk method without the last argument
@@ -263,11 +263,10 @@ public class GFS {
             }
             output.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,"A file previously in the list couldn't be found!","Error",JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,"Generic input/output exception","Error",JOptionPane.ERROR_MESSAGE);
         }
-        //TODO care about the exceptions
     }
 
     //http://stackoverflow.com/questions/2056221/recursively-list-files-in-java
@@ -288,12 +287,9 @@ public class GFS {
                 String absPath = f.getAbsolutePath();
                 String internalPath = absPath.substring(originalPath.length(),absPath.length()).replaceAll("\\\\","/");
 
-                //TODO ugly code, make it better
                 if(addBaseDirectory){
                     internalPath = new File(originalPath).getName() + '\\' + internalPath;
                 }
-
-                System.out.println(internalPath);
 
                 references.add(new GFSExternalFileReference(absPath,internalPath,f.getName(),f.length(),alignment));
             }
