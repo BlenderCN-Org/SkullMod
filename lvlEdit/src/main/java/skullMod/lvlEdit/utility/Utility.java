@@ -24,12 +24,12 @@ public class Utility {
         System.out.println(sb.toString());
     }
 
-    static double getVersion () {
+    public static double getVersion () {
         String version = System.getProperty("java.version");
         return Double.parseDouble (version.substring (0, 3));
     }
 
-    private void disableAllComponents(JComponent component) {
+    public static void disableAllComponents(JComponent component) {
         Component[] com = component.getComponents();
 
         for (int a = 0; a < com.length; a++) {
