@@ -288,7 +288,7 @@ public class GFS {
                 String internalPath = absPath.substring(originalPath.length(),absPath.length()).replaceAll("\\\\","/");
 
                 if(addBaseDirectory){
-                    internalPath = new File(originalPath).getName() + '\\' + internalPath;
+                    internalPath = new File(originalPath).getName() + '/' + internalPath;
                 }
 
                 references.add(new GFSExternalFileReference(absPath,internalPath,f.getName(),f.length(),alignment));

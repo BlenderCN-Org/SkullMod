@@ -13,7 +13,6 @@ public class MainWindow extends JFrame{
     public static final String AUTHOR       = "0xFAIL";
     public static final String VERSION      = "1.0";
     public static final String DATE         = "2013-08-15";
-
     public static final String GAME         = "Skullgirls (PC)";
 
     //UI elements
@@ -275,14 +274,14 @@ public class MainWindow extends JFrame{
         aboutLabel2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         aboutLabel2.addMouseListener(new MouseURLAdapter("http://github.com/0xFAIL"));
 
-        //*****Misc stuff and layout of the JFrame*****
+        //*****Misc stuff*****
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.pack();
         this.setVisible(true);
         this.setResizable(false);
 
-        //Issue a warning if Java is not up to date
+        //Issue a warning if Java is not required version
         if (Utility.JAVA_VERSION < 1.7) {
             JOptionPane.showMessageDialog(this, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 1.7 is required for this application to work properly!\nDrag and drop might not work.", "Warning", JOptionPane.WARNING_MESSAGE);
         }

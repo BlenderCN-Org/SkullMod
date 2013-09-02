@@ -22,3 +22,5 @@ find a fix for the JFileChooser InterruptedException which is caused by a linger
 
 Add AWT exception handler
 http://stackoverflow.com/questions/740418/how-do-i-catch-this-exception-in-swing
+
+Make all functions work in Ubuntu

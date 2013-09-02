@@ -38,7 +38,7 @@
                         <archive>
                             <manifest>
                                 <addClasspath>true</addClasspath>
-                                <mainClass>skullMod.gfsEdit.Application</mainClass>
+                                <mainClass>skullMod.gfsEdit.skullMod.lvlEdit.Application</mainClass>
                             </manifest>
                         </archive>
                     </configuration>
