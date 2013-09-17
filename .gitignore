@@ -10,6 +10,5 @@
 .idea
 
 # Specific directorys #
-
-#build exe for windows
+#build exe for windows, put your launch4j files in there
 gfsEdit/launch4j/launch4j/
