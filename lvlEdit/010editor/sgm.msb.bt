@@ -1,16 +1,17 @@
 //--------------------------------------
 //--- 010 Editor v4.0.3 Binary Template
 //
-// File:
-// Author:
-// Revision:
-// Purpose:
+// File: Skullgirls Model files (.sgm.msb)
+// Author: 0xFAIL
+// Revision: 0.8
+// Purpose: Non nefarious :-) just for a level editor
+// Comment: Array optimisation is broken? has to be disabled when using Pascal64String arrays
 //--------------------------------------
 BigEndian();
 
 typedef struct{
     uint64 count <hidden=true,fgcolor=cLtGray,bgcolor=cWhite>;
-    char chars[count] <hidden=true>;
+    char chars[count] <hidden=true, optimize=false>;
 } Pascal64String <read=Pascal64String_Read>;
 
 string Pascal64String_Read(Pascal64String &v){ return v.chars; }
@@ -18,15 +19,35 @@ string Pascal64String_Read(Pascal64String &v){ return v.chars; }
 struct FILE{
     Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
     Pascal64String textureName <bgcolor=cGreen>;
-    char unknown[52] <fgcolor=cLtGray>;
+    float unknown1[13] <fgcolor=cLtGray>;
     Pascal64String dataFormat <bgcolor=cYellow>;
-    uint64 dataFormatLengthPerEntry <fgcolor=cYellow>;
-    uint64 nOfEntries;
-    uint64 nOf <fgcolor=cLtRed>;
-    uint64 alwaysNull <fgcolor=cLtRed>;
-    struct ENTRY{
-        char data[dataFormatLengthPerEntry] <fgcolor=cGray>;
-    }entry[nOfEntries];
+    uint64 dataFormatLengthPerPolygon <fgcolor=cYellow>;
+    uint64 nOfPolygons;
+    uint64 nOfTriangles <fgcolor=cLtRed>;
+    uint64 nOfBones <fgcolor=cLtRed>;
+    struct POLYGON{
+        char data[dataFormatLengthPerPolygon] <fgcolor=cGray>;
+    }polygon[nOfPolygons];
+    struct TRIANGLE{
+        short firstPolygonIndex <fgcolor=cLtRed>;
+        short secondPolygonIndex <fgcolor=cLtGreen>;
+        short thirdPolygonIndex <fgcolor=cLtBlue>;
+    }triangle[nOfTriangles];
+    struct maybeModelDataOrBoundingBoxForSorting{
+        float xPos <bgcolor=cLtGray,fgcolor=cLtRed>;
+        float yPos <bgcolor=cLtGray,fgcolor=cLtGreen>;
+        float zPos <bgcolor=cLtGray,fgcolor=cLtBlue>;
+
+        float xRot <bgcolor=cLtGray,fgcolor=cLtRed>;
+        float yRot <bgcolor=cLtGray,fgcolor=cLtGreen>;
+        float zRot <bgcolor=cLtGray,fgcolor=cLtBlue>;
+    }model_data;
+    struct BONE_NAMES{
+        Pascal64String boneName[nOfBones] <bgcolor=cYellow>;
+    }bone_name;
+    struct BONE_PROPERTIES{
+        float unknown3[16] <fgcolor=cGray>;
+    }bone_properties[nOfBones];
 }file <read=FILE_read>;
 
 //http://www.intrepid-web.net/010-editor/
