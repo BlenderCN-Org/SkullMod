@@ -97,13 +97,14 @@ public class MainWindow extends JFrame {
 
         this.add(new JPanel());
 
+
         //*****Misc stuff*****
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.pack();
         this.setVisible(true);
 
-        //Issue a warning if Java is not required version
+        //Issue a warning if Java is not found in required version
         if (Utility.JAVA_VERSION < 1.7) {
             JOptionPane.showMessageDialog(this, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 1.7 is required for this application to work properly!\nSome features might not work.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
