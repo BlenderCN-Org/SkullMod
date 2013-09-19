@@ -1,9 +1,9 @@
 //--------------------------------------
-// Skullgirls level, index file
+// Skullgirls level, animation file
 // 
-// File: Skullgirls Index files (.sgi.msb)
+// File: Skullgirls Animation files (.sga.msb)
 // Author: 0xFAIL
-// Revision: 0.5
+// Revision: 0.3
 // Purpose: Non nefarious :-) just for a level editor
 // Comment: Array optimisation is broken? has to be disabled when using Pascal64String arrays
 //--------------------------------------
@@ -16,20 +16,31 @@ typedef struct{
 
 string Pascal64String_Read(Pascal64String &v){ return v.chars; }
 
+
+typedef struct{
+    uint64 nOfAnimationFrames;
+    struct UV_COORDS{
+        float u;
+        float v;
+    } track[nOfAnimationFrames] <optimize=false>; 
+    struct UNKNOWN{
+        char unknownData[5];
+    } unknown[nOfAnimationFrames] <optimize=false>;
+    struct TIME{
+        float time;
+        char alwaysNull[4] <hidden=true>;
+    } time[nOfAnimationFrames] <optimize=false>;   
+} UV_TRACK <read=UV_TRACK_Read>;
+
+string UV_TRACK_Read(UV_TRACK &v){ return "PLACEHOLDER"; }
+
 struct FILE{
     Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
-    uint64 nOfElements <fgcolor=cGreen>;
-    struct ELEMENT{
-        Pascal64String elementName <bgcolor=cGreen,hidden=true>;
-        Pascal64String shapeName <fgcolor=cGreen>;
-        char unknown[66] <fgcolor=cGray,hidden=true>;
-        uint64 nOfAnimations <fgcolor=cGreen,hidden=true>;
-        struct ANIMATION{
-            Pascal64String animationName <bgcolor=cRed,hidden=true>;
-            Pascal64String animationFileName <fgcolor=cRed>;
-        } animation[nOfAnimations] <optimize=false,read=ANIMATION_read>;        
-    } element[nOfElements] <optimize=false,read=ELEMENT_read>;
+    char unknown1[24];
+    Pascal64String type;
+    UV_TRACK track;
 } file <read=FILE_read>;
+
 
 
 //http://www.intrepid-web.net/010-editor/
@@ -57,12 +68,3 @@ char[] get_filename(char full_path[], char delimiter[])
 string FILE_read(FILE &f){
     return get_filename(GetFileName(),"\\");
 }
-
-string ELEMENT_read(ELEMENT &e){
-    return e.elementName.chars;
-}
-
-string ANIMATION_read(ANIMATION &a){
-    return a.animationName.chars;
-}
-

@@ -1,5 +1,5 @@
 //--------------------------------------
-//--- 010 Editor v4.0.3 Binary Template
+// Skullgirls level, model file
 //
 // File: Skullgirls Model files (.sgm.msb)
 // Author: 0xFAIL
@@ -27,7 +27,7 @@ struct FILE{
     uint64 nOfBones <fgcolor=cLtRed>;
     struct POLYGON{
         char data[dataFormatLengthPerPolygon] <fgcolor=cGray>;
-    }polygon[nOfPolygons];
+    }polygon[nOfPolygons] <optimize=false>;;
     struct TRIANGLE{
         short firstPolygonIndex <fgcolor=cLtRed>;
         short secondPolygonIndex <fgcolor=cLtGreen>;
@@ -43,7 +43,7 @@ struct FILE{
         float zRot <bgcolor=cLtGray,fgcolor=cLtBlue>;
     }model_data;
     struct BONE_NAMES{
-        Pascal64String boneName[nOfBones] <bgcolor=cYellow>;
+        Pascal64String boneName[nOfBones] <bgcolor=cYellow,optimize=false>;
     }bone_name;
     struct BONE_PROPERTIES{
         float unknown3[16] <fgcolor=cGray>;
