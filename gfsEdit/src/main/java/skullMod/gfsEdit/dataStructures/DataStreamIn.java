@@ -4,11 +4,12 @@ import java.io.*;
 
 /**
  * Wraps streams for easier usage, length of stream has to be known
+ * TODO might not play nice with symlinks?, does it close them correctly?
  */
 public class DataStreamIn {
     private final FileInputStream fis;
     private final BufferedInputStream bis;
-    public final java.io.DataInputStream s;
+    public final DataInputStream s;
     public final long fileLength;
     public final String fileName;
     public DataStreamIn(String path) throws FileNotFoundException {
@@ -18,7 +19,7 @@ public class DataStreamIn {
         fileName = file.getName();
         fis = new FileInputStream(file);
         bis = new BufferedInputStream(fis);
-        s = new java.io.DataInputStream(bis);
+        s = new DataInputStream(bis);
     }
 
     public void close(){

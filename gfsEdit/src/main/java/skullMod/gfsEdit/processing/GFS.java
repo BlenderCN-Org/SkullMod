@@ -27,8 +27,7 @@ public class GFS {
 
         int dataOffset = data.s.readInt();
         System.out.println("Offset to dataStructures portion of GFS: " + dataOffset);
-
-        if(readPascalString(data).equals(MAGIC_STRING)){  //Read magic string
+                                   if(readPascalString(data).equals(MAGIC_STRING)){  //Read magic string
             System.out.println("Found Magic string");
         }else{
             throw new IllegalArgumentException("Magic string not found");
@@ -176,7 +175,7 @@ public class GFS {
                 dataOut.close();
             }
         }
-
+        data.close(); //TODO test if this was a problem with the previous version
         if(offset == inputFileSize){
             System.out.println("Everyting went fine");
 
@@ -212,7 +211,6 @@ public class GFS {
         }else{
             alignment = 1;
         }
-
 
         String outFilePath;
 

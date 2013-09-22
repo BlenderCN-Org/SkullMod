@@ -41,12 +41,25 @@ public class MainWindow extends JFrame{
             JOptionPane.showMessageDialog(this,"Couldn't load application icon","Error",JOptionPane.ERROR_MESSAGE);
         }
 
-        /**Set look of the application to mimic the OS GUI*/
-        try{
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-            System.err.println("Setting look and feel failed"); //This should happen silently
+        //Going with nimbus, looks better (fonts) and is the same on all platforms but requires JDK 7
+        UIManager.put("nimbusBase", new Color(128,128,128));
+        UIManager.put("nimbusBlueGrey", new Color(200,200,200));
+        UIManager.put("control", new Color(250,250,250));
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // Set look of the application to mimic the OS GUI
+            try{
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+            catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException ex) {
+                System.err.println("Setting look and feel failed"); //This should happen silently
+            }
         }
 
         /**Get default font and make a bold/italic copy of it*/
