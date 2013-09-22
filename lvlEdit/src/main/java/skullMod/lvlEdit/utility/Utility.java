@@ -1,7 +1,11 @@
 package skullMod.lvlEdit.utility;
 
+import org.apache.commons.io.IOUtils;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
 
 public class Utility {
@@ -55,5 +59,58 @@ public class Utility {
         setAlignmentTopLeft(result);
         setPreferredHeightToMaxHeight(result);
         return result;
+    }
+
+    public static String byteToBinString(byte b){
+        return String.format("%8s", Integer.toBinaryString(convertToUnsignedByte(b))).replace(' ', '0');
+    }
+
+    public static int convertToUnsignedByte(byte b){ return  b &0xFF;}
+
+    //TODO checks
+    public static float[] readFloatArray(DataInputStream dis, float[] array) throws IOException {
+        for(int i = 0;i < array.length;i++){
+            array[i] = dis.readFloat();
+        }
+        return array;
+    }
+
+    /**
+     * Big endian
+     *
+     * @param dis
+     * @return
+     * @throws java.io.IOException
+     */
+    public static String readLongPascalString(DataInputStream dis) throws IOException{
+        if(dis == null){ throw new IllegalArgumentException("Given stream is null"); }
+        long stringLength = dis.readLong();
+        if(stringLength < 1 || stringLength > Integer.MAX_VALUE){ throw new IllegalArgumentException("Given stream position results in invalid data: " + stringLength); }
+        byte[] data = new byte[(int) stringLength]; //No string is longer than Integer.MAX_VALUE
+        dis.read(data);
+
+        return IOUtils.toString(data, "ASCII");
+    }
+
+
+    public static String[] readLongPascalStringArray(DataInputStream dis, String[] array) throws IOException{
+        if(dis == null){ throw new IllegalArgumentException("Given stream is null"); }
+        for(int i = 0;i < array.length;i++){
+            array[i] = readLongPascalString(dis);
+        }
+        return array;
+    }
+
+    public static byte[] readByteArray(DataInputStream dis, byte[] array) throws IOException{
+        dis.read(array);
+        return array;
+    }
+
+    public static short[] readShortArray(DataInputStream dis, short[] array) throws IOException{
+        if(dis == null){ throw new IllegalArgumentException("Given stream is null"); }
+        for(int i = 0;i < array.length;i++){
+            array[i] = dis.readShort();
+        }
+        return array;
     }
 }

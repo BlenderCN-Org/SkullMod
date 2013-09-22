@@ -49,35 +49,7 @@ public class Temp{
 
     }
 
-    /**
-     * Big endian
-     *
-     * @param dis
-     * @return
-     * @throws IOException
-     */
-    public static String readLongPascalString(DataInputStream dis) throws IOException{
-        if(dis == null){ throw new IllegalArgumentException("Given stream is null"); }
-        long stringLength = dis.readLong();
-        if(stringLength < 1 || stringLength > Integer.MAX_VALUE){ throw new IllegalArgumentException("Given stream position results in invalid data: " + stringLength); }
-        byte[] data = new byte[(int) stringLength]; //No string is longer than Integer.MAX_VALUE
-        dis.read(data);
-
-        return IOUtils.toString(data,"ASCII");
-    }
-
 
     //Let's go with "constant stuff I don't have to worry about", probably not position or rotation
     //Also java bytes are USELESS because they are signed, (byte) (startByte & 0xFF) is used to upcast the int bits to a byte
-    //They are written correctly regardless
-    //BTW 0x3F80 is 1.0 as a 32 bit IEEE 754 float
-
-    //12 0x00 bytes
-    //6 0x3F800000
-    //12 0x00 bytes
-    //1 0x42B40000    Unicode Han Character 'food made of rice-flour' (U+42B4) or whatever
-
-    //SGM nOf = triangles, each has a 16 bit index, so nOf * (2*3) follow the data
-    //Alwaysnull field is not always null, maybe determins type, geoShape has a different value there (10)
-    //Last 24 bytes are random stuff
 }

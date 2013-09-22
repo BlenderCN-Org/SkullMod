@@ -17,6 +17,9 @@ typedef struct{
 string Pascal64String_Read(Pascal64String &v){ return v.chars; }
 
 struct FILE{
+    Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
+    uint64 nOfUnknown1;
+    uint64 nOfUnknown2;
 } file <read=FILE_read>;
 
 //http://www.intrepid-web.net/010-editor/

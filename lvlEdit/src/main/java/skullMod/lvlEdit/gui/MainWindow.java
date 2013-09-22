@@ -1,10 +1,14 @@
 package skullMod.lvlEdit.gui;
 
+import org.apache.commons.io.IOUtils;
+import skullMod.lvlEdit.dataStructures.DataStreamIn;
+import skullMod.lvlEdit.dataStructures.SGM_File;
 import skullMod.lvlEdit.utility.Utility;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -107,6 +111,41 @@ public class MainWindow extends JFrame {
         //Issue a warning if Java is not found in required version
         if (Utility.JAVA_VERSION < 1.7) {
             JOptionPane.showMessageDialog(this, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 1.7 is required for this application to work properly!\nSome features might not work.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+
+
+        try {
+            DataStreamIn dsi = new DataStreamIn("D:/test.sgm.msb");
+
+            String fileFormatRevision = Utility.readLongPascalString(dsi.s);
+            String textureName = Utility.readLongPascalString(dsi.s);
+            float unknown1[] = Utility.readFloatArray(dsi.s,new float[13]); //13 entries
+            String dataFormat = Utility.readLongPascalString(dsi.s);
+
+            long bytesPerPolygon = dsi.s.readLong();
+            long nOfPolygons = dsi.s.readLong();
+            long nOfTriangles = dsi.s.readLong();
+            long nOfJoints = dsi.s.readLong();
+
+            byte polygonData[] = Utility.readByteArray(dsi.s,new byte[(int) (nOfPolygons*bytesPerPolygon)]);
+            short triangleData[] = Utility.readShortArray(dsi.s,new short[(int) (nOfTriangles*3)]);
+            float maybeBoundingBox[] = Utility.readFloatArray(dsi.s,new float[6]); //Length = 6 floats = 6*4 = 24 bytes
+
+            String jointNames[] = Utility.readLongPascalStringArray(dsi.s,new String[(int) nOfJoints]);
+            byte jointProperties[] = Utility.readByteArray(dsi.s,new byte[(int) (nOfJoints*16)]);
+
+
+
+            dsi.close();
+
+            SGM_File file = new SGM_File(fileFormatRevision,textureName,unknown1,dataFormat,bytesPerPolygon,
+                    nOfPolygons,nOfTriangles,nOfJoints,polygonData,triangleData,maybeBoundingBox,jointNames,jointProperties);
+            System.out.println(file);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        } catch (IOException e){
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 }
