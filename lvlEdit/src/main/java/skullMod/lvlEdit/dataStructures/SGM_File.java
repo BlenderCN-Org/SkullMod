@@ -1,5 +1,10 @@
 package skullMod.lvlEdit.dataStructures;
 
+import skullMod.lvlEdit.utility.Utility;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+
 /**
  * Skullgirls model file (.sgm.msb)
  *
@@ -22,6 +27,25 @@ public class SGM_File {
 
     public String jointNames[]; //nOfJoints Strings
     public byte jointProperties[]; //nOfJoints*16
+
+    public SGM_File(DataInputStream dis) throws IOException {
+        fileFormatRevision = Utility.readLongPascalString(dis);
+        textureName = Utility.readLongPascalString(dis);
+        unknown1 = Utility.readFloatArray(dis,new float[13]); //13 entries
+        dataFormat = Utility.readLongPascalString(dis);
+
+        bytesPerPolygon = dis.readLong();
+        nOfPolygons = dis.readLong();
+        nOfTriangles = dis.readLong();
+        nOfJoints = dis.readLong();
+
+        polygonData = Utility.readByteArray(dis,new byte[(int) (nOfPolygons*bytesPerPolygon)]);
+        triangleData = Utility.readShortArray(dis,new short[(int) (nOfTriangles*3)]);
+        maybeBoundingBox = Utility.readFloatArray(dis,new float[6]); //Length = 6 floats = 6*4 = 24 bytes
+
+        jointNames = Utility.readLongPascalStringArray(dis,new String[(int) nOfJoints]);
+        jointProperties = Utility.readByteArray(dis,new byte[(int) (nOfJoints*16)]);
+    }
 
     public SGM_File(String fileFormatRevision, String textureName, float unknown1[], String dataFormat,
                     long bytesPerPolygon, long nOfPolygons, long nOfTriangles, long nOfJoints,

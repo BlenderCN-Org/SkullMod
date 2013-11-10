@@ -11,8 +11,8 @@ import java.io.*;
 public class MainWindow extends JFrame{
     public static final String APPLICATION  = "GFS edit";
     public static final String AUTHOR       = "0xFAIL";
-    public static final String VERSION      = "1.0";
-    public static final String DATE         = "2013-08-15";
+    public static final String VERSION      = "1.1";
+    public static final String DATE         = "2013-11-03";
     public static final String GAME         = "Skullgirls (PC)";
 
     //UI elements
@@ -42,9 +42,6 @@ public class MainWindow extends JFrame{
         }
 
         //Going with nimbus, looks better (fonts) and is the same on all platforms but requires JDK 7
-        UIManager.put("nimbusBase", new Color(128,128,128));
-        UIManager.put("nimbusBlueGrey", new Color(200,200,200));
-        UIManager.put("control", new Color(250,250,250));
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -286,6 +283,7 @@ public class MainWindow extends JFrame{
 
         aboutLabel2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         aboutLabel2.addMouseListener(new MouseURLAdapter("http://github.com/0xFAIL"));
+
 
         //*****Misc stuff*****
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -3,9 +3,15 @@ package skullMod.lvlEdit.gui;
 import org.apache.commons.io.IOUtils;
 import skullMod.lvlEdit.dataStructures.DataStreamIn;
 import skullMod.lvlEdit.dataStructures.SGM_File;
+import skullMod.lvlEdit.temp.OneTriangle;
 import skullMod.lvlEdit.utility.Utility;
 
 import javax.imageio.ImageIO;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLProfile;
+import javax.media.opengl.awt.GLCanvas;
 import javax.swing.*;
 import java.awt.*;
 import java.io.FileNotFoundException;
@@ -18,7 +24,7 @@ public class MainWindow extends JFrame {
     public static final String APPLICATION  = "LVL edit";
     public static final String AUTHOR       = "0xFAIL";
     public static final String VERSION      = "0.1";
-    public static final String DATE         = "2013-09-02";
+    public static final String DATE         = "2013-29-02";
     public static final String GAME         = "Skullgirls (PC)";
 
 
@@ -30,6 +36,8 @@ public class MainWindow extends JFrame {
 
     public MainWindow(){
         super(APPLICATION + " " + VERSION); //Set title
+
+
 
         /**Set icon*/
         try {
@@ -99,7 +107,43 @@ public class MainWindow extends JFrame {
         Font boldFont = defaultFont.deriveFont(Font.BOLD);
         Font italicFont = defaultFont.deriveFont(Font.ITALIC);
 
-        this.add(new JPanel());
+        /**
+         * Mainpane
+         */
+        JTabbedPane contentPane = new JTabbedPane();
+
+        GLProfile glprofile = GLProfile.getDefault();
+        GLCapabilities glcapabilities = new GLCapabilities( glprofile );
+        final GLCanvas glcanvas = new GLCanvas( glcapabilities );
+        glcanvas.setSize(300,300);
+        glcanvas.addGLEventListener( new GLEventListener() {
+
+            @Override
+            public void reshape( GLAutoDrawable glautodrawable, int x, int y, int width, int height ) {
+                OneTriangle.setup(glautodrawable.getGL().getGL3(), width, height);
+            }
+
+            @Override
+            public void init( GLAutoDrawable glautodrawable ) {
+            }
+
+            @Override
+            public void dispose( GLAutoDrawable glautodrawable ) {
+            }
+
+            @Override
+            public void display( GLAutoDrawable glautodrawable ) {
+                OneTriangle.render( glautodrawable.getGL().getGL3(), glautodrawable.getWidth(), glautodrawable.getHeight() );
+            }
+        });
+
+        contentPane.add("3D",glcanvas);
+        contentPane.add("2D image",new JPanel());
+
+        /**
+         * Layout
+         */
+        this.add(contentPane);
 
 
         //*****Misc stuff*****
@@ -113,7 +157,7 @@ public class MainWindow extends JFrame {
             JOptionPane.showMessageDialog(this, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 1.7 is required for this application to work properly!\nSome features might not work.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
 
-
+        /**
         try {
             DataStreamIn dsi = new DataStreamIn("D:/test.sgm.msb");
 
@@ -147,5 +191,6 @@ public class MainWindow extends JFrame {
         } catch (IOException e){
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+         */
     }
 }

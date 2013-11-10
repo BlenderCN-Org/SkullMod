@@ -6,7 +6,6 @@
 *.ear
 
 # IntelliJ IDEA #
-*.iml
 .idea
 
 # Specific directorys #
