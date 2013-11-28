@@ -5,7 +5,7 @@ Pack/Unpack
 
 Check if there is enough space on the HDD
 Check if there is a file in place of the file to create, ask user to overwrite, extra checkbox?
-
+TEST this
 
 Pack
 
@@ -15,12 +15,9 @@ Check if accumulated files are above 5000
 Misc
 
 JDialogs for pack/unpack
-Probably only works on Windows because of the path separator used in some places, test that
 
 find a fix for the JFileChooser InterruptedException which is caused by a lingering bug in Swing, maybe immediate dereferencing does the trick, as well as forced gc?
 
 
 Add AWT exception handler
 http://stackoverflow.com/questions/740418/how-do-i-catch-this-exception-in-swing
-
-Make all functions work in Ubuntu

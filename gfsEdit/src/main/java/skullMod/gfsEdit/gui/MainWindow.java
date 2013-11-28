@@ -11,8 +11,8 @@ import java.io.*;
 public class MainWindow extends JFrame{
     public static final String APPLICATION  = "GFS edit";
     public static final String AUTHOR       = "0xFAIL";
-    public static final String VERSION      = "1.1";
-    public static final String DATE         = "2013-11-03";
+    public static final String VERSION      = "1.2";
+    public static final String DATE         = "2013-11-12";
     public static final String GAME         = "Skullgirls (PC)";
 
     //UI elements

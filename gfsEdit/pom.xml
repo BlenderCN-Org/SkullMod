@@ -6,7 +6,7 @@
 
     <groupId>gfsEdit</groupId>
     <artifactId>gfsEdit</artifactId>
-    <version>1.0</version>
+    <version>1.2</version>
 
     <dependencies>
         <dependency>
@@ -27,7 +27,6 @@
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
-
                     </configuration>
                 </plugin>
                 <!-- Executable jar file -->

@@ -24,12 +24,20 @@ public class FileItemListener implements ItemListener{
             GFSInternalFileReference[] references = null;
             try {
                 references = GFS.getInternalFileReferences(item);
+                if(references == null){
+                    System.out.println("null was returned for item: " + item.getAbsoluteFile());
+                }else{
+                    System.out.println("Number of internal file references: " + references.length);
+                    fileList.setListData(references); //TODO Should this be set if references is null?
+                }
+
             } catch (FileNotFoundException e1) {
                 e1.printStackTrace();
+                System.out.println("Some file not found, more investigation");
             }
-            System.out.println(references.length);
 
-            fileList.setListData(references);
+
+
         }
     }
 }

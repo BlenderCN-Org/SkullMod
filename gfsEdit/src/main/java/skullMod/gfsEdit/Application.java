@@ -8,6 +8,9 @@ import skullMod.gfsEdit.gui.MainWindow;
  * Written by 0xFAIL
  *
  * Requires Java 7 (DataFlavor consistency, diamond generics, nimbus l&f)
+ *
+ *
+ * TODO Disallow absolute linux path before evaluation the path of a file
  */
 public class Application {
     public static void main(String[] args){

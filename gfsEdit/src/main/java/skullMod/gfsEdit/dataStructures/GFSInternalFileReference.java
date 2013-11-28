@@ -18,10 +18,11 @@ public class GFSInternalFileReference {
     public GFSInternalFileReference(String path, String name, int length, int offset, String originalFileName,int alignment){
         if(length < 0){ throw new IllegalArgumentException("length is smaller than 0!"); }
         if(offset < 0){ throw new IllegalArgumentException("offset is smaller than 0!"); }
-        if(path.contains(":") || path.contains("..")){ //There is no escape!
-            throw new IllegalArgumentException("Security exception");
+        if(path.contains(":") || path.contains("..")){ //Filter out absolute paths and people trying to put things were they don't belong
+            throw new IllegalArgumentException("Security exception, this file is malicious");
         }
-        this.path = path.replaceAll("/","\\")+ "\\";
+        //Regex doesn't like \\ for a \ character, you have to escape twice, once for java and one for regex so \\\\ is correct *sigh*
+        this.path = path.replaceAll("/","\\\\")+ "\\";
         this.name = name;
         this.length = length;
         this.offset = offset;

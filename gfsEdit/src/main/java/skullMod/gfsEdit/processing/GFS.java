@@ -20,14 +20,13 @@ import javax.swing.*;
  */
 public class GFS {
     public static final String MAGIC_STRING = "Reverge Package File";
-    public static final String KNOWN_VERSION_NUMBER = "1.1";
+    public static final String KNOWN_VERSION_NUMBER = "1.1"; //Never saw one with 1.0 or below
 
-    //Assumes correct file is choosen, currently doesn't check for errors thouroughly
+    //Assumes correct file is chosen, currently doesn't check for errors, except for obvious ones
     public static GFSInternalFileReference[] getReferencesGFS(DataStreamIn data) throws IOException {
-
         int dataOffset = data.s.readInt();
         System.out.println("Offset to dataStructures portion of GFS: " + dataOffset);
-                                   if(readPascalString(data).equals(MAGIC_STRING)){  //Read magic string
+        if(readPascalString(data).equals(MAGIC_STRING)){  //Read magic string
             System.out.println("Found Magic string");
         }else{
             throw new IllegalArgumentException("Magic string not found");
@@ -63,6 +62,7 @@ public class GFS {
                 System.out.println("Header ends at" + fileOffset);
             }
 
+            System.out.println("for-loop " + i);
             //Create new InternalFileReference
             result[i] = new GFSInternalFileReference(file.getParent(),file.getName(),fileLength,fileOffset,null,alignment);
             fileOffset += fileLength; //The new fileOffset after the current file
@@ -73,6 +73,7 @@ public class GFS {
         }
 
         if(fileOffset != data.fileLength){
+            System.out.println("The accumulated file length does not match with the real file length");
             throw new IllegalArgumentException("The accumulated file length does not match with the real file length: Calc: " + fileOffset + " Actual Length: " + data.fileLength);
         }else{
             System.out.println("Calculated file length and actual file length match");
@@ -134,9 +135,15 @@ public class GFS {
             boolean noWriting = false;
 
             String basePath = outputDirectory;
-            File currentDirectory = new File(basePath + files[i].path);
-            String filePath = basePath + files[i].path + files[i].name;
+            String correctedInternalPath = files[i].path.replaceAll("\\\\","/");
+            File currentDirectory = new File(basePath + correctedInternalPath); //Replace \ with /
+            String filePath = basePath + correctedInternalPath + files[i].name;
             File currentFile = new File(filePath);
+
+            System.out.println("basePath: " + basePath);
+            System.out.println("currentDirectory: " + currentDirectory.getPath());
+            System.out.println("filePath: " + filePath);
+            System.out.println("currentFile: " + currentFile.getPath());
 
             if(currentFile.isDirectory()){
                 throw new IllegalArgumentException("File can not be written, a folder is in place and won't be overwritten:\n" + currentFile.getAbsolutePath());
@@ -146,7 +153,7 @@ public class GFS {
                 noWriting = true; //Skip file if it exists
             }
 
-            System.out.println(basePath + files[i].path + files[i].name);
+            System.out.println(basePath + correctedInternalPath + files[i].name);
             if(noWriting){
                 data.s.skip(files[i].length);
                 offset += files[i].length;
@@ -158,7 +165,7 @@ public class GFS {
             }else{
                 System.out.println("Writing file: " + files[i].name);
                 currentDirectory.mkdirs();
-                DataStreamOut dataOut = new DataStreamOut(basePath + files[i].path + files[i].name);
+                DataStreamOut dataOut = new DataStreamOut(basePath + correctedInternalPath + files[i].name);
 
                 for(int j = 0;j < files[i].length;j++){
                     dataOut.s.writeByte(data.s.readByte());
@@ -197,9 +204,26 @@ public class GFS {
 
         try {
              files = GFS.getReferencesGFS(data);
+            System.out.println("getReferencesGFS ran through");
+        } catch (FileNotFoundException fnfe){
+            System.out.println("File not found: " + gfsFile.getPath());
         } catch (IOException e) {
+            System.out.println("IO Exception in getInternalFileReferences");
+        } catch (Exception e){
+            System.out.println("An exception occured: Printing stack");
+            StackTraceElement[] ste = e.getStackTrace();
+            for(int i = 0; i<ste.length;i++){
+                System.out.println(i + " Class: " + ste[i].getClassName());
+                System.out.println(i + " Method: " + ste[i].getMethodName());
+                System.out.println(i + " Line number: " + ste[i].getLineNumber());
+            }
+
         } finally {
+            if(files == null){
+                System.out.println("getReferenceGFS returned null");
+            }
             data.close();
+
             return files;
         }
     }
