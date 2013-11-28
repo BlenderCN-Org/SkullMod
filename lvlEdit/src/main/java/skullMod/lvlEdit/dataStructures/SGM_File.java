@@ -4,13 +4,14 @@ import skullMod.lvlEdit.utility.Utility;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Skullgirls model file (.sgm.msb)
  *
  * Javas signed data types are a bother and need additional security checks TODO implement them
  */
-public class SGM_File {
+public class SGM_File implements Serializable{
     public String fileFormatRevision;
     public String textureName;
     public float unknown1[]; //13 entries
@@ -47,12 +48,30 @@ public class SGM_File {
         jointProperties = Utility.readByteArray(dis,new byte[(int) (nOfJoints*16)]);
     }
 
+    /**
+     *
+     * @param fileFormatRevision
+     * @param textureName
+     * @param unknown1
+     * @param dataFormat
+     * @param bytesPerPolygon
+     * @param nOfPolygons
+     * @param nOfTriangles
+     * @param nOfJoints
+     * @param polygonData
+     * @param triangleData
+     * @param maybeBoundingBox
+     * @param jointNames
+     * @param jointProperties
+     */
     public SGM_File(String fileFormatRevision, String textureName, float unknown1[], String dataFormat,
                     long bytesPerPolygon, long nOfPolygons, long nOfTriangles, long nOfJoints,
                     byte polygonData[], short triangleData[], float maybeBoundingBox[],
                     String jointNames[], byte jointProperties[]){
 
         //TODO check incoming data
+
+        if(fileFormatRevision == null){ throw new IllegalArgumentException("fileFormatRevision is null"); }
 
         this.fileFormatRevision = fileFormatRevision;
         this.textureName = textureName;

@@ -5,6 +5,10 @@
 *.war
 *.ear
 
+# Except Package Files we want #
+#lvlEdit needs a jar that is not available in a maven repository
+!lvlEdit/lib/*.jar
+
 # IntelliJ IDEA #
 .idea
 

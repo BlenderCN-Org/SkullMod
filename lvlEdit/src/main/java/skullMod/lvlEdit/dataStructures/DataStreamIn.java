@@ -5,6 +5,7 @@ import java.io.*;
 /**
  * Wraps streams for easier usage, length of stream has to be known
  * TODO might not play nice with symlinks?, does it close them correctly?
+ *
  */
 public class DataStreamIn {
     private final FileInputStream fis;
@@ -22,6 +23,7 @@ public class DataStreamIn {
         s = new DataInputStream(bis);
     }
 
+    //TODO check if this is necessary
     public void close(){
         try {
             s.close();
