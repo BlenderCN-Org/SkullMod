@@ -3,6 +3,9 @@ package skullMod.lvlEdit.gui;
 import org.apache.commons.io.IOUtils;
 import skullMod.lvlEdit.dataStructures.DataStreamIn;
 import skullMod.lvlEdit.dataStructures.SGM_File;
+import skullMod.lvlEdit.gui.dds_info.Animation;
+import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
+import skullMod.lvlEdit.gui.dds_info.PixelCoordinate;
 import skullMod.lvlEdit.temp.OneTriangle;
 import skullMod.lvlEdit.utility.Utility;
 
@@ -17,6 +20,7 @@ import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  */
@@ -24,7 +28,7 @@ public class MainWindow extends JFrame {
     public static final String APPLICATION  = "LVL edit";
     public static final String AUTHOR       = "0xFAIL";
     public static final String VERSION      = "0.1";
-    public static final String DATE         = "2013-29-02";
+    public static final String DATE         = "2013-12-04";
     public static final String GAME         = "Skullgirls (PC)";
 
 
@@ -37,7 +41,10 @@ public class MainWindow extends JFrame {
     public MainWindow(){
         super(APPLICATION + " " + VERSION); //Set title
 
-
+        //Issue a warning if Java is not found in required version
+        if (Utility.JAVA_VERSION < 1.7) {
+            JOptionPane.showMessageDialog(null, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 1.7 is required for this application to work properly!\nSome features might not work or crash.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
 
         /**Set icon*/
         try {
@@ -112,7 +119,8 @@ public class MainWindow extends JFrame {
          */
         JTabbedPane contentPane = new JTabbedPane();
 
-        GLProfile glprofile = GLProfile.getDefault();
+        //FIXME currently a GL3 context is requested, find a "softer" way to get the desired context
+        GLProfile glprofile = GLProfile.get(GLProfile.GL3);
         GLCapabilities glcapabilities = new GLCapabilities( glprofile );
         final GLCanvas glcanvas = new GLCanvas( glcapabilities );
         glcanvas.setSize(300,300);
@@ -123,22 +131,43 @@ public class MainWindow extends JFrame {
                 OneTriangle.setup(glautodrawable.getGL().getGL3(), width, height);
             }
 
-            @Override
             public void init( GLAutoDrawable glautodrawable ) {
             }
 
-            @Override
+
             public void dispose( GLAutoDrawable glautodrawable ) {
             }
 
-            @Override
             public void display( GLAutoDrawable glautodrawable ) {
                 OneTriangle.render( glautodrawable.getGL().getGL3(), glautodrawable.getWidth(), glautodrawable.getHeight() );
             }
         });
 
         contentPane.add("3D",glcanvas);
-        contentPane.add("2D image",new JPanel());
+
+        //TODO test data, remove it
+        DDS_Panel ddsPanel = new DDS_Panel("/home/netbook/Working_files/testEnvironment/asg_labs.dds");
+
+        InfoRectangle[] models = new InfoRectangle[2];
+        models[0] = new InfoRectangle(new PixelCoordinate(5,5), new PixelCoordinate(50,50), "Test1");
+        models[1] = new InfoRectangle(new PixelCoordinate(10,60), new PixelCoordinate(100,100), "Test2 model bla bla bla");
+        ddsPanel.setModels(models);
+
+        Animation[] animations = new Animation[1];
+        InfoRectangle[] animation1 = new InfoRectangle[2];
+        //Name doesn't matter so it's empty
+        animation1[0] = new InfoRectangle(new PixelCoordinate(20,110), new PixelCoordinate(50,140));
+        animation1[1] = new InfoRectangle(new PixelCoordinate(60,110), new PixelCoordinate(90,140));
+        animations[0] = new Animation("test", animation1);
+        ddsPanel.setAnimations(animations);
+
+        contentPane.add("2D image",new JScrollPane(ddsPanel));
+
+
+
+        AnimationPanel animationPanel = new AnimationPanel();
+
+        contentPane.add("2D animation", new JScrollPane(animationPanel));
 
         /**
          * Layout
@@ -147,15 +176,12 @@ public class MainWindow extends JFrame {
 
 
         //*****Misc stuff*****
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //FIXME is this the problem of the awt crash with file/directory select dialogs
 
         this.pack();
         this.setVisible(true);
 
-        //Issue a warning if Java is not found in required version
-        if (Utility.JAVA_VERSION < 1.7) {
-            JOptionPane.showMessageDialog(this, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 1.7 is required for this application to work properly!\nSome features might not work.", "Warning", JOptionPane.WARNING_MESSAGE);
-        }
+
 
         /**
         try {
