@@ -15,6 +15,9 @@ public class DDS_Panel extends JPanel{
     private final Color modelColor = new Color(255,0,0,128);
     private final Color animationColor = new Color(255,255,0,128);
 
+    private final Color darkGrayColor = new Color(100,100,100);
+    private final Color lightGrayColor = new Color(150,150,150);
+
 
     private int drawOffset = 10; //Offset for all draw operations
 
@@ -27,6 +30,9 @@ public class DDS_Panel extends JPanel{
         //TODO check incoming params and throw fitting exceptions
 
         this.fileName = fileName;
+
+        this.setOpaque(true);
+        this.setBackground(darkGrayColor);
 
         File file = new File(fileName);
         try{
@@ -52,14 +58,16 @@ public class DDS_Panel extends JPanel{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
 
+
         g.translate(drawOffset, drawOffset);
+
+        drawChecker(g,drawOffset,drawOffset,10, new Dimension(image.getWidth(), image.getHeight()));
 
         drawOrigin(g);
 
         if(image != null){ g.drawImage(image, 0, 0, null); }
 
         int fontHeight = g.getFont().getSize(); //FIXME there has to be a better way to determine font height in px
-        System.out.println(fontHeight);
 
         g.setColor(modelColor);
         for(InfoRectangle rectangle : models){
@@ -77,6 +85,26 @@ public class DDS_Panel extends JPanel{
         }
     }
 
+    private void drawChecker(Graphics g, int xOffset, int yOffset, int size, Dimension imageSize) {
+        Dimension jPanel = this.getSize();
+
+        g.setColor(lightGrayColor);
+
+        int imageWidth = (int) imageSize.getWidth();
+        int imageHeight = (int) imageSize.getHeight();
+
+        final int nOfRows = (int) Math.ceil(((imageHeight - yOffset) / (double) size) / 2.0);
+        System.out.println(nOfRows);
+
+        for(int i = 0;i < nOfRows/2;i++){
+            g.fillRect(0,i*2*size,size,size);
+        }
+
+
+
+
+    }
+
     //Draw the outline of the given rectangle (this means everything that is INSIDE the outline is visible
     public void drawOutlineOfRectangle(Graphics g, InfoRectangle rectangle){
         g.drawRect(rectangle.getPoint1().getX() - 1, rectangle.getPoint1().getY() - 1, rectangle.getWidth() + 2, rectangle.getHeight() + 2);
@@ -88,14 +116,19 @@ public class DDS_Panel extends JPanel{
         g.drawString("0",(-1) * g.getFontMetrics().charWidth('0') - 1,-1); // (-1) * for invert
     }
 
-
-
-
     public Dimension getPreferredSize(){
-        if(image != null){
-            return new Dimension(image.getWidth() + drawOffset*2, image.getHeight() + drawOffset*2);
+        if(image == null){
+            return getMinimumSize();
         }else{
-            return new Dimension(0,0);
+            return new Dimension(image.getWidth() + drawOffset*2, image.getHeight() + drawOffset*2);
         }
+    }
+
+    public Dimension getMinimumSize(){
+        return new Dimension(100,100);
+    }
+
+    public Dimension getMaximumSize(){
+        return getPreferredSize();
     }
 }

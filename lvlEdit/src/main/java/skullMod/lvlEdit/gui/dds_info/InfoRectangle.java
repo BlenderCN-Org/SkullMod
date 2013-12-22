@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * A displayed rectangle, contains a name and boundaries
- * Boundaries are automatically calculate
+ * Boundaries are automatically calculated
  * The first coordinate contains the min values for x and y, the second the max values for x and y
  * The internal Object never changes
  */

@@ -1,11 +1,10 @@
 package skullMod.lvlEdit.gui;
 
-import org.apache.commons.io.IOUtils;
-import skullMod.lvlEdit.dataStructures.DataStreamIn;
-import skullMod.lvlEdit.dataStructures.SGM_File;
 import skullMod.lvlEdit.gui.dds_info.Animation;
 import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
 import skullMod.lvlEdit.gui.dds_info.PixelCoordinate;
+import skullMod.lvlEdit.gui.leftPane.SelectorPanel;
+import skullMod.lvlEdit.gui.rightPane.RightJPane;
 import skullMod.lvlEdit.temp.OneTriangle;
 import skullMod.lvlEdit.utility.Utility;
 
@@ -17,10 +16,8 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.*;
 import java.awt.*;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 /**
  */
@@ -34,7 +31,7 @@ public class MainWindow extends JFrame {
 
     public final JMenuBar menuBar;
     public final JMenu fileMenu, toolsMenu, aboutMenu;
-    public final JMenuItem newLevelMenuItem, loadMenuItem, saveMenuItem, saveAsMenuItem, importMenuItem, exportMenuItem, exitMenuItem;
+    public final JMenuItem newLevelMenuItem, loadMenuItem, saveMenuItem, saveAsMenuItem, closeLevelItem, importMenuItem, exportMenuItem, exitMenuItem;
     public final JMenuItem imageToDDSMenuItem;
     public final JMenuItem aboutMenuItem, helpMenuItem;
 
@@ -75,6 +72,7 @@ public class MainWindow extends JFrame {
         loadMenuItem = new JMenuItem("Load");
         saveMenuItem = new JMenuItem("Save");
         saveAsMenuItem = new JMenuItem("Save as");
+        closeLevelItem = new JMenuItem("Close level");
         importMenuItem = new JMenuItem("Import");
         exportMenuItem = new JMenuItem("Export");
         exitMenuItem = new JMenuItem("Exit");
@@ -84,6 +82,7 @@ public class MainWindow extends JFrame {
         fileMenu.add(loadMenuItem);
         fileMenu.add(saveMenuItem);
         fileMenu.add(saveAsMenuItem);
+        fileMenu.add(closeLevelItem);
         fileMenu.addSeparator();
         fileMenu.add(importMenuItem);
         fileMenu.add(exportMenuItem);
@@ -161,25 +160,45 @@ public class MainWindow extends JFrame {
         animations[0] = new Animation("test", animation1);
         ddsPanel.setAnimations(animations);
 
-        contentPane.add("2D image",new JScrollPane(ddsPanel));
 
+        JScrollPane imageScrollPane = new JScrollPane(ddsPanel);
+
+        final int SCROLL_SPEED = 8;
+
+        imageScrollPane.getHorizontalScrollBar().setUnitIncrement(SCROLL_SPEED);
+        imageScrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_SPEED);
+        contentPane.add("2D image", imageScrollPane);
 
 
         AnimationPanel animationPanel = new AnimationPanel();
-
         contentPane.add("2D animation", new JScrollPane(animationPanel));
+        contentPane.setMinimumSize(new Dimension(200,200));
 
         /**
          * Layout
          */
-        this.add(contentPane);
+        //Create a split pane with the two scroll panes in it.
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new SelectorPanel(), contentPane);
+        splitPane.setOneTouchExpandable(true);
+
+
+        this.setLayout(new BorderLayout());
+        this.add(splitPane, BorderLayout.CENTER);
+        this.add(new RightJPane(), BorderLayout.EAST);
+
+        this.setSize(getPreferredSize());
 
 
         //*****Misc stuff*****
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //FIXME is this the problem of the awt crash with file/directory select dialogs
 
+
+        this.setMinimumSize(new Dimension(400,100));
+
         this.pack();
         this.setVisible(true);
+
+        this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
 
 
@@ -218,5 +237,20 @@ public class MainWindow extends JFrame {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
          */
+
+    }
+
+    public Dimension getPreferredSize(){
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int width = gd.getDisplayMode().getWidth();
+        int height = gd.getDisplayMode().getHeight();
+
+        //When in doubt :-)
+        double GOLDEN_RATIO = (1.0 + java.lang.Math.sqrt(5))/2.0;
+
+        int suggestedWidth = (int) (width / GOLDEN_RATIO);
+        int suggestedHeight = (int) (height / GOLDEN_RATIO);
+
+        return new Dimension(suggestedWidth, suggestedHeight);
     }
 }
