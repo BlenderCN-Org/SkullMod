@@ -1,6 +1,7 @@
 package skullMod.lvlEdit.gui;
 
 import skullMod.lvlEdit.dataStructures.CentralDataObject;
+import skullMod.lvlEdit.dataStructures.DataStreamIn;
 import skullMod.lvlEdit.gui.dds_info.Animation;
 import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
 import skullMod.lvlEdit.gui.dds_info.PixelCoordinate;
@@ -211,6 +212,39 @@ public class MainWindow extends JFrame {
         this.setVisible(true);
 
         this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+
+        //TODO find an easy way for unsigned long in Java *aaargh*
+        //TODO enforce endianess (even though java already does?)rome
+        try{
+            DataStreamIn dsi = new DataStreamIn("/home/netbook/Working_files/Skullgirls_extracted/levels/class_notes_3d/background.sgi.msb");
+
+            String fileFormatRevision = Utility.readLongPascalString(dsi.s);
+            long nOfElements = dsi.s.readLong();
+
+            for(int i = 0;i < nOfElements;i++){
+                System.out.println("Element name: " + i + " " + Utility.readLongPascalString(dsi.s));
+                System.out.println("Shape name: " + i + " " + Utility.readLongPascalString(dsi.s));
+                dsi.s.read(new byte[66]); //Scrap unknown bytes
+
+                long nOfAnimations = dsi.s.readLong();
+                System.out.println("nOfElements: " + i + " " + nOfAnimations);
+                for(int j = 0;j < nOfAnimations;j++){
+                    System.out.println("animationName: " + i + " " + j + " " + Utility.readLongPascalString(dsi.s));
+                    System.out.println("animationFileName: " + i + " " + j + " " + Utility.readLongPascalString(dsi.s));
+
+                }
+            }
+
+
+            System.out.println(fileFormatRevision);
+            System.out.println(nOfElements);
+
+            dsi.close();
+
+        }catch(IOException ioe){
+            System.out.println("IOEXCEPTION");
+        }
+
 
         /**
         try {
