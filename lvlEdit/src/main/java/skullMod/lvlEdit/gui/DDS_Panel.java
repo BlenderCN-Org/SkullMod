@@ -34,12 +34,15 @@ public class DDS_Panel extends JPanel{
         this.setOpaque(true);
         this.setBackground(darkGrayColor);
 
-        File file = new File(fileName);
-        try{
-            image = ImageIO.read(file);
-        }catch(IOException ioe){
-            System.out.println("IO Exception");
+        if(fileName == null){
+            File file = new File(fileName);
+            try{
+                image = ImageIO.read(file);
+            }catch(IOException ioe){
+                System.out.println("IO Exception");  //TODO here too
+            }
         }
+
     }
 
     //remove after testing
@@ -61,7 +64,7 @@ public class DDS_Panel extends JPanel{
 
         g.translate(drawOffset, drawOffset);
 
-        drawChecker(g,drawOffset,drawOffset,10, new Dimension(image.getWidth(), image.getHeight()));
+        //drawChecker(g,drawOffset,drawOffset,10, new Dimension(image.getWidth(), image.getHeight()));
 
         drawOrigin(g);
 

@@ -4,47 +4,41 @@ import javax.swing.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
- * A table with an HashMap data model, allows only two columns,
- * only the right one is editable
+ * A table with a HashMap data model, allows only two columns, only the right column is editable
+ *
+ * The validation of fields is done using the method isValidValue(...)
+ * The initalisation of fields is done using the method initHashMapValues(...)
+ * If the validation failed the invalidValueFound(...) method is called
  */
-public class HashMapJTable extends JTable{
-    private HashMap<String, Object> hashMap;
+public abstract class HashMapJTable extends JTable{
+    /** The internal HashMap */
+    protected final HashMap<String, String> hashMap;
 
-    public HashMapJTable(){ this(null); }
-
-
-    public HashMapJTable(HashMap<String, Object> hashMap){
-
-        if(hashMap == null){
-            this.hashMap = new HashMap<>();
-        }else{
-            this.hashMap = hashMap;
-        }
+    /**
+     * Constructor
+     */
+    protected HashMapJTable(){
+        this.hashMap = new HashMap<>();
+        this.initHashMapValues();
 
         this.setModel(new HashMapTableModel());
 
         //TODO check if this is necessary
         this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        //TODO explain what this does
-
-
     }
 
     //TODO explain what this does in simple terms
     public void setPreferredScrollableViewportSize(){
-        //TODO ignored, see the getter for this attribute
+        //TODO ignored, see the getter for this attribute, throw exception?
     }
 
-    public Dimension getPreferredScrollableViewportSize(){
-        return getPreferredSize();
-    }
+    /** TODO Explain */
+    public Dimension getPreferredScrollableViewportSize(){ return getPreferredSize(); }
 
+    /** Internal class for TableMOdel */
     private class HashMapTableModel implements TableModel {
         public String getColumnName(int i){
             if(i < 0 || i > 1){ throw new IllegalArgumentException("Out of table bounds"); }
@@ -55,7 +49,8 @@ public class HashMapJTable extends JTable{
             }
         }
 
-        //FIXME don't cheat the alignment use the proper way
+
+        //FIXME don't cheat the alignment use the proper way, whatever that might be
         public Class<?> getColumnClass(int i) {
             if(i < 0 || i > 1) { throw new IllegalArgumentException("Out of table bounds"); }
             if(i == 0){
@@ -64,6 +59,12 @@ public class HashMapJTable extends JTable{
             return String.class; //This is aligned on the left
         }
 
+        /**
+         * Only the "Value" column is editable
+         * @param row The row
+         * @param col The column
+         * @return Whether the cell is editable
+         */
         public boolean isCellEditable(int row, int col) {
             if(col == 1){
                 return true;
@@ -72,23 +73,33 @@ public class HashMapJTable extends JTable{
             }
         }
 
-        public int getRowCount() {
-            return hashMap.size();
-        }
-        public int getColumnCount() {
-            return 2;
-        }
+        /**
+         * Row count
+         * @return row count
+         */
+        public int getRowCount() { return hashMap.size(); }
+
+        /**
+         * Column count, fixed to 2 (one for key, one for value)
+         * @return Always 2
+         */
+        public int getColumnCount() { return 2; }
+
+        /**
+         * Value at table position
+         * @param row value at this row
+         * @param column value at this column
+         * @return The value, always a String
+         */
         public Object getValueAt(int row, int column) {
             if(row > getRowCount() || column > getColumnCount() || row < 0 || column < 0){
                 throw new IllegalArgumentException("Out of table bounds");
             }
 
-            Set<Map.Entry<String,Object>> entries= hashMap.entrySet();
-
+            Set<Map.Entry<String,String>> entries= hashMap.entrySet();
 
             int i = 0;
-            for(Map.Entry<String,Object> entry : entries){
-
+            for(Map.Entry<String,String> entry : entries){
                 if(i == row){
                     if(column == 0){
                         return entry.getKey();
@@ -102,17 +113,35 @@ public class HashMapJTable extends JTable{
 
         }
 
+        /**
+         * Set value at given position, only the "value" row is editable
+         * @param input Object to be written, toString() is called on it for the actual value
+         * @param row The row in which to write
+         * @param col The column in which to write
+         */
         public void setValueAt(Object input, int row, int col) {
             if(col != 1){ throw new IllegalArgumentException("Out of table bounds"); }
-            hashMap.put(getValueAt(row, 0).toString(),input.toString());
 
-            System.out.println(input.toString() + " " + row + " " + col);
+            if(isValidValue(getValueAt(row, 0).toString(), getValueAt(row, 1).toString(), input.toString(),row,col)){
+                hashMap.put(getValueAt(row, 0).toString(),input.toString());
+            }else{
+                invalidValueFound(getValueAt(row, 0).toString(), getValueAt(row, 1).toString(), input.toString(),row,col);
+            }
         }
+
+        //TODO listener methods, add them
         public void addTableModelListener(TableModelListener tableModelListener) {
         }
         public void removeTableModelListener(TableModelListener tableModelListener) {
         }
-
-
     }
+
+    /** Valid value  */
+    protected abstract boolean isValidValue(String key, String oldValue, String newValue, int row, int col);
+
+    /** init the HashMap values using the setter */
+    protected abstract void initHashMapValues();
+
+    /** what to do when an invalid value found */
+    protected abstract void invalidValueFound(String key, String oldValue, String newValue, int row, int col);
 }

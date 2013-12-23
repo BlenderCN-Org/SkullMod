@@ -7,7 +7,7 @@ import java.awt.*;
 import static skullMod.lvlEdit.gui.modeChange.ModeChanger.Modes.*;
 
 public class CenterSelectorPanel extends JPanel {
-    private JTree scene, model, animation, shape;
+    private JScrollPane scene, model, animation, shape;
 
     private CardLayout layout;
 
@@ -20,15 +20,36 @@ public class CenterSelectorPanel extends JPanel {
         //FIXME temp data
 
         DefaultMutableTreeNode sceneRoot = new DefaultMutableTreeNode("sceneRoot");
+
+        DefaultMutableTreeNode one = new DefaultMutableTreeNode("newaaaaaaaaaaaaaaaaaaa");
+
+        DefaultMutableTreeNode two = new DefaultMutableTreeNode("new");
+        DefaultMutableTreeNode three = new DefaultMutableTreeNode("new");
+        DefaultMutableTreeNode four = new DefaultMutableTreeNode("new");
+        DefaultMutableTreeNode five = new DefaultMutableTreeNode("new");
+        DefaultMutableTreeNode six = new DefaultMutableTreeNode("new");
+        DefaultMutableTreeNode seven = new DefaultMutableTreeNode("new");
+
+
+        one.add(two);
+        one.add(three);
+        three.add(four);
+        one.add(five);
+        one.add(six);
+        one.add(seven);
+
+        sceneRoot.add(one);
+
+
         DefaultMutableTreeNode modelRoot = new DefaultMutableTreeNode("modelRoot");
         DefaultMutableTreeNode animationRoot = new DefaultMutableTreeNode("animationRoot");
         DefaultMutableTreeNode shapeRoot = new DefaultMutableTreeNode("shapeRoot");
 
 
-        scene = new JTree(sceneRoot);
-        model = new JTree(modelRoot);
-        animation = new JTree(animationRoot);
-        shape = new JTree(shapeRoot); //FIXME unknown if this is the correct word for the content
+        scene = new JScrollPane(new JTree(sceneRoot));
+        model = new JScrollPane(new JTree(modelRoot));
+        animation = new JScrollPane(new JTree(animationRoot));
+        shape = new JScrollPane(new JTree(shapeRoot)); //FIXME unknown if this is the correct word for the content
 
         this.add(scene,SCENE.toString());
         this.add(model,MODEL.toString());

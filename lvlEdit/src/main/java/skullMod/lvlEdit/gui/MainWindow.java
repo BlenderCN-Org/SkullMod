@@ -1,9 +1,11 @@
 package skullMod.lvlEdit.gui;
 
+import skullMod.lvlEdit.dataStructures.CentralDataObject;
 import skullMod.lvlEdit.gui.dds_info.Animation;
 import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
 import skullMod.lvlEdit.gui.dds_info.PixelCoordinate;
 import skullMod.lvlEdit.gui.leftPane.SelectorPanel;
+import skullMod.lvlEdit.gui.modeChange.ModeChanger;
 import skullMod.lvlEdit.gui.rightPane.RightJPane;
 import skullMod.lvlEdit.temp.OneTriangle;
 import skullMod.lvlEdit.utility.Utility;
@@ -16,6 +18,8 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,8 +29,12 @@ public class MainWindow extends JFrame {
     public static final String APPLICATION  = "LVL edit";
     public static final String AUTHOR       = "0xFAIL";
     public static final String VERSION      = "0.1";
-    public static final String DATE         = "2013-12-04";
+    public static final String DATE         = "2013-12-23";
     public static final String GAME         = "Skullgirls (PC)";
+
+    public static final String ANIMATION_PANEL = "Animation";
+    public static final String IMAGE_PANEL = "2D Image";
+    public static final String SCENE_PANEL = "3D";
 
 
     public final JMenuBar menuBar;
@@ -34,6 +42,8 @@ public class MainWindow extends JFrame {
     public final JMenuItem newLevelMenuItem, loadMenuItem, saveMenuItem, saveAsMenuItem, closeLevelItem, importMenuItem, exportMenuItem, exitMenuItem;
     public final JMenuItem imageToDDSMenuItem;
     public final JMenuItem aboutMenuItem, helpMenuItem;
+
+    public final JTabbedPane contentPane;
 
     public MainWindow(){
         super(APPLICATION + " " + VERSION); //Set title
@@ -116,7 +126,7 @@ public class MainWindow extends JFrame {
         /**
          * Mainpane
          */
-        JTabbedPane contentPane = new JTabbedPane();
+        contentPane = new JTabbedPane();
 
         //FIXME currently a GL3 context is requested, find a "softer" way to get the desired context
         GLProfile glprofile = GLProfile.get(GLProfile.GL3);
@@ -142,7 +152,9 @@ public class MainWindow extends JFrame {
             }
         });
 
-        contentPane.add("3D",glcanvas);
+        CentralDataObject.scenePanel = glcanvas;
+
+        contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
 
         //TODO test data, remove it
         DDS_Panel ddsPanel = new DDS_Panel("/home/netbook/Working_files/testEnvironment/asg_labs.dds");
@@ -161,17 +173,15 @@ public class MainWindow extends JFrame {
         ddsPanel.setAnimations(animations);
 
 
-        JScrollPane imageScrollPane = new JScrollPane(ddsPanel);
+        CentralDataObject.modelPanel = new JScrollPane(ddsPanel);
 
-        final int SCROLL_SPEED = 8;
+        final int SCROLL_SPEED = 8; // TODO make this an option
 
-        imageScrollPane.getHorizontalScrollBar().setUnitIncrement(SCROLL_SPEED);
-        imageScrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_SPEED);
-        contentPane.add("2D image", imageScrollPane);
+        CentralDataObject.modelPanel.getHorizontalScrollBar().setUnitIncrement(SCROLL_SPEED);
+        CentralDataObject.modelPanel.getVerticalScrollBar().setUnitIncrement(SCROLL_SPEED);
 
+        CentralDataObject.animationPanel = new JScrollPane(new AnimationPanel());
 
-        AnimationPanel animationPanel = new AnimationPanel();
-        contentPane.add("2D animation", new JScrollPane(animationPanel));
         contentPane.setMinimumSize(new Dimension(200,200));
 
         /**
@@ -186,6 +196,8 @@ public class MainWindow extends JFrame {
         this.add(splitPane, BorderLayout.CENTER);
         this.add(new RightJPane(), BorderLayout.EAST);
 
+        CentralDataObject.modeList.addItemListener(new ModeListItemListenera());
+
         this.setSize(getPreferredSize());
 
 
@@ -199,8 +211,6 @@ public class MainWindow extends JFrame {
         this.setVisible(true);
 
         this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-
-
 
         /**
         try {
@@ -252,5 +262,39 @@ public class MainWindow extends JFrame {
         int suggestedHeight = (int) (height / GOLDEN_RATIO);
 
         return new Dimension(suggestedWidth, suggestedHeight);
+    }
+
+    private class ModeListItemListenera implements ItemListener {
+        public void itemStateChanged(ItemEvent itemEvent) {
+            if(itemEvent.getStateChange() == ItemEvent.SELECTED){
+                String item = (String) itemEvent.getItem();
+
+                // TODO I don't know any good looking switch statement that can take care of this situation
+                //We are gonna use many sweet ifs
+
+                //TODO fix model / image panel names, choose one and stick with it
+
+                if(item.equals(ModeChanger.Modes.SCENE.name)){
+                    contentPane.removeAll();
+                    contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
+                }
+                if(item.equals(ModeChanger.Modes.MODEL.name)){
+                    contentPane.removeAll();
+                    contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
+                    contentPane.add(IMAGE_PANEL, CentralDataObject.modelPanel);
+
+                }
+                if(item.equals(ModeChanger.Modes.ANIMATION.name)){
+                    contentPane.removeAll();
+                    contentPane.add(ANIMATION_PANEL, CentralDataObject.animationPanel);
+
+                }
+                if(item.equals(ModeChanger.Modes.SHAPE.name)){
+                    contentPane.removeAll();
+                    //TODO temporary
+                    contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
+                }
+            }
+        }
     }
 }

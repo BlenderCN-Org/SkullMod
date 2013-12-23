@@ -2,6 +2,9 @@ package skullMod.lvlEdit.dataStructures;
 
 import skullMod.lvlEdit.gui.modeChange.ModeChanger;
 
+import javax.media.opengl.awt.GLCanvas;
+import javax.swing.*;
+
 
 /**
  * Contains all data for this application
@@ -16,6 +19,11 @@ public final class CentralDataObject {
      * Attach itemListener for mode change, use static import on enum
      * import static skullMod.lvlEdit.gui.modeChange.ModeChanger.Modes.*;
      */
-    public static ModeChanger modeList = new ModeChanger();
+    public static final ModeChanger modeList = new ModeChanger();
+
+
+    public static JScrollPane modelPanel;
+    public static JScrollPane animationPanel;
+    public static GLCanvas scenePanel;
 
 }

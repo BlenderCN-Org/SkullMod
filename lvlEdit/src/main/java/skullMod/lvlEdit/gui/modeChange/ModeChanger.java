@@ -5,6 +5,12 @@ import javax.swing.*;
 public class ModeChanger extends JComboBox<String>{
     public enum Modes{
         SCENE, MODEL, ANIMATION, SHAPE;
+
+        public final String name;
+
+        Modes(){
+            name = this.name();
+        }
         public String toString(){ return this.name(); }
     }
 
