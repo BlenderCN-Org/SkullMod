@@ -74,6 +74,8 @@ class FileListTransferHandler extends TransferHandler {
                                 System.out.println("File added: " + file.getAbsoluteFile());
                                 guiElement.addItem(file);
                             }
+
+                            tempStream.close();
                         }
                     }
                 }else{
