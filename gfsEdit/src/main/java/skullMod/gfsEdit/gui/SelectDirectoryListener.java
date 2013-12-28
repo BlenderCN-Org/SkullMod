@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Locale;
 
 public class SelectDirectoryListener implements ActionListener{
     private JFileChooser directoryChooser;
@@ -18,6 +19,8 @@ public class SelectDirectoryListener implements ActionListener{
         this.selectDirectoryLabel = selectDirectoryLabel;
 
         directoryChooser = new JFileChooser(new File("."));
+        directoryChooser.setLocale(Locale.ENGLISH);
+        directoryChooser.updateUI();
         directoryChooser.setDialogTitle("Select directory");
         directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         directoryChooser.setAcceptAllFileFilterUsed(false);

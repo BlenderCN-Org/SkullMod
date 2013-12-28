@@ -158,7 +158,7 @@ public class MainWindow extends JFrame {
         contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
 
         //TODO test data, remove it
-        DDS_Panel ddsPanel = new DDS_Panel("/home/netbook/Working_files/testEnvironment/asg_labs.dds");
+        DDS_Panel ddsPanel = new DDS_Panel("C:/asg_labs.dds");
 
         InfoRectangle[] models = new InfoRectangle[2];
         models[0] = new InfoRectangle(new PixelCoordinate(5,5), new PixelCoordinate(50,50), "Test1");
@@ -214,7 +214,6 @@ public class MainWindow extends JFrame {
         this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
         //TODO find an easy way for unsigned long in Java *aaargh*
-        //TODO enforce endianess (even though java already does?)rome
         try{
             DataStreamIn dsi = new DataStreamIn("/home/netbook/Working_files/Skullgirls_extracted/levels/class_notes_3d/background.sgi.msb");
 

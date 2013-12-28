@@ -62,7 +62,6 @@ public class GFS {
                 System.out.println("Header ends at" + fileOffset);
             }
 
-            System.out.println("for-loop " + i);
             //Create new InternalFileReference
             result[i] = new GFSInternalFileReference(file.getParent(),file.getName(),fileLength,fileOffset,null,alignment);
             fileOffset += fileLength; //The new fileOffset after the current file
@@ -209,15 +208,6 @@ public class GFS {
             System.out.println("File not found: " + gfsFile.getPath());
         } catch (IOException e) {
             System.out.println("IO Exception in getInternalFileReferences");
-        } catch (Exception e){
-            System.out.println("An exception occured: Printing stack");
-            StackTraceElement[] ste = e.getStackTrace();
-            for(int i = 0; i<ste.length;i++){
-                System.out.println(i + " Class: " + ste[i].getClassName());
-                System.out.println(i + " Method: " + ste[i].getMethodName());
-                System.out.println(i + " Line number: " + ste[i].getLineNumber());
-            }
-
         } finally {
             if(files == null){
                 System.out.println("getReferenceGFS returned null");
@@ -281,6 +271,9 @@ public class GFS {
                 for(int j = 0;j < references[i].length;j++){
                     output.s.writeByte(input.s.readByte());
                 }
+
+                input.close();
+
                 if(references[i].padding != 0){ output.writeBytes(new byte[references[i].padding]);} //Padd stuff
             }
             output.close();
@@ -333,6 +326,7 @@ public class GFS {
             // Read file and return dataStructures
             byte[] data = new byte[length];
             f.readFully(data);
+            f.close();
             return data;
         }
     }
