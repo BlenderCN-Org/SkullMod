@@ -1,15 +1,19 @@
 package skullMod.lvlEdit.gui;
 
-
 import skullMod.lvlEdit.gui.dds_info.Animation;
 import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.FileImageInputStream;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
 
 public class DDS_Panel extends JPanel{
     private final Color modelColor = new Color(255,0,0,128);
@@ -26,31 +30,43 @@ public class DDS_Panel extends JPanel{
     private InfoRectangle[] models;
     private Animation[] animations;
 
-    public DDS_Panel(String fileName){
-        //TODO check incoming params and throw fitting exceptions
-
-        this.fileName = fileName;
-
+    public DDS_Panel(){
         this.setOpaque(true);
         this.setBackground(darkGrayColor);
+    }
 
-        if(fileName == null){
+    public DDS_Panel(String fileName){
+        this();
+        //TODO check incoming params and throw fitting exceptions
+
+        if(fileName == null){ this.fileName = fileName; }
+        changeImage(fileName);
+    }
+
+    //TODO param is actually path?
+    public void changeImage(String fileName){
+        if(fileName != null){
             File file = new File(fileName);
             try{
                 image = ImageIO.read(file);
+                this.fileName = fileName;
+                this.repaint();
+            }catch(FileNotFoundException fnfe){
+                System.out.println("File not found exception");
             }catch(IOException ioe){
-                System.out.println("IO Exception");  //TODO here too
+                System.out.println("Error reading file");
             }
+
         }
 
     }
 
-    //remove after testing
+    //FIXME remove after testing
     public void setModels(InfoRectangle[] models){
         this.models = models;
     }
 
-    //remove after testing
+    //FIXME remove after testing
     public void setAnimations(Animation[] animations){
         this.animations = animations;
     }
@@ -68,7 +84,9 @@ public class DDS_Panel extends JPanel{
 
         drawOrigin(g);
 
-        if(image != null){ g.drawImage(image, 0, 0, null); }
+        if(image != null){ g.drawImage(image, 0, 0, null); }else{
+            System.out.println("No image to draw");
+        }
 
         int fontHeight = g.getFont().getSize(); //FIXME there has to be a better way to determine font height in px
 
