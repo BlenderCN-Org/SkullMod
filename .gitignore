@@ -7,10 +7,11 @@
 
 # Except Package Files we want #
 #lvlEdit needs a jar that is not available in a maven repository
-!lvlEdit/lib/*.jar
+!lvlEdit/lib/java-dds/*.jar
 
 # IntelliJ IDEA #
 .idea
+*.iml
 
 # Specific directorys #
 #build exe for windows, put your launch4j files in there
