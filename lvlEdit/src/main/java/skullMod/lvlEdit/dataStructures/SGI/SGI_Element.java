@@ -1,5 +1,7 @@
-package skullMod.lvlEdit.dataStructures;
+package skullMod.lvlEdit.dataStructures.SGI;
 
+import skullMod.lvlEdit.dataStructures.DataStreamIn;
+import skullMod.lvlEdit.dataStructures.DataStreamOut;
 import skullMod.lvlEdit.utility.Utility;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -41,6 +43,17 @@ public class SGI_Element implements Serializable {
         for(SGI_Animation animation : animations){
             animation.addToNode(thisNode);
         }
+
+    }
+
+    public void writeToStream(DataStreamOut dso) throws IOException{
+        Utility.writeLongPascalString(dso, elementName);
+        Utility.writeLongPascalString(dso, modelFileName);
+        dso.writeBytes(unknown);
+
+        //FIXME change unknown once known
+
+
 
     }
 }

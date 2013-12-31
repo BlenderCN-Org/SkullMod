@@ -1,5 +1,6 @@
-package skullMod.lvlEdit.dataStructures;
+package skullMod.lvlEdit.dataStructures.SGI;
 
+import skullMod.lvlEdit.dataStructures.DataStreamIn;
 import skullMod.lvlEdit.utility.Utility;
 
 import javax.swing.tree.DefaultMutableTreeNode;

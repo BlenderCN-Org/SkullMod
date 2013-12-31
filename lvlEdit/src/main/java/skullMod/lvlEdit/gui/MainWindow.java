@@ -2,23 +2,17 @@ package skullMod.lvlEdit.gui;
 
 import skullMod.lvlEdit.dataStructures.CentralDataObject;
 import skullMod.lvlEdit.dataStructures.DataStreamIn;
-import skullMod.lvlEdit.dataStructures.SGI_Element;
-import skullMod.lvlEdit.dataStructures.SGI_File;
+import skullMod.lvlEdit.dataStructures.SGI.SGI_Element;
+import skullMod.lvlEdit.dataStructures.SGI.SGI_File;
 import skullMod.lvlEdit.gui.dds_info.Animation;
 import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
 import skullMod.lvlEdit.gui.dds_info.PixelCoordinate;
 import skullMod.lvlEdit.gui.leftPane.SelectorPanel;
 import skullMod.lvlEdit.gui.modeChange.ModeChanger;
 import skullMod.lvlEdit.gui.rightPane.RightJPane;
-import skullMod.lvlEdit.temp.OneTriangle;
 import skullMod.lvlEdit.utility.Utility;
 
 import javax.imageio.ImageIO;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultTreeModel;
@@ -61,10 +55,11 @@ public class MainWindow extends JFrame {
         super(APPLICATION + " " + VERSION); //Set title
 
         JOptionPane.showMessageDialog(null,"Hi, todays build has the following new features:\n" +
-                "-)open up a .sgi.msb file to see info (tested with a few stages)\n" +
-                "Select DEVOPTIONS->open .sgi (on the Menubar) and naviagate to the !!extracted!! (use gfsEdit) levels.gfs directory\n(directories have the stage names) \n" +
-                "-)see the first textures used in the level by switching to MODELS (dropdown menu) and clicking the 2D image tab\nQuit by clicking on the 'x' on the window, the exit option doesn't work yet\n" +
-                "Next planned features: display all available textures, remove existing models, probably tomorrow","Hi there", JOptionPane.INFORMATION_MESSAGE);
+                "-)Exit button works in File menu\n" +
+                "-)Saving sgi files is possible. Not enabled yet.\n" +
+                "-)'Remember last path that was selected' in file chooser\n" +
+                "-)All models are listed in the models tab\n" +
+                "Next planned release date: January","Hi there", JOptionPane.INFORMATION_MESSAGE);
 
         //Issue a warning if Java is not found in required version
         if (Utility.JAVA_VERSION < 1.7) {
@@ -107,7 +102,7 @@ public class MainWindow extends JFrame {
 
 
         //FIXME DEVOPTIONS
-        devMenu = new JMenu("DEVOPTIONS");
+        devMenu = new JMenu("DEVOPTIONS (everything except this doesn't work yet)");
         loadSGI = new JMenuItem("Load .sgi.msb");
 
         devMenu.add(loadSGI);
@@ -332,17 +327,31 @@ public class MainWindow extends JFrame {
         }
     }
 
+    private class ExitApplicationListener implements ActionListener{
+        public void actionPerformed(ActionEvent e){
+            if(e.getSource() == exitMenuItem){
+                MainWindow.this.dispose();
+            }
+        }
+    }
+
 
     private class ReadSGI_Listener implements ActionListener{
+        private String lastPath = ".";
+
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == loadSGI){
-                JFileChooser fileChooser = new JFileChooser(".");
+                JFileChooser fileChooser = new JFileChooser(lastPath);
                 fileChooser.setFileFilter(new SGI_FileFilter());
                 fileChooser.setAcceptAllFileFilterUsed(false);
 
                 fileChooser.showOpenDialog(MainWindow.this);
 
                 File selectedFile = fileChooser.getSelectedFile();
+                if(selectedFile != null && selectedFile.exists()){
+                    lastPath = selectedFile.getParent();
+                }
+
 
                 //Cancel if nothing was selected
                 if(selectedFile == null){ JOptionPane.showMessageDialog(MainWindow.this,"Nothing selected"); return; }

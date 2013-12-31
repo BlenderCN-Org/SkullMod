@@ -6,7 +6,7 @@
 // Revision: 0.8
 // Purpose: Non nefarious :-) just for a level editor
 // Comment: Array optimisation is broken? has to be disabled when using Pascal64String arrays
-// Note: uchar4 is a vec4
+// Note: uchar4 is a vec4 part?
 //--------------------------------------
 BigEndian();
 
