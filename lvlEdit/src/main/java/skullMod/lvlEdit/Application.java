@@ -5,11 +5,11 @@ import skullMod.lvlEdit.gui.MainWindow;
 import javax.swing.*;
 
 /**
- * LVL edit
+ * lvlEdit
  *
  * Written by 0xFAIL
  *
- * Requires Java 7 ( for DataFlavor consistency, diamond generics, String switch)
+ * Requires Java 7 (for DataFlavor consistency, diamond generics, String switch)
  */
 public class Application {
     public static void main(String[] args){

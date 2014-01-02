@@ -10,6 +10,7 @@ import skullMod.gfsEdit.dataStructures.DataStreamIn;
 import skullMod.gfsEdit.dataStructures.DataStreamOut;
 import skullMod.gfsEdit.dataStructures.GFSExternalFileReference;
 import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
+import skullMod.gfsEdit.gui.MainWindow;
 import skullMod.gfsEdit.utility.Utility;
 import org.apache.commons.io.FilenameUtils;
 
@@ -181,11 +182,11 @@ public class GFS {
                 dataOut.close();
             }
         }
-        data.close(); //TODO test if this was a problem with the previous version
+        data.close();
         if(offset == inputFileSize){
-            System.out.println("Everyting went fine");
-
+            System.out.println("Everything went fine");
         }else{
+            JOptionPane.showMessageDialog(MainWindow.window, "Data was extracted, but file length does not match with calculated file length\nthe file is probably damaged", "Error", JOptionPane.ERROR_MESSAGE);
             throw new IllegalArgumentException("Data was extracted, but file length does not match with calculated file length");
         }
     }

@@ -1,8 +1,11 @@
 package skullMod.gfsEdit.dataStructures;
 
-/**
- * A reference of a file inside another file
- */
+import skullMod.gfsEdit.gui.MainWindow;
+
+import javax.swing.*;
+import java.io.File;
+
+/** A reference of a file inside another file */
 public class GFSInternalFileReference {
     public final String path;
     public final String name;
@@ -18,7 +21,8 @@ public class GFSInternalFileReference {
     public GFSInternalFileReference(String path, String name, int length, int offset, String originalFileName,int alignment){
         if(length < 0){ throw new IllegalArgumentException("length is smaller than 0!"); }
         if(offset < 0){ throw new IllegalArgumentException("offset is smaller than 0!"); }
-        if(path.contains(":") || path.contains("..")){ //Filter out absolute paths and people trying to put things were they don't belong
+        if(path.contains(":") || path.contains("..") || path.startsWith("/")){ //Filter out absolute paths and people trying to put things were they don't belong
+            JOptionPane.showMessageDialog(MainWindow.window, "Security exception, this file is malicious:\n" + path + File.separator + name);
             throw new IllegalArgumentException("Security exception, this file is malicious");
         }
         //Regex doesn't like \\ for a \ character, you have to escape twice, once for java and one for regex so \\\\ is correct *sigh*

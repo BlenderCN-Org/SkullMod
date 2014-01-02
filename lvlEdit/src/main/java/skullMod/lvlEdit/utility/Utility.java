@@ -11,6 +11,8 @@ import java.text.NumberFormat;
 public class Utility {
     public static double JAVA_VERSION = getVersion ();
 
+    //FIXME remove JAVA_VERSION from every utility, only use dynamic methods, currently it's compile time
+
     public static void getMemoryUsage(){
         Runtime runtime = Runtime.getRuntime();
 

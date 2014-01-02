@@ -15,6 +15,8 @@ public class MainWindow extends JFrame{
     public static final String DATE         = "2013-12-26";
     public static final String GAME         = "Skullgirls (PC)";
 
+    public static JFrame window; //Contains a reference to the top window (TODO beautify this)
+
     //UI elements
     private JCheckBox includeDirectoryNameCheckbox,dropTargetCheckbox, dropTargetCheckboxCreateDirectoryWithFilename,
             dropTargetCheckboxAddFiles,dropTargetCheckboxOverwriteFiles;
@@ -32,6 +34,8 @@ public class MainWindow extends JFrame{
 
     public MainWindow(){
         super(APPLICATION + " " + VERSION); //Set title
+
+        window = this;
 
         /**Set icon*/
         try {

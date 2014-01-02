@@ -12,3 +12,5 @@ Currently:
     * Not usable - in development
 * PalEd - The Skullgirls team is selling player colors as DLC, not gonna interfere with that
     * Not in development - for now
+* sprConv
+    * Convert .spr.msb+dds files to png and png files to .spr.msb+dds, supports animation

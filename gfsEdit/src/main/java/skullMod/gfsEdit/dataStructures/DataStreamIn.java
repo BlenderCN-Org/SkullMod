@@ -7,7 +7,6 @@ import java.io.*;
  * TODO might not play nice with symlinks?, does it close them correctly?
  */
 public class DataStreamIn{
-    public static int nOfOpenStreams = 0;
 
     private final FileInputStream fis;
     private final BufferedInputStream bis;

@@ -63,6 +63,7 @@ public class PackActionListener implements ActionListener {
         boolean includeDirectoryName = includeDirectoryNameCheckbox.isSelected();
         boolean align4k = alignment4kRadioButton.isSelected();
 
+
         GFS.pack(directory,outputName,includeDirectoryName,align4k);
 
         String outputFile;
