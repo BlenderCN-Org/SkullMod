@@ -13,7 +13,8 @@ public class SGI_Element implements Serializable {
     public String elementName;
     public String modelFileName;
 
-    public byte[] unknown; //66 bytes
+    public Mat4 transformationMatrix;
+    public byte[] unknown; //2 bytes
 
     public SGI_Animation[] animations;
 
@@ -21,7 +22,8 @@ public class SGI_Element implements Serializable {
         elementName = Utility.readLongPascalString(sgi_stream.s);
         modelFileName = Utility.readLongPascalString(sgi_stream.s);
 
-        unknown = Utility.readByteArray(sgi_stream.s, new byte[66]); //FIXME figure them out
+        transformationMatrix = new Mat4(sgi_stream.s);
+        unknown = Utility.readByteArray(sgi_stream.s, new byte[2]); //FIXME figure them out
 
         int nOfAnimations = (int) sgi_stream.s.readLong();
 
@@ -49,6 +51,7 @@ public class SGI_Element implements Serializable {
     public void writeToStream(DataStreamOut dso) throws IOException{
         Utility.writeLongPascalString(dso, elementName);
         Utility.writeLongPascalString(dso, modelFileName);
+        transformationMatrix.writeToStream(dso.s);
         dso.writeBytes(unknown);
 
         //FIXME change unknown once known

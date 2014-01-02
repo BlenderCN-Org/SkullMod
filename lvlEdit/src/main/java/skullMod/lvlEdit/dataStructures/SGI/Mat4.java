@@ -1,6 +1,7 @@
 package skullMod.lvlEdit.dataStructures.SGI;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -29,5 +30,11 @@ public class Mat4 implements Serializable {
         if(matrix.length != 16){ throw new IllegalArgumentException("Given matrix is not a 4x4 matrix, length is: " + matrix.length); }
         //TODO can one entry be null?
         this.matrix = matrix.clone();
+    }
+
+    public void writeToStream(DataOutputStream s) throws IOException{
+        for(float component : matrix){
+            s.writeFloat(component);
+        }
     }
 }
