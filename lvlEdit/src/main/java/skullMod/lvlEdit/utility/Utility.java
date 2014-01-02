@@ -1,10 +1,13 @@
 package skullMod.lvlEdit.utility;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
+import skullMod.lvlEdit.dataStructures.DataStreamOut;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 
@@ -94,6 +97,19 @@ public class Utility {
         return IOUtils.toString(data, "ASCII");
     }
 
+
+    public static void writeLongPascalString(DataStreamOut dso, String input) throws IOException{
+        if(dso == null){ throw new IllegalArgumentException("Given stream is null"); }
+        if(input == null){throw new IllegalArgumentException("Given input is null"); }
+        if(input.length() == 0){ throw new IllegalArgumentException("Given input has a length of zero"); }
+
+        //FIXME validate input to be ascii
+
+        long stringLength = input.length();
+
+        dso.s.writeLong(stringLength);
+        dso.s.write(input.getBytes(Charsets.US_ASCII));
+    }
 
     public static String[] readLongPascalStringArray(DataInputStream dis, String[] array) throws IOException{
         if(dis == null){ throw new IllegalArgumentException("Given stream is null"); }

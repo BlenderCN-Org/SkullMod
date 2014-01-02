@@ -1,5 +1,7 @@
 package skullMod.lvlEdit.gui.leftPane;
 
+import skullMod.lvlEdit.dataStructures.CentralDataObject;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
@@ -7,8 +9,6 @@ import java.awt.*;
 import static skullMod.lvlEdit.gui.modeChange.ModeChanger.Modes.*;
 
 public class CenterSelectorPanel extends JPanel {
-    private JScrollPane scene, model, animation, shape;
-
     private CardLayout layout;
 
 
@@ -17,44 +17,14 @@ public class CenterSelectorPanel extends JPanel {
         this.setLayout(layout);
 
 
-        //FIXME temp data
 
-        DefaultMutableTreeNode sceneRoot = new DefaultMutableTreeNode("sceneRoot");
+        //sceneTree.expandRow(0);
+        //sceneTree.setRootVisible(false);
 
-        DefaultMutableTreeNode one = new DefaultMutableTreeNode("newaaaaaaaaaaaaaaaaaaa");
-
-        DefaultMutableTreeNode two = new DefaultMutableTreeNode("new");
-        DefaultMutableTreeNode three = new DefaultMutableTreeNode("new");
-        DefaultMutableTreeNode four = new DefaultMutableTreeNode("new");
-        DefaultMutableTreeNode five = new DefaultMutableTreeNode("new");
-        DefaultMutableTreeNode six = new DefaultMutableTreeNode("new");
-        DefaultMutableTreeNode seven = new DefaultMutableTreeNode("new");
-
-
-        one.add(two);
-        one.add(three);
-        three.add(four);
-        one.add(five);
-        one.add(six);
-        one.add(seven);
-
-        sceneRoot.add(one);
-
-
-        DefaultMutableTreeNode modelRoot = new DefaultMutableTreeNode("modelRoot");
-        DefaultMutableTreeNode animationRoot = new DefaultMutableTreeNode("animationRoot");
-        DefaultMutableTreeNode shapeRoot = new DefaultMutableTreeNode("shapeRoot");
-
-
-        scene = new JScrollPane(new JTree(sceneRoot));
-        model = new JScrollPane(new JTree(modelRoot));
-        animation = new JScrollPane(new JTree(animationRoot));
-        shape = new JScrollPane(new JTree(shapeRoot)); //FIXME unknown if this is the correct word for the content
-
-        this.add(scene,SCENE.toString());
-        this.add(model,MODEL.toString());
-        this.add(animation,ANIMATION.toString());
-        this.add(shape,SHAPE.toString());
+        this.add(new JScrollPane(CentralDataObject.sceneTree),SCENE.toString());
+        this.add(new JScrollPane(CentralDataObject.modelTree),MODEL.toString());
+        this.add(new JScrollPane(CentralDataObject.animationTree),ANIMATION.toString());
+        this.add(new JScrollPane(CentralDataObject.shapeTree),SHAPE.toString());
 
         layout.show(this, SCENE.toString());
     }

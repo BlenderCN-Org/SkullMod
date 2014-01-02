@@ -14,7 +14,6 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
-
         <dependency>
             <groupId>org.imgscalr</groupId>
             <artifactId>imgscalr-lib</artifactId>
@@ -31,7 +30,6 @@
             <artifactId>jogl-all-main</artifactId>
             <version>2.1.2</version>
         </dependency>
-
         <dependency>
             <groupId>net.nikr</groupId>
             <artifactId>dds</artifactId>
@@ -50,8 +48,6 @@
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
-
-
                     </configuration>
                 </plugin>
                 <!-- Executable jar file -->
@@ -67,7 +63,7 @@
                         </archive>
                     </configuration>
                 </plugin>
-                <!-- Load jar file and use as dependency -->
+
                 <plugin>
                     <groupId>com.googlecode.addjars-maven-plugin</groupId>
                     <artifactId>addjars-maven-plugin</artifactId>
@@ -80,7 +76,7 @@
                             <configuration>
                                 <resources>
                                     <resource>
-                                        <directory>${basedir}/lib</directory>
+                                        <directory>${project.basedir}/lib</directory>
                                     </resource>
                                 </resources>
                             </configuration>

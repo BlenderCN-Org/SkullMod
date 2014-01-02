@@ -22,7 +22,10 @@ struct FILE{
     struct ELEMENT{
         Pascal64String elementName <bgcolor=cGreen,hidden=true>;
         Pascal64String shapeName <fgcolor=cGreen>;
-        char unknown[66] <fgcolor=cGray,hidden=true>;
+        //char unknown[66] <fgcolor=cGray>;
+        float unknown[16];
+        char unknown2[2];
+
         uint64 nOfAnimations <fgcolor=cGreen,hidden=true>;
         struct ANIMATION{
             Pascal64String animationName <bgcolor=cRed,hidden=true>;
