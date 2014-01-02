@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 
-//This class assumes the standard layout found in all spr files
+//This class assumes the standard layout found in all spr files with 4 bytes per entry
 public class SPR_Entry implements Serializable {
     //TODO add unsigned byte as class
     byte tile_x;

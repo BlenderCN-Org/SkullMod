@@ -6,7 +6,7 @@
 
     <groupId>skullMod.sprConv</groupId>
     <artifactId>sprConv</artifactId>
-    <version>1.0-</version>
+    <version>1.0</version>
 
 
     <repositories>
@@ -48,8 +48,6 @@
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
-
-
                     </configuration>
                 </plugin>
                 <!-- Executable jar file -->
