@@ -62,7 +62,7 @@ public class MainWindow extends JFrame {
                 "Next planned release date: January","Hi there", JOptionPane.INFORMATION_MESSAGE);
 
         //Issue a warning if Java is not found in required version
-        if (Utility.JAVA_VERSION < 1.7) {
+        if (Utility.getVersion() < 1.7) {
             JOptionPane.showMessageDialog(null, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 1.7 is required for this application to work properly!\nSome features might not work or crash.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
 
