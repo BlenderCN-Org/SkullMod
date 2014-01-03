@@ -40,4 +40,18 @@ public class DrawPanel extends JPanel{
         g.drawLine(-1,-translation,-1,(int) d.getHeight());
         //g.getBounds ?
     }
+
+    public static void drawCheckerGrid(Graphics g, Dimension d, int translation, int checkerSize){
+        int fieldsToTheRight = (int) Math.ceil((d.getWidth()-translation)/checkerSize); //Check ceil
+        int fieldsToTheLeft = (int) Math.ceil(translation/checkerSize);
+        //int fieldsAboveOrigion = (int) Math.ceil();
+        //Step 1, draw everything RIGHT and BELOW the origin
+
+        //Step 2, draw everything LEFT and BELOW the origin
+
+        //Step 3, draw everything LEFT and ABOVE the origin
+
+        //Step 4, draw everything RIGHT and ABOVE the origin
+
+    }
 }
