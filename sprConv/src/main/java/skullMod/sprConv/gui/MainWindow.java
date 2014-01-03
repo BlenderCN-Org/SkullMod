@@ -62,7 +62,7 @@ public class MainWindow extends JFrame{
 
         //Create panels
         JPanel panelLeft = new JPanel();
-        JPanel panelRight = new JPanel();
+        JPanel panelRight = new DrawPanel();
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(panelLeft), new JScrollPane(panelRight));
         splitPane.setOneTouchExpandable(true);

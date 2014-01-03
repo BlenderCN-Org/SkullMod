@@ -29,6 +29,11 @@ public class SPR_File implements Serializable{
 
     public SPR_File(DataInputStream dis) throws IOException{
         fileFormatRevision = Utility.readLongPascalString(dis);
+
+        if(fileFormatRevision.equals(knownFileFormatRevision)){
+            throw new IllegalArgumentException("File format revision does not match, stopped reading");
+        }
+
         spriteSceneName = Utility.readLongPascalString(dis);
         unknown1 = dis.readFloat();
 
