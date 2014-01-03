@@ -1,8 +1,10 @@
 package skullMod.sprConv.utility;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
@@ -30,5 +32,20 @@ public class Utility {
         dis.read(data);
 
         return IOUtils.toString(data, "ASCII");
+    }
+
+
+
+    public static void writeLongPascalString(DataOutputStream dso, String input) throws IOException{
+        if(dso == null){ throw new IllegalArgumentException("Given stream is null"); }
+        if(input == null){throw new IllegalArgumentException("Given input is null"); }
+        if(input.length() == 0){ throw new IllegalArgumentException("Given input has a length of zero"); }
+
+        //FIXME validate input to be ascii
+
+        long stringLength = input.length();
+
+        dso.writeLong(stringLength);
+        dso.write(input.getBytes(Charsets.US_ASCII));
     }
 }
