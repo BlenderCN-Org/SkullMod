@@ -83,5 +83,7 @@ public class MainWindow extends JFrame{
         this.setVisible(true);
 
         this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+
+        new AboutDialog(this, true);
     }
 }

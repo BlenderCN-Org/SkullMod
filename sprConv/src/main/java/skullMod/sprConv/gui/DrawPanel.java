@@ -3,9 +3,16 @@ package skullMod.sprConv.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class DrawPanel extends JPanel{
     public BufferedImage image;
+
+    public final ReentrantLock imageLock = new ReentrantLock();
+
+    public static final Color darkBackground = new Color(100,100,100);
+    public static final Color lightBackground = new Color(150,150,150);
 
     public DrawPanel(){
         this.setOpaque(true);
@@ -14,11 +21,15 @@ public class DrawPanel extends JPanel{
 
     public void setImage(BufferedImage image){
         if(image == null){ throw new IllegalArgumentException("Given image is null, use remove image"); }
+        imageLock.lock();
         this.image = image;
+        imageLock.unlock();
     }
 
     public void removeImage(){
+        imageLock.lock();
         this.image = null;
+        imageLock.unlock();
     }
 
     public void paintComponent(Graphics g){
@@ -29,9 +40,18 @@ public class DrawPanel extends JPanel{
         drawOrigin(g, this.getSize(), translation);
 
 
-        //Look up synchronized on null
-        synchronized (image){
-            if(image != null){ g.drawImage(image, image.getWidth(), image.getHeight(),null); }
+        //Draw grid (16x16 the size of each block)
+        drawCheckerGrid(g,this.getSize(), translation,16);
+
+        try{
+            if(imageLock.tryLock(1, TimeUnit.SECONDS)) {
+                if(image != null){ g.drawImage(image, image.getWidth(), image.getHeight(), null); }
+                imageLock.unlock();
+            }else{
+                this.repaint(); //TODO is this a bad idea, probably...
+            }
+        }catch(InterruptedException ie){
+        }finally{
         }
     }
     public static void drawOrigin(Graphics g, Dimension d, int translation){
@@ -43,10 +63,29 @@ public class DrawPanel extends JPanel{
 
     public static void drawCheckerGrid(Graphics g, Dimension d, int translation, int checkerSize){
         int fieldsToTheRight = (int) Math.ceil((d.getWidth()-translation)/checkerSize); //Check ceil
-        int fieldsToTheLeft = (int) Math.ceil(translation/checkerSize);
-        //int fieldsAboveOrigion = (int) Math.ceil();
-        //Step 1, draw everything RIGHT and BELOW the origin
+        int fieldsToTheLeft = (int) Math.ceil((double)translation/checkerSize);
+        int fieldsBelow = (int) Math.ceil((d.getHeight()-translation)/checkerSize);
+        int fieldsAbove = (int) Math.ceil((double) translation/checkerSize);
 
+        System.out.println("Fields to the right: " + fieldsToTheRight);
+        System.out.println("Fields to the left: " + fieldsToTheLeft);
+        System.out.println("Fields above: " + fieldsAbove);
+        System.out.println("Fields below: " + fieldsBelow);
+        System.out.println("====================");
+        //Step 1, draw everything RIGHT and BELOW the origin
+        for(int y = 0;y < fieldsBelow;y++){
+            for(int x = 0;x < fieldsToTheRight;x++){
+                if( (x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1)){
+                    g.setColor(lightBackground);
+                }else{
+                    g.setColor(darkBackground);
+                }
+                g.fillRect(x*checkerSize,y*checkerSize,checkerSize,checkerSize);
+            }
+
+        }
+
+        //TODO does this look good?
         //Step 2, draw everything LEFT and BELOW the origin
 
         //Step 3, draw everything LEFT and ABOVE the origin
