@@ -10,7 +10,7 @@ string Pascal64String_Read(Pascal64String &v){ return v.chars; }
 struct FILE{
 	Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
 	Pascal64String spriteName <fgcolor=cGreen>;
-	float unknownHeaderPart;	
+	int unknownHeaderPart;
 	Pascal64String dataFormatString <fgcolor=cRed>;
 	
 	uint64 bytesPerEntry <bgcolor=cGray, fgcolor=cLtYellow>;
@@ -41,10 +41,10 @@ struct FILE{
 	struct FILE_NAMES{
 		struct FILE_NAME{
 			Pascal64String name;
-			uint32 unknown1;
+			uint32 frameOffset;
 			uint32 nOfFrames;
+			uint32 unknown1;
 			uint32 unknown2;
-			uint32 unknown3;		
 		} fileName[nOfSprites] <read=FILE_NAME_read, optimize=false>;	
 	} fileNames <read=FILE_NAMES_read>;
 }file <read=FILE_read>;

@@ -11,7 +11,7 @@ public class SPR_File implements Serializable{
     public String fileFormatRevision;
     public String spriteSceneName; //TODO better idea for naming
 
-    public float unknown1;
+    public int unknown1; //This is int for sure (see the character select sprites)
 
     public String dataFormatString;
 
@@ -19,13 +19,13 @@ public class SPR_File implements Serializable{
     public long bytesPerEntry;
     public long nOfEntries;
     public long nOfFrames;
-    public long nOfSprites;
+    public long nOfAnimations;
     public long blockWidth;  //in pixels
     public long blockHeight; //in pixels
 
     public SPR_Entry[] entries;
     public SPR_Frame[] frames;
-    public SPR_SpriteInfo[] spriteInfos;
+    public SPR_Animation[] animations;
 
     public SPR_File(DataInputStream dis) throws IOException{
         fileFormatRevision = Utility.readLongPascalString(dis);
@@ -35,7 +35,7 @@ public class SPR_File implements Serializable{
         }
 
         spriteSceneName = Utility.readLongPascalString(dis);
-        unknown1 = dis.readFloat();
+        unknown1 = dis.readInt();
 
         dataFormatString = Utility.readLongPascalString(dis);
 
@@ -43,20 +43,23 @@ public class SPR_File implements Serializable{
         bytesPerEntry = dis.readLong();
         nOfEntries = dis.readLong();
         nOfFrames = dis.readLong();
-        nOfSprites = dis.readLong();
+        nOfAnimations = dis.readLong();
         blockWidth = dis.readLong();
         blockHeight = dis.readLong();
 
         //Init arrays for the following reads
         entries = new SPR_Entry[(int)nOfEntries];
         frames = new SPR_Frame[(int)nOfFrames];
-        spriteInfos = new SPR_SpriteInfo[(int)nOfSprites];
+        animations = new SPR_Animation[(int) nOfAnimations];
 
         for(int i = 0;i < nOfEntries;i++){
             entries[i] = new SPR_Entry(dis);
         }
         for(int i = 0;i < nOfFrames;i++){
             frames[i] = new SPR_Frame(dis);
+        }
+        for(int i = 0;i < nOfAnimations;i++){
+            animations[i] = new SPR_Animation(dis);
         }
     }
 
@@ -70,7 +73,7 @@ public class SPR_File implements Serializable{
         dos.writeLong(bytesPerEntry);
         dos.writeLong(nOfEntries);
         dos.writeLong(nOfFrames);
-        dos.writeLong(nOfSprites);
+        dos.writeLong(nOfAnimations);
         dos.writeLong(blockWidth);
         dos.writeLong(blockHeight);
 
@@ -80,8 +83,8 @@ public class SPR_File implements Serializable{
         for(SPR_Frame frame : frames){
             frame.writeToStream(dos);
         }
-        for(SPR_SpriteInfo spriteInfo : spriteInfos){
-            spriteInfo.writeToStream(dos);
+        for(SPR_Animation animation : animations){
+            animation.writeToStream(dos);
         }
     }
 }

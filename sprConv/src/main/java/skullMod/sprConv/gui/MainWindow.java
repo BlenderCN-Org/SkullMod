@@ -1,8 +1,6 @@
 package skullMod.sprConv.gui;
 
-import skullMod.sprConv.dataStructures.SPR.DataStreamIn;
-import skullMod.sprConv.dataStructures.SPR.SPR_Entry;
-import skullMod.sprConv.dataStructures.SPR.SPR_File;
+import skullMod.sprConv.dataStructures.SPR.*;
 import skullMod.sprConv.utility.Utility;
 
 import javax.imageio.ImageIO;
@@ -15,6 +13,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 
 
@@ -91,76 +90,38 @@ public class MainWindow extends JFrame{
 
 
         this.setMinimumSize(new Dimension(400,100));
+        this.setSize(400,100);
 
         this.pack();
         this.setVisible(true);
 
-        this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+
+
+        //this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
         //TODO new AboutDialog(this, true);
 
 
 
-        //Why hello there, this is test code
-        String fileName = "D:/test/loading_en.dds";
-        File file = new File(fileName);
 
-        BufferedImage image = null;
-        try{
-            image = ImageIO.read(file);
-        }catch(FileNotFoundException fnfe){
-            System.out.println("File not found exception");
-        }catch(IOException ioe){
-            System.out.println("Error reading file");
-            System.out.println(ioe.getMessage());
-        }catch(Exception e){
-            System.out.println("Unknown error");
-        }
-
-        int imageWidth = image.getWidth();
-        int imageHeight = image.getHeight();
-
-        System.out.println("Size: " + imageWidth + " " + imageHeight);
-
-
-        //Loading spr
-
-        String sprFileName = "D:/test/loading_en.spr.msb";
-        DataStreamIn dsi = null;
-
-        SPR_File spr_file = null;
-        try{
-            dsi = new DataStreamIn(sprFileName);
-            spr_file = new SPR_File(dsi.s);
-
-        }catch(IOException ioe){
-
-        }
-
-        BufferedImage result = new BufferedImage(imageWidth, imageHeight*5, BufferedImage.TYPE_INT_ARGB);
-
-        int cellSize = 16;
-        int counter = 0;
-        int yOffset = 0;
-
-        for(SPR_Entry entry : spr_file.entries){
-            if(counter != 0 && counter % 480 == 0){
-                yOffset+=300;
-            }
-            copyRect(image,result, entry.tile_u & 0xFF, entry.tile_v & 0xFF, entry.tile_x & 0xFF, entry.tile_y & 0xFF,cellSize, yOffset);
-            counter++;
-        }
-
-        panelRight.setImage(result);
-        panelRight.repaint();
-
+        panelRight.setImage(animations.get("bomb_en")[3]);
     }
 
-    public static void copyRect(BufferedImage source, BufferedImage target, int xSource, int ySource, int xDest, int yDest, int tileSize, int yOffset){
+    private static Dimension getMaxBounds(SPR_Entry[] entries, int blockOffset, int nOfBlocks, int blockWidth, int blockHeight) {
+        int xMax = 0, yMax = 0;
+        for(int i = blockOffset;i < blockOffset+nOfBlocks;i++){
+            //Tile numbers start from 0, to make the start from one 1 is added
+            xMax = Math.max(xMax, (entries[i].tile_x+1)*blockWidth);
+            yMax = Math.max(yMax, (entries[i].tile_y+1)*blockHeight);
+        }
+        return new Dimension(xMax,yMax);
+    }
+
+    public static void copyRect(BufferedImage source, BufferedImage target, int xSource, int ySource, int xDest, int yDest, int blockWidth, int blockHeight){
         System.out.println(xSource + " " + ySource + " " + xDest + " " + yDest + " ");
-        for(int y = 0;y < tileSize;y++){
-            for(int x = 0;x < tileSize;x++){
-                target.setRGB(xDest*tileSize + x, yDest*tileSize + y  + yOffset,source.getRGB(xSource*tileSize + x,ySource*tileSize + y));
+        for(int y = 0;y < blockHeight;y++){
+            for(int x = 0;x < blockWidth;x++){
+                target.setRGB(xDest*blockWidth + x, yDest*blockHeight + y,source.getRGB(xSource*blockWidth + x,ySource*blockHeight + y));
             }
         }
     }
@@ -174,5 +135,97 @@ public class MainWindow extends JFrame{
             if (imageIndex < max) return imageReader.read(imageIndex);
         }
         return null;
+    }
+
+    public static HashMap<String, BufferedImage[]> convertSPR(String sprPath){
+        String fileWithNoExtension = "/home/netbook/Working_files/Skullgirls_extracted/tcs/loading_en";
+
+
+        //Why hello there, this is test code
+        String fileName = fileWithNoExtension + ".dds";
+        File file = new File(fileName);
+
+        BufferedImage image = null;
+        try{
+            image = ImageIO.read(file);
+        }catch(FileNotFoundException fnfe){
+            System.out.println("File not found exception");
+        }catch(IOException ioe){
+            System.out.println("Error reading file");
+            System.out.println(ioe.getMessage());
+            ioe.printStackTrace();
+        }catch(Exception e){
+            System.out.println("Unknown error");
+        }
+
+        int imageWidth = image.getWidth();
+        int imageHeight = image.getHeight();
+
+        System.out.println("Size: " + imageWidth + " " + imageHeight);
+
+
+
+
+
+        //Loading spr
+
+        String sprFileName = fileWithNoExtension + ".spr.msb";
+        DataStreamIn dsi = null;
+
+        SPR_File spr_file = null;
+        try{
+            dsi = new DataStreamIn(sprFileName);
+            spr_file = new SPR_File(dsi.s);
+            dsi.close();
+
+        }catch(IOException ioe){
+
+        }
+
+
+
+
+
+
+        HashMap<String, BufferedImage[]> animations = new HashMap<>();
+
+        SPR_Entry[] entries = spr_file.entries;
+
+        int blockWidth = (int) spr_file.blockWidth; //Downcast
+        int blockHeight = (int) spr_file.blockHeight; //Downcast
+
+        //Go through each animation
+        for(int currentAnimationNumber = 0;currentAnimationNumber < spr_file.animations.length;currentAnimationNumber++){
+            SPR_Animation currentAnimation = spr_file.animations[currentAnimationNumber];
+            System.out.println(currentAnimation.animationName);
+            int nOfFrames = currentAnimation.nOfFrames;
+            int frameOffset = currentAnimation.frameOffset;
+
+            //Create store for frames of animation
+            BufferedImage[] animationImages = new BufferedImage[nOfFrames];
+
+            //Go through each frame of the current animation
+            for(int frameNumber = 0;frameNumber < nOfFrames;frameNumber++){
+                int currentFrameNumber = frameNumber + frameOffset;
+                SPR_Frame currentFrame = spr_file.frames[currentFrameNumber];
+
+
+                int blockOffset = currentFrame.blockOffset;
+                int nOfBlocks = currentFrame.nOfBlocks;
+                //Determine size by evaluating maximum x/y coordinate
+                Dimension imageSize = getMaxBounds(entries, blockOffset, nOfBlocks, blockWidth, blockHeight);
+
+                //Create image
+                BufferedImage frameImage = new BufferedImage((int) imageSize.getWidth(), (int) imageSize.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+
+                for(int blockNumber = blockOffset;blockNumber < blockOffset + nOfBlocks;blockNumber++){
+                    copyRect(image,frameImage,entries[blockNumber].tile_u & 0xFF, entries[blockNumber].tile_v & 0xFF, entries[blockNumber].tile_x & 0xFF, entries[blockNumber].tile_y & 0xFF, blockWidth, blockHeight);
+                }
+                animationImages[frameNumber] = frameImage;
+            }
+
+            animations.put(currentAnimation.animationName, animationImages);
+        }
+        return animations;
     }
 }
