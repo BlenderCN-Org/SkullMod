@@ -32,6 +32,22 @@ public class DrawPanel extends JPanel{
         imageLock.unlock();
     }
 
+    public Dimension getPreferredSize(){
+        imageLock.lock();
+
+        if(image != null){
+
+            Dimension dimension = new Dimension(image.getWidth() + 16*2, image.getHeight() + 16*2);
+            imageLock.unlock();
+            return dimension;
+        }else{
+            imageLock.unlock();
+            return getMaximumSize();
+        }
+
+
+    }
+
     public void paintComponent(Graphics g){
         super.paintComponent(g); //Explain why
 
@@ -42,10 +58,17 @@ public class DrawPanel extends JPanel{
 
         //Draw grid (16x16 the size of each block)
         drawCheckerGrid(g,this.getSize(), translation,16);
+        //g.fillRect(0,0,100,100);
 
         try{
+            System.out.println("TRY");
             if(imageLock.tryLock(1, TimeUnit.SECONDS)) {
-                if(image != null){ g.drawImage(image, image.getWidth(), image.getHeight(), null); }
+                System.out.println("LOCK SUCCESS");
+                if(image != null){
+                    g.drawImage(image, 0, 0, null);
+
+                    System.out.println("Image was drawn");
+                }
                 imageLock.unlock();
             }else{
                 this.repaint(); //TODO is this a bad idea, probably...
@@ -67,11 +90,13 @@ public class DrawPanel extends JPanel{
         int fieldsBelow = (int) Math.ceil((d.getHeight()-translation)/checkerSize);
         int fieldsAbove = (int) Math.ceil((double) translation/checkerSize);
 
+        /*
         System.out.println("Fields to the right: " + fieldsToTheRight);
         System.out.println("Fields to the left: " + fieldsToTheLeft);
         System.out.println("Fields above: " + fieldsAbove);
         System.out.println("Fields below: " + fieldsBelow);
         System.out.println("====================");
+        */
         //Step 1, draw everything RIGHT and BELOW the origin
         for(int y = 0;y < fieldsBelow;y++){
             for(int x = 0;x < fieldsToTheRight;x++){

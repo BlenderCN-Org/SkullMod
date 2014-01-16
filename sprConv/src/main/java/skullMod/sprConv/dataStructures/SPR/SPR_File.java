@@ -8,29 +8,29 @@ import java.io.*;
 public class SPR_File implements Serializable{
     public static final String knownFileFormatRevision = "2.0";
 
-    String fileFormatRevision;
-    String spriteSceneName; //TODO better idea for naming
+    public String fileFormatRevision;
+    public String spriteSceneName; //TODO better idea for naming
 
-    float unknown1;
+    public float unknown1;
 
-    String dataFormatString;
+    public String dataFormatString;
 
     //Unsigned
-    long bytesPerEntry;
-    long nOfEntries;
-    long nOfFrames;
-    long nOfSprites;
-    long blockWidth;  //in pixels
-    long blockHeight; //in pixels
+    public long bytesPerEntry;
+    public long nOfEntries;
+    public long nOfFrames;
+    public long nOfSprites;
+    public long blockWidth;  //in pixels
+    public long blockHeight; //in pixels
 
-    SPR_Entry[] entries;
-    SPR_Frame[] frames;
-    SPR_SpriteInfo[] spriteInfos;
+    public SPR_Entry[] entries;
+    public SPR_Frame[] frames;
+    public SPR_SpriteInfo[] spriteInfos;
 
     public SPR_File(DataInputStream dis) throws IOException{
         fileFormatRevision = Utility.readLongPascalString(dis);
 
-        if(fileFormatRevision.equals(knownFileFormatRevision)){
+        if(!fileFormatRevision.equals(knownFileFormatRevision)){
             throw new IllegalArgumentException("File format revision does not match, stopped reading");
         }
 

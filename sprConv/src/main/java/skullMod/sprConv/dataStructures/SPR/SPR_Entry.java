@@ -8,10 +8,10 @@ import java.io.Serializable;
 //This class assumes the standard layout found in all spr files with 4 bytes per entry
 public class SPR_Entry implements Serializable {
     //TODO add unsigned byte as class
-    byte tile_x;
-    byte tile_y;
-    byte tile_u;
-    byte tile_v;
+    public byte tile_x;
+    public byte tile_y;
+    public byte tile_u;
+    public byte tile_v;
 
     public SPR_Entry(DataInputStream dis) throws IOException {
         tile_x = dis.readByte();
