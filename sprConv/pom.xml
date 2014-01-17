@@ -58,7 +58,7 @@
                         <archive>
                             <manifest>
                                 <addClasspath>true</addClasspath>
-                                <mainClass>skullMod.lvlEdit.Application</mainClass>
+                                <mainClass>skullMod.sprConv.Application</mainClass>
                             </manifest>
                         </archive>
                     </configuration>

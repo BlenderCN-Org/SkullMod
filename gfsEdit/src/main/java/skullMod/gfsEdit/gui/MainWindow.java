@@ -272,7 +272,7 @@ public class MainWindow extends JFrame{
 
         unpackPanel.add(unpackButtonPanel);
 
-        //*****Add listeners and handlers
+        //*****Add menuListeners and handlers
         packButton.addActionListener(new PackActionListener(this,selectDirectoryLabel,outputNameTextField,includeDirectoryNameCheckbox,alignment4kbyte));
 
         unpackButton.addActionListener(new UnpackActionListener(fileList,dropTargetCheckboxCreateDirectoryWithFilename,dropTargetCheckboxOverwriteFiles,this));

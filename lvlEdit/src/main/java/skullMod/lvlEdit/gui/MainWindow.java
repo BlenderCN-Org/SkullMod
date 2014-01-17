@@ -224,7 +224,7 @@ public class MainWindow extends JFrame {
         this.add(splitPane, BorderLayout.CENTER);
         this.add(new RightJPane(), BorderLayout.EAST);
 
-        CentralDataObject.modeList.addItemListener(new ModeListItemListenera());
+        CentralDataObject.modeList.addItemListener(new ModeListItemListener());
 
         this.setSize(getPreferredSize());
 
@@ -293,7 +293,7 @@ public class MainWindow extends JFrame {
         return new Dimension(suggestedWidth, suggestedHeight);
     }
 
-    private class ModeListItemListenera implements ItemListener {
+    private class ModeListItemListener implements ItemListener {
         public void itemStateChanged(ItemEvent itemEvent) {
             if(itemEvent.getStateChange() == ItemEvent.SELECTED){
                 String item = (String) itemEvent.getItem();
