@@ -102,9 +102,12 @@ public class MainWindow extends JFrame{
         //TODO new AboutDialog(this, true);
 
 
+        String fileWithNoExtension = "D:/test/lamia";
+        HashMap<String, BufferedImage[]> animations  = convertSPR(fileWithNoExtension);
+
+        panelRight.setImage(animations.get("lamia")[0]);
 
 
-        panelRight.setImage(animations.get("bomb_en")[3]);
     }
 
     private static Dimension getMaxBounds(SPR_Entry[] entries, int blockOffset, int nOfBlocks, int blockWidth, int blockHeight) {
@@ -118,7 +121,7 @@ public class MainWindow extends JFrame{
     }
 
     public static void copyRect(BufferedImage source, BufferedImage target, int xSource, int ySource, int xDest, int yDest, int blockWidth, int blockHeight){
-        System.out.println(xSource + " " + ySource + " " + xDest + " " + yDest + " ");
+        //System.out.println(xSource + " " + ySource + " " + xDest + " " + yDest + " ");
         for(int y = 0;y < blockHeight;y++){
             for(int x = 0;x < blockWidth;x++){
                 target.setRGB(xDest*blockWidth + x, yDest*blockHeight + y,source.getRGB(xSource*blockWidth + x,ySource*blockHeight + y));
@@ -138,11 +141,11 @@ public class MainWindow extends JFrame{
     }
 
     public static HashMap<String, BufferedImage[]> convertSPR(String sprPath){
-        String fileWithNoExtension = "/home/netbook/Working_files/Skullgirls_extracted/tcs/loading_en";
+
 
 
         //Why hello there, this is test code
-        String fileName = fileWithNoExtension + ".dds";
+        String fileName = sprPath + ".dds";
         File file = new File(fileName);
 
         BufferedImage image = null;
@@ -169,7 +172,7 @@ public class MainWindow extends JFrame{
 
         //Loading spr
 
-        String sprFileName = fileWithNoExtension + ".spr.msb";
+        String sprFileName = sprPath + ".spr.msb";
         DataStreamIn dsi = null;
 
         SPR_File spr_file = null;
@@ -197,7 +200,7 @@ public class MainWindow extends JFrame{
         //Go through each animation
         for(int currentAnimationNumber = 0;currentAnimationNumber < spr_file.animations.length;currentAnimationNumber++){
             SPR_Animation currentAnimation = spr_file.animations[currentAnimationNumber];
-            System.out.println(currentAnimation.animationName);
+            System.out.println("Animation name: " + currentAnimation.animationName);
             int nOfFrames = currentAnimation.nOfFrames;
             int frameOffset = currentAnimation.frameOffset;
 
@@ -215,8 +218,12 @@ public class MainWindow extends JFrame{
                 //Determine size by evaluating maximum x/y coordinate
                 Dimension imageSize = getMaxBounds(entries, blockOffset, nOfBlocks, blockWidth, blockHeight);
 
+                System.out.println("Frame " + frameNumber + ", size: " + (int) imageSize.getWidth() + "x" + (int) imageSize.getHeight());
+
                 //Create image
                 BufferedImage frameImage = new BufferedImage((int) imageSize.getWidth(), (int) imageSize.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+
+                System.out.println("Reading " + nOfBlocks + " Offset: " + blockOffset);
 
                 for(int blockNumber = blockOffset;blockNumber < blockOffset + nOfBlocks;blockNumber++){
                     copyRect(image,frameImage,entries[blockNumber].tile_u & 0xFF, entries[blockNumber].tile_v & 0xFF, entries[blockNumber].tile_x & 0xFF, entries[blockNumber].tile_y & 0xFF, blockWidth, blockHeight);

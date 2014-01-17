@@ -24,12 +24,14 @@ public class DrawPanel extends JPanel{
         imageLock.lock();
         this.image = image;
         imageLock.unlock();
+        this.repaint();
     }
 
     public void removeImage(){
         imageLock.lock();
         this.image = null;
         imageLock.unlock();
+        this.repaint();
     }
 
     public Dimension getPreferredSize(){
@@ -42,10 +44,8 @@ public class DrawPanel extends JPanel{
             return dimension;
         }else{
             imageLock.unlock();
-            return getMaximumSize();
+            return getMinimumSize();
         }
-
-
     }
 
     public void paintComponent(Graphics g){
@@ -61,9 +61,7 @@ public class DrawPanel extends JPanel{
         //g.fillRect(0,0,100,100);
 
         try{
-            System.out.println("TRY");
             if(imageLock.tryLock(1, TimeUnit.SECONDS)) {
-                System.out.println("LOCK SUCCESS");
                 if(image != null){
                     g.drawImage(image, 0, 0, null);
 
