@@ -127,7 +127,9 @@ public class SPR_JTree extends JTree{
 
 
     private class SPR_frame_TreeSelectionListener implements TreeSelectionListener {
+        private AnimationThread animationThread;
         public void valueChanged(TreeSelectionEvent e) {
+
             Object source = SPR_JTree.this.getLastSelectedPathComponent();
             if(source instanceof SPR_Frame){
                 SPR_Frame frame = (SPR_Frame) source;
@@ -147,6 +149,67 @@ public class SPR_JTree extends JTree{
             }else{
                 drawPanel.removeImage();
             }
+
+            if(source instanceof SPR_Animation){
+                SPR_Animation animation = (SPR_Animation) source;
+
+                if(animationThread != null){
+                    animationThread.setThreadInactive();
+                }
+
+                animationThread = new AnimationThread(animation.animationName,  animation.nOfFrames);
+                animationThread.start();
+            }else{
+                if(animationThread != null){
+                    animationThread.setThreadInactive();
+                    animationThread = null; //TODO do this?
+                }
+            }
+        }
+
+        //TODO exit thread on dispose through endThread listener or hooks
+
+        private class AnimationThread extends Thread{
+            private String animationName;
+            private int frameOffset;
+            private int nOfFrames;
+
+            private boolean isActive = true;
+
+            private int currentFrame = 0;
+
+            public AnimationThread(String animationName, int nOfFrames){
+                this.animationName = animationName;
+                this.nOfFrames = nOfFrames;
+            }
+            //TODO shut down jframe, listener for thread ending (GUI support threads) or shutdown hook, more thread safety
+            public void run(){
+                while(this.isThreadActive()){
+                    SwingUtilities.invokeLater(new Runnable(){
+                        public void run(){
+                                drawPanel.setImage(animations.get(animationName)[currentFrame]);
+
+                                currentFrame++;
+                                if(currentFrame > nOfFrames-1){ currentFrame = 0; }
+                            }
+                        }
+                    );
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+
+                    }
+                }
+            }
+
+            public void setThreadInactive(){
+                isActive = false;
+            }
+
+            public boolean isThreadActive(){
+                return isActive;
+            }
+
         }
     }
 }

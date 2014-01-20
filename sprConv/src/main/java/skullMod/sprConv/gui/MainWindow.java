@@ -2,6 +2,7 @@ package skullMod.sprConv.gui;
 
 import skullMod.sprConv.dataStructures.SPR.SPR_File;
 import skullMod.sprConv.menuListeners.LoadFileListener;
+import skullMod.sprConv.menuListeners.NewFileListener;
 import skullMod.sprConv.menuListeners.OpenFileListener;
 import skullMod.sprConv.utility.Utility;
 
@@ -40,7 +41,6 @@ public class MainWindow extends JFrame{
 
         /*MenuItems - File*/
         JMenuItem newFileMenuItem = new JMenuItem("New file");
-        newFileMenuItem.setEnabled(false);
         JMenuItem loadFileMenuItem = new JMenuItem("Load file");
 
         JMenuItem saveFileMenuItem = new JMenuItem("Save");
@@ -83,6 +83,8 @@ public class MainWindow extends JFrame{
         DrawPanel panelRight = new DrawPanel();
         SPR_JTree panelLeft = new SPR_JTree(this, new SPR_File(), null, panelRight);
 
+
+        newFileMenuItem.addActionListener(new NewFileListener(panelLeft));
         loadFileMenuItem.addActionListener(new LoadFileListener(this, panelLeft, panelRight));
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(panelLeft), new JScrollPane(panelRight));
