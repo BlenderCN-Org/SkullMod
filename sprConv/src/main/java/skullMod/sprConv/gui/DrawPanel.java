@@ -83,38 +83,31 @@ public class DrawPanel extends JPanel{
     }
 
     public static void drawCheckerGrid(Graphics g, Dimension d, int translation, int checkerSize, BufferedImage image){
-        int fieldsToTheRight = (int) Math.ceil((d.getWidth()-translation)/checkerSize); //Check ceil
-        int fieldsToTheLeft = (int) Math.ceil((double)translation/checkerSize);
-        int fieldsBelow = (int) Math.ceil((d.getHeight()-translation)/checkerSize);
-        int fieldsAbove = (int) Math.ceil((double) translation/checkerSize);
+        int fieldsToTheRight = 0, fieldsBelow = 0;
+        //int fieldsToTheLeft = (int) Math.ceil((double)translation/checkerSize);
+        //int fieldsAbove = (int) Math.ceil((double) translation/checkerSize);
 
-        /*
-        System.out.println("Fields to the right: " + fieldsToTheRight);
-        System.out.println("Fields to the left: " + fieldsToTheLeft);
-        System.out.println("Fields above: " + fieldsAbove);
-        System.out.println("Fields below: " + fieldsBelow);
-        System.out.println("====================");
-        */
+        if(image != null){
+            fieldsToTheRight = image.getWidth()/checkerSize;
+            fieldsBelow = image.getHeight()/checkerSize;
+        }else{
+            fieldsToTheRight = (int) Math.ceil((d.getWidth()-translation)/checkerSize); //Check ceil
+            fieldsBelow = (int) Math.ceil((d.getHeight()-translation)/checkerSize);
+        }
+
         //Step 1, draw everything RIGHT and BELOW the origin
+        g.setColor(darkBackground);
+        g.fillRect(0,0, fieldsToTheRight*checkerSize, fieldsBelow*checkerSize);
+        g.setColor(lightBackground);
         for(int y = 0;y < fieldsBelow;y++){
             for(int x = 0;x < fieldsToTheRight;x++){
+
                 if( (x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1)){
-                    g.setColor(lightBackground);
-                }else{
-                    g.setColor(darkBackground);
+                    g.fillRect(x*checkerSize, y*checkerSize, checkerSize, checkerSize);
                 }
-                if(image != null){
-                    if(image.getWidth() <= x*checkerSize || image.getHeight() <= y*checkerSize){
-
-                    }else{
-                        g.fillRect(x*checkerSize,y*checkerSize,checkerSize,checkerSize);
-                    }
-
-                }else{
-                    g.fillRect(x*checkerSize,y*checkerSize,checkerSize,checkerSize);
-                }
-
             }
         }
     }
 }
+
+
