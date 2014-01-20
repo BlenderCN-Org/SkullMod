@@ -76,7 +76,7 @@ public class SPR_JTree extends JTree{
         }
         public int getChildCount(Object parent) {
             if(parent == null){ throw new IllegalArgumentException("Given node is null"); } //TODO can this happen?
-            //TODO No hardcoding...
+            //TODO No hardcoding..., or maybe?
             if(parent instanceof SPR_File){ return 4; } //sceneName, unknown1 , frames, animations
             if(parent instanceof SPR_Frame){ return 3; } //All unknowns for now
             if(parent instanceof SPR_Animation){ return 2; }
@@ -142,7 +142,7 @@ public class SPR_JTree extends JTree{
 
                 }
 
-                drawPanel.setImage(SPR_JTree.this.animations.get(animationName)[frameNumber-frameOffset]);
+                drawPanel.setImage(SPR_JTree.this.animations.get(animationName)[frameNumber - frameOffset]);
             }else{
                 drawPanel.removeImage();
             }
