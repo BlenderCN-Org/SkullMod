@@ -1,6 +1,8 @@
 package skullMod.sprConv.gui;
 
 import skullMod.sprConv.dataStructures.SPR.*;
+import skullMod.sprConv.dataStructures.jTreeNodes.NamedArrayNode;
+import skullMod.sprConv.dataStructures.jTreeNodes.StringNode;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
@@ -60,13 +62,12 @@ public class SPR_JTree extends JTree{
             if(parent instanceof SPR_Frame){
                 SPR_Frame frame = (SPR_Frame) parent;
                 if(index == 0){ return new StringNode(frame, "Unknown1", Integer.toString(frame.unknown1), 0); }
-                if(index == 1){ return new StringNode(frame, "Unknown2", Float.toString(frame.unknown2), 1); }
-                if(index == 2){ return new StringNode(frame, "Unknown3", Float.toString(frame.unknown3), 2); }
+                if(index == 1){ return new StringNode(frame, "Image center x", Float.toString(frame.xImageCenter), 1); }
+                if(index == 2){ return new StringNode(frame, "Image center y", Float.toString(frame.yImageCenter), 2); }
             }
             if(parent instanceof SPR_Animation){
                 SPR_Animation animation = (SPR_Animation) parent;
                 if(index == 0){ return new StringNode(animation, "Unknown1", Integer.toString(animation.unknown1), 0); }
-                if(index == 1){ return new StringNode(animation, "Unknown2", Integer.toString(animation.unknown2), 1); }
             }
             if(parent instanceof NamedArrayNode){
                 NamedArrayNode node = (NamedArrayNode) parent;
@@ -79,7 +80,7 @@ public class SPR_JTree extends JTree{
             //TODO No hardcoding..., or maybe?
             if(parent instanceof SPR_File){ return 4; } //sceneName, unknown1 , frames, animations
             if(parent instanceof SPR_Frame){ return 3; } //All unknowns for now
-            if(parent instanceof SPR_Animation){ return 2; }
+            if(parent instanceof SPR_Animation){ return 1; }
             if(parent instanceof NamedArrayNode){ return ((NamedArrayNode) parent).getChildCount(); }
             if(parent instanceof StringNode){ return 0;}
             throw new IllegalArgumentException("Unknown node type");

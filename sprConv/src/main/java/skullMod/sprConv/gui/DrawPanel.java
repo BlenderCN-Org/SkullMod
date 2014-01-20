@@ -20,7 +20,7 @@ public class DrawPanel extends JPanel{
     }
 
     public void setImage(BufferedImage image){
-        if(image == null){ throw new IllegalArgumentException("Given image is null, use remove image"); }
+        if(image == null){ throw new IllegalArgumentException("Given image is null, use removeImage()"); }
         imageLock.lock();
         this.image = image;
         imageLock.unlock();

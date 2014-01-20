@@ -12,14 +12,14 @@ public class SPR_Animation implements Serializable{
     public int frameOffset; //Unsigned
     public int nOfFrames; //Unsigned
     public int unknown1;
-    public int unknown2;
+    public int lastFrame; //Unsigned
 
     public SPR_Animation(DataInputStream dis) throws IOException {
         animationName = Utility.readLongPascalString(dis);
         frameOffset = dis.readInt();
         nOfFrames = dis.readInt();
         unknown1 = dis.readInt();
-        unknown2 = dis.readInt();
+        lastFrame = dis.readInt();
     }
 
     public void writeToStream(DataOutputStream dos) throws IOException{
@@ -27,7 +27,7 @@ public class SPR_Animation implements Serializable{
         dos.writeInt(frameOffset);
         dos.writeInt(nOfFrames);
         dos.writeInt(unknown1);
-        dos.writeInt(unknown2);
+        dos.writeInt(lastFrame);
     }
 
     public String toString(){

@@ -1,4 +1,4 @@
-package skullMod.sprConv.dataStructures.SPR;
+package skullMod.sprConv.dataStructures.jTreeNodes;
 
 public class StringNode {
     private final String string;

@@ -10,8 +10,8 @@ public class SPR_Frame implements Serializable{
     public int blockOffset;
     public int nOfBlocks;
     public int unknown1;
-    public float unknown2;
-    public float unknown3;
+    public float xImageCenter;
+    public float yImageCenter;
 
     /**
      * The frame number is for displaying the correct value in the GUI / for the toString() method
@@ -23,8 +23,8 @@ public class SPR_Frame implements Serializable{
         blockOffset = dis.readInt();
         nOfBlocks = dis.readInt();
         unknown1 = dis.readInt();
-        unknown2 = dis.readFloat();
-        unknown3 = dis.readFloat();
+        xImageCenter = dis.readFloat();
+        yImageCenter = dis.readFloat();
 
         this.frameNumber = frameNumber;
     }
@@ -33,8 +33,8 @@ public class SPR_Frame implements Serializable{
         dos.writeInt(blockOffset);
         dos.writeInt(nOfBlocks);
         dos.writeInt(unknown1);
-        dos.writeFloat(unknown2);
-        dos.writeFloat(unknown3);
+        dos.writeFloat(xImageCenter);
+        dos.writeFloat(yImageCenter);
     }
     public String toString(){
         return Integer.toString(frameNumber);

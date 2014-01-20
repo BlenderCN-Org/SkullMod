@@ -1,8 +1,7 @@
 package skullMod.sprConv.gui;
 
-import skullMod.sprConv.dataStructures.SPR.ProcessSPR;
 import skullMod.sprConv.dataStructures.SPR.SPR_File;
-import skullMod.sprConv.dataStructures.SPR.SPR_Helper;
+import skullMod.sprConv.menuListeners.LoadFileListener;
 import skullMod.sprConv.menuListeners.OpenFileListener;
 import skullMod.sprConv.utility.Utility;
 

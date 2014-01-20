@@ -1,7 +1,9 @@
-package skullMod.sprConv.gui;
+package skullMod.sprConv.menuListeners;
 
 import skullMod.sprConv.dataStructures.SPR.ProcessSPR;
 import skullMod.sprConv.dataStructures.SPR.SPR_File;
+import skullMod.sprConv.gui.DrawPanel;
+import skullMod.sprConv.gui.SPR_JTree;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;

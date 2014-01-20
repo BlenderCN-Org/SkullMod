@@ -1,4 +1,4 @@
-package skullMod.sprConv.dataStructures.SPR;
+package skullMod.sprConv.dataStructures.jTreeNodes;
 
 public class NamedArrayNode {
     public final String name;
