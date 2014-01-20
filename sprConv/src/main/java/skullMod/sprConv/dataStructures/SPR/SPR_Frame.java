@@ -13,12 +13,20 @@ public class SPR_Frame implements Serializable{
     public float unknown2;
     public float unknown3;
 
-    public SPR_Frame(DataInputStream dis) throws IOException {
+    /**
+     * The frame number is for displaying the correct value in the GUI / for the toString() method
+     * It's NOT part of the file format itself
+     */
+    public int frameNumber;
+
+    public SPR_Frame(DataInputStream dis, int frameNumber) throws IOException {
         blockOffset = dis.readInt();
         nOfBlocks = dis.readInt();
         unknown1 = dis.readInt();
         unknown2 = dis.readFloat();
         unknown3 = dis.readFloat();
+
+        this.frameNumber = frameNumber;
     }
 
     public void writeToStream(DataOutputStream dos) throws IOException{
@@ -27,5 +35,8 @@ public class SPR_Frame implements Serializable{
         dos.writeInt(unknown1);
         dos.writeFloat(unknown2);
         dos.writeFloat(unknown3);
+    }
+    public String toString(){
+        return Integer.toString(frameNumber);
     }
 }

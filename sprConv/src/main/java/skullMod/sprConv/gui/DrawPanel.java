@@ -57,7 +57,7 @@ public class DrawPanel extends JPanel{
 
 
         //Draw grid (16x16 the size of each block)
-        drawCheckerGrid(g,this.getSize(), translation,16);
+        drawCheckerGrid(g,this.getSize(), translation,16,image);
         //g.fillRect(0,0,100,100);
 
         try{
@@ -82,7 +82,7 @@ public class DrawPanel extends JPanel{
         //g.getBounds ?
     }
 
-    public static void drawCheckerGrid(Graphics g, Dimension d, int translation, int checkerSize){
+    public static void drawCheckerGrid(Graphics g, Dimension d, int translation, int checkerSize, BufferedImage image){
         int fieldsToTheRight = (int) Math.ceil((d.getWidth()-translation)/checkerSize); //Check ceil
         int fieldsToTheLeft = (int) Math.ceil((double)translation/checkerSize);
         int fieldsBelow = (int) Math.ceil((d.getHeight()-translation)/checkerSize);
@@ -103,17 +103,18 @@ public class DrawPanel extends JPanel{
                 }else{
                     g.setColor(darkBackground);
                 }
-                g.fillRect(x*checkerSize,y*checkerSize,checkerSize,checkerSize);
+                if(image != null){
+                    if(image.getWidth() <= x*checkerSize || image.getHeight() <= y*checkerSize){
+
+                    }else{
+                        g.fillRect(x*checkerSize,y*checkerSize,checkerSize,checkerSize);
+                    }
+
+                }else{
+                    g.fillRect(x*checkerSize,y*checkerSize,checkerSize,checkerSize);
+                }
+
             }
-
         }
-
-        //TODO does this look good?
-        //Step 2, draw everything LEFT and BELOW the origin
-
-        //Step 3, draw everything LEFT and ABOVE the origin
-
-        //Step 4, draw everything RIGHT and ABOVE the origin
-
     }
 }

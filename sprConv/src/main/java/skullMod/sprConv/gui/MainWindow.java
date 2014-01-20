@@ -1,5 +1,8 @@
 package skullMod.sprConv.gui;
 
+import skullMod.sprConv.dataStructures.SPR.ProcessSPR;
+import skullMod.sprConv.dataStructures.SPR.SPR_File;
+import skullMod.sprConv.dataStructures.SPR.SPR_Helper;
 import skullMod.sprConv.menuListeners.OpenFileListener;
 import skullMod.sprConv.utility.Utility;
 
@@ -39,6 +42,8 @@ public class MainWindow extends JFrame{
         /*MenuItems - File*/
         JMenuItem newFileMenuItem = new JMenuItem("New file");
         newFileMenuItem.setEnabled(false);
+        JMenuItem loadFileMenuItem = new JMenuItem("Load file");
+
         JMenuItem saveFileMenuItem = new JMenuItem("Save");
         saveFileMenuItem.setEnabled(false);
         JMenuItem saveFileAsMenuItem = new JMenuItem("Save as");
@@ -56,6 +61,7 @@ public class MainWindow extends JFrame{
 
         //Build menu
         fileMenu.add(newFileMenuItem);
+        fileMenu.add(loadFileMenuItem);
         fileMenu.add(saveFileMenuItem);
         fileMenu.add(saveFileAsMenuItem);
         fileMenu.add(new JSeparator());
@@ -75,8 +81,10 @@ public class MainWindow extends JFrame{
         menuBar.add(debugMenu);
 
         //Create panels
-        JPanel panelLeft = new JPanel();
         DrawPanel panelRight = new DrawPanel();
+        SPR_JTree panelLeft = new SPR_JTree(this, new SPR_File(), null, panelRight);
+
+        loadFileMenuItem.addActionListener(new LoadFileListener(this, panelLeft, panelRight));
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(panelLeft), new JScrollPane(panelRight));
         splitPane.setOneTouchExpandable(true);

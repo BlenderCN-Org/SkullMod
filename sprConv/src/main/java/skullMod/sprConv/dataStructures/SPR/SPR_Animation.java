@@ -30,4 +30,7 @@ public class SPR_Animation implements Serializable{
         dos.writeInt(unknown2);
     }
 
+    public String toString(){
+        return animationName;
+    }
 }

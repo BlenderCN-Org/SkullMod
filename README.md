@@ -11,6 +11,7 @@ Currently:
 * lvlEdit - Edit/Create new Skullgirls levels (.sgm.msb/.sgi.msb/.sga.msb/.sgs.msb/.lvl)
     * Not usable - in development
 * PalEd - The Skullgirls team is selling player colors as DLC, not gonna interfere with that
-    * Not in development - for now
+    * Not in development
 * sprConv
     * Convert .spr.msb+dds files to png and png files to .spr.msb+dds, supports animation
+    * Only spr to png is implemented as of yet

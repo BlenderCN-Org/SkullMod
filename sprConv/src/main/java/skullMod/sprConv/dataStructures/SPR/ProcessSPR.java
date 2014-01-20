@@ -42,19 +42,8 @@ public final class ProcessSPR {
             throw new IllegalArgumentException(ioe);
         }
 
-        DataStreamIn dsi = null;
+        SPR_File spr_file = getSPR_File(sprFilename);
 
-        SPR_File spr_file = null;
-        try{
-            dsi = new DataStreamIn(sprFilename);
-            spr_file = new SPR_File(dsi.s);
-        }catch(FileNotFoundException fnfe){
-            throw new IllegalArgumentException(fnfe);
-        }catch(IOException ioe){
-            throw new IllegalArgumentException(ioe);
-        }finally{
-            if(dsi != null){ dsi.close(); }
-        }
         //Output for animations
         HashMap<String, BufferedImage[]> animations = new HashMap<>();
 
@@ -138,6 +127,20 @@ public final class ProcessSPR {
 
                 target.setRGB(xDest*blockWidth + x, yDest*blockHeight + y,source.getRGB(xSource*blockWidth + x,ySource*blockHeight + y));
             }
+        }
+    }
+
+    public static SPR_File getSPR_File(String pathToFile) throws IllegalArgumentException{
+        DataStreamIn dsi = null;
+        try{
+            dsi = new DataStreamIn(pathToFile);
+            return new SPR_File(dsi.s);
+        }catch(FileNotFoundException fnfe){
+            throw new IllegalArgumentException(fnfe);
+        }catch(IOException ioe){
+            throw new IllegalArgumentException(ioe);
+        }finally{
+            if(dsi != null){ dsi.close(); }
         }
     }
 }

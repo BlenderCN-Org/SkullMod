@@ -7,9 +7,11 @@ import java.io.*;
 
 public class SPR_File implements Serializable{
     public static final String knownFileFormatRevision = "2.0";
+    public static final String defaultDataFormatString = "unigned char tile_x, tile_y, tile_u, tile_v;";
+    public static final long defaultBytesPerEntry = 4;
 
     public String fileFormatRevision;
-    public String spriteSceneName; //TODO better idea for naming
+    public String sceneName;
 
     public int unknown1; //This is int for sure (see the character select sprites)
 
@@ -27,6 +29,25 @@ public class SPR_File implements Serializable{
     public SPR_Frame[] frames;
     public SPR_Animation[] animations;
 
+    public SPR_File(){
+        this.fileFormatRevision = knownFileFormatRevision;
+        this.sceneName = "default";
+        this.unknown1 = 0; //TODO bravely default
+        this.dataFormatString = defaultDataFormatString;
+
+        this.bytesPerEntry = defaultBytesPerEntry;
+        this.nOfEntries = 0;
+        this.nOfFrames = 0;
+        this.nOfAnimations = 0;
+        this.blockWidth = 16;
+        this.blockHeight = 16;
+
+
+        this.entries = new SPR_Entry[0];
+        this.frames = new SPR_Frame[0];
+        this.animations = new SPR_Animation[0];
+    }
+
     public SPR_File(DataInputStream dis) throws IOException{
         fileFormatRevision = Utility.readLongPascalString(dis);
 
@@ -34,10 +55,14 @@ public class SPR_File implements Serializable{
             throw new IllegalArgumentException("File format revision does not match, stopped reading");
         }
 
-        spriteSceneName = Utility.readLongPascalString(dis);
+        sceneName = Utility.readLongPascalString(dis);
         unknown1 = dis.readInt();
 
         dataFormatString = Utility.readLongPascalString(dis);
+
+        if(!dataFormatString.equals(defaultDataFormatString)){
+            throw new IllegalArgumentException("Data format string is not valid");
+        }
 
         //Unsigned
         bytesPerEntry = dis.readLong();
@@ -56,7 +81,7 @@ public class SPR_File implements Serializable{
             entries[i] = new SPR_Entry(dis);
         }
         for(int i = 0;i < nOfFrames;i++){
-            frames[i] = new SPR_Frame(dis);
+            frames[i] = new SPR_Frame(dis, i);
         }
         for(int i = 0;i < nOfAnimations;i++){
             animations[i] = new SPR_Animation(dis);
@@ -65,7 +90,7 @@ public class SPR_File implements Serializable{
 
     public void writeToStream(DataOutputStream dos) throws IOException{
         Utility.writeLongPascalString(dos, fileFormatRevision);
-        Utility.writeLongPascalString(dos, spriteSceneName);
+        Utility.writeLongPascalString(dos, sceneName);
         dos.writeFloat(unknown1);
 
         Utility.writeLongPascalString(dos, dataFormatString);
@@ -86,5 +111,9 @@ public class SPR_File implements Serializable{
         for(SPR_Animation animation : animations){
             animation.writeToStream(dos);
         }
+    }
+
+    public String toString(){
+        return sceneName;
     }
 }
