@@ -9,9 +9,12 @@ import javax.swing.*;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,19 +27,22 @@ public class SPR_JTree extends JTree{
     private SPR_File sprFile;
     private HashMap<String, BufferedImage[]> animations;
     private final DrawPanel drawPanel;
+    private final JFrame window;
 
     private final LinkedList<TreeModelListener> listeners = new LinkedList<>();
 
 
-    public SPR_JTree(Component parent, SPR_File sprFile, HashMap<String, BufferedImage[]> animations, DrawPanel drawPanel){
+    public SPR_JTree(Component parent, SPR_File sprFile, HashMap<String, BufferedImage[]> animations, DrawPanel drawPanel, JFrame window){
         this.parent = parent;
         this.sprFile = sprFile;
         this.animations = animations;
 
         this.drawPanel = drawPanel;
+        this.window = window;
 
         this.setModel(new DataModel());
         this.addTreeSelectionListener(new SPR_frame_TreeSelectionListener());
+        this.setCellRenderer(new SPR_TreeCellRenderer());
     }
 
     public void setModel(SPR_File sprFile, HashMap<String, BufferedImage[]> animations){
@@ -181,6 +187,8 @@ public class SPR_JTree extends JTree{
             public AnimationThread(String animationName, int nOfFrames){
                 this.animationName = animationName;
                 this.nOfFrames = nOfFrames;
+
+                window.addWindowListener(new ThreadWindowAdapater());
             }
             //TODO shut down jframe, listener for thread ending (GUI support threads) or shutdown hook, more thread safety
             public void run(){
@@ -210,6 +218,47 @@ public class SPR_JTree extends JTree{
                 return isActive;
             }
 
+
+            private class ThreadWindowAdapater extends WindowAdapter {
+                public void windowClosing(WindowEvent e){
+                    setThreadInactive();
+                }
+            }
+        }
+    }
+
+    /**
+     * By: SanderB
+     * Arrow: http://vector4free.com/vector/56-free-arrow-symbols-icons/
+     * License: http://creativecommons.org/licenses/by/3.0/
+     *
+     * Font used: Selznick Remix NF (look terms up)
+     */
+    private class SPR_TreeCellRenderer extends DefaultTreeCellRenderer{
+
+        private final ImageIcon leafIcon;
+        private final ImageIcon directoryIcon;
+        private final ImageIcon frameIcon;
+        private final ImageIcon animationIcon;
+
+        public SPR_TreeCellRenderer(){
+            leafIcon = new ImageIcon(SPR_TreeCellRenderer.class.getResource("/leafIcon.png"));
+            directoryIcon = new ImageIcon(SPR_TreeCellRenderer.class.getResource("/directoryIcon.png"));
+            frameIcon = new ImageIcon(SPR_TreeCellRenderer.class.getResource("/frameIcon.png"));
+            animationIcon = new ImageIcon(SPR_TreeCellRenderer.class.getResource("/animationIcon.png"));
+
+            this.setLeafIcon(leafIcon);
+            this.setOpenIcon(directoryIcon);
+            this.setClosedIcon(directoryIcon);
+        }
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+            Object node = value;
+            // check whatever you need to on the node user object
+            if(node instanceof SPR_Frame) { setIcon(frameIcon); }
+            if(node instanceof SPR_Animation){ setIcon(animationIcon); }
+            return this;
         }
     }
 }

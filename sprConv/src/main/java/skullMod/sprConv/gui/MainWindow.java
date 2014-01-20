@@ -81,7 +81,7 @@ public class MainWindow extends JFrame{
 
         //Create panels
         DrawPanel panelRight = new DrawPanel();
-        SPR_JTree panelLeft = new SPR_JTree(this, new SPR_File(), null, panelRight);
+        SPR_JTree panelLeft = new SPR_JTree(this, new SPR_File(), null, panelRight, this);
 
 
         newFileMenuItem.addActionListener(new NewFileListener(panelLeft));
