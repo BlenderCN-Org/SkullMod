@@ -8,12 +8,27 @@
     <artifactId>lvlEdit</artifactId>
     <version>0.1</version>
 
+    <repositories>
+        <repository>
+            <id>maven.nikr.net</id>
+            <name>maven.nikr.net</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <url>http://maven.nikr.net/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.imgscalr</groupId>
             <artifactId>imgscalr-lib</artifactId>
@@ -30,6 +45,7 @@
             <artifactId>jogl-all-main</artifactId>
             <version>2.1.2</version>
         </dependency>
+        -->
         <dependency>
             <groupId>net.nikr</groupId>
             <artifactId>dds</artifactId>
