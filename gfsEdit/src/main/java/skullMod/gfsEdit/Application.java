@@ -2,6 +2,8 @@ package skullMod.gfsEdit;
 
 import skullMod.gfsEdit.gui.MainWindow;
 
+import javax.swing.*;
+
 /**
  * GFS edit
  *
@@ -11,6 +13,12 @@ import skullMod.gfsEdit.gui.MainWindow;
  */
 public class Application {
     public static void main(String[] args){
-        new MainWindow();
+
+        //Start properly from event dispatcher thread
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new MainWindow();
+            }
+        });
     }
 }

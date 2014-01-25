@@ -2,6 +2,8 @@ package skullMod.sprConv;
 
 import skullMod.sprConv.gui.MainWindow;
 
+import javax.swing.*;
+
 
 /**
  * sprConv
@@ -17,6 +19,12 @@ public class Application {
         System.setProperty("sun.java2d.noddraw", Boolean.TRUE.toString());
         System.setProperty("sun.java2d.opengl=true", Boolean.TRUE.toString());
 
+        //Start properly from event dispatcher thread
+        SwingUtilities.invokeLater(new Runnable(){
+            public void run(){
+                new MainWindow();
+            }
+        });
         new MainWindow();
     }
 }
