@@ -3,7 +3,6 @@ gfsEdit
 
 Packer/Unpacker for .gfs files found in the data01 directory
 
-Tested on Win 7 64-bit and Linux Mint 15 64-bit
 
 FAQ
 

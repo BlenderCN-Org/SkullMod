@@ -6,13 +6,14 @@ import skullMod.gfsEdit.utility.Utility;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 public class MainWindow extends JFrame{
     public static final String APPLICATION  = "GFS edit";
     public static final String AUTHOR       = "0xFAIL";
-    public static final String VERSION      = "1.2";
-    public static final String DATE         = "2013-12-26";
+    public static final String VERSION      = "1.3";
+    public static final String DATE         = "2014-01-26";
     public static final String GAME         = "Skullgirls (PC)";
 
     public static JFrame window; //Contains a reference to the top window (TODO beautify this)
@@ -83,12 +84,39 @@ public class MainWindow extends JFrame{
         JLabel aboutLabel2 = new JLabel("<html><br>Newest version at: www.github.com/0xFAIL (Click here)<html>");
         JLabel aboutLabel3 = new JLabel("<html><br>For the license see LICENSE.txt (BSD 2-Clause License)<br><br><br>Icon by junglemoonicons.weebly.com/icons.html<br>Icon license is CC Attribution Non-Commerical Share Alike<html>");
 
+        //TODO beautify
+        InputStream io = Thread.currentThread().getContextClassLoader().getResourceAsStream("excelsior_badge.png");
+        BufferedImage myPicture = null;
+        try {
+            myPicture = ImageIO.read(io);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+        picLabel.setBorder(BorderFactory.createEmptyBorder(20,10,20,0));
+
+
+        picLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        picLabel.addMouseListener(new MouseURLAdapter("http://www.ExcelsiorJET.com/"));
+
+        JLabel creditLine1 = new JLabel("Excelsior and Excelsior JET are trademarks of Excelsior LLC");
+        JLabel creditLine2 = new JLabel("in the Russian Federation and other countries.");
+        JLabel creditLine3 = new JLabel("The Excelsior JET Badge is a trademark of Excelsior LLC,");
+        JLabel creditLine4 = new JLabel("used with permission.");
+
         aboutLabel1.setFont(boldFont);
         aboutLabel3.setFont(italicFont);
 
         aboutPanel.add(aboutLabel1);
         aboutPanel.add(aboutLabel2);
         aboutPanel.add(aboutLabel3);
+
+        aboutPanel.add(picLabel);
+
+        aboutPanel.add(creditLine1);
+        aboutPanel.add(creditLine2);
+        aboutPanel.add(creditLine3);
+        aboutPanel.add(creditLine4);
 
         unpackPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
         packPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));

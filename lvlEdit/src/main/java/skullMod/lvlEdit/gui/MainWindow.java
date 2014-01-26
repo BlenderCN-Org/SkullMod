@@ -30,8 +30,8 @@ import java.io.InputStream;
 public class MainWindow extends JFrame {
     public static final String APPLICATION  = "LVL edit";
     public static final String AUTHOR       = "0xFAIL";
-    public static final String VERSION      = "0.1 testing";
-    public static final String DATE         = "2013-12-28";
+    public static final String VERSION      = "0.2 testing";
+    public static final String DATE         = "2014-01-26";
     public static final String GAME         = "Skullgirls (PC)";
 
     public static final String ANIMATION_PANEL = "Animation";

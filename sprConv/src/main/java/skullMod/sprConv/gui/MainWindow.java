@@ -15,8 +15,8 @@ import java.awt.event.ActionListener;
 public class MainWindow extends JFrame{
     public static final String APPLICATION  = "sprConv";
     public static final String AUTHOR       = "0xFAIL";
-    public static final String VERSION      = "0.1 testing";
-    public static final String DATE         = "2014-01-20";
+    public static final String VERSION      = "0.2 testing";
+    public static final String DATE         = "2014-01-26";
     public static final String GAME         = "Skullgirls (PC)";
 
     public MainWindow(){

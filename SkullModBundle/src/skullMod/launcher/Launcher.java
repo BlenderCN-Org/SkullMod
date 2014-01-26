@@ -6,6 +6,9 @@ import java.awt.event.ActionListener;
 
 /** Small launcher */
 public class Launcher extends JFrame{
+    public final static String APPLICATION = "SkullMod";
+    public final static String VERSION = "0.1";
+
     /** Applcations that can be laucnhed */
     private enum Applications{
         GFS_EDIT, LVL_EDIT, SPR_CONV
@@ -14,14 +17,14 @@ public class Launcher extends JFrame{
     /** Buttons */
     private final JButton gfsEditButton, lvlEditButton, sprConvButton;
 
-    /** Main launcher */
+    /** Main method */
     public static void main(String[] args){
         new Launcher();
     }
 
     /** Create a launcher */
     public Launcher(){
-        super("SkullMod Launcher");
+        super(APPLICATION  + " Launcher " + VERSION);
         this.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -82,7 +85,6 @@ public class Launcher extends JFrame{
                     skullMod.sprConv.Application.main(new String[0]);
                     break;
             }
-
         }
     }
 }
