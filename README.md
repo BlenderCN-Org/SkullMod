@@ -15,9 +15,9 @@ Currently:
 * sprConv
     * Convert .spr.msb+dds files to png and png files to .spr.msb+dds, supports animation
     * Only spr to png is implemented as of yet
+***
 
 
-![Badge](./github_images/excelsior_badge.png?raw=true)
-
+[![Badge](./github_images/excelsior_badge.png?raw=true)](http://www.excelsiorjet.com)
 
 Excelsior and Excelsior JET are trademarks of Excelsior LLC in the Russian Federation and other countries. The Excelsior JET Badge is a trademark of Excelsior LLC, used with permission.
