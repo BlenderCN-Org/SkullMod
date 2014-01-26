@@ -17,7 +17,7 @@ Currently:
     * Only spr to png is implemented as of yet
 
 
-![Badge](../blob/master/github_images/excelsior_badge.png?raw=true)
+![Badge](./github_images/excelsior_badge.png?raw=true)
 
 
 Excelsior and Excelsior JET are trademarks of Excelsior LLC in the Russian Federation and other countries. The Excelsior JET Badge is a trademark of Excelsior LLC, used with permission.
