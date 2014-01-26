@@ -15,7 +15,8 @@ Currently:
 * sprConv
     * Convert .spr.msb+dds files to png and png files to .spr.msb+dds, supports animation
     * Only spr to png is implemented as of yet
-***
+
+___
 
 
 [![Badge](./github_images/excelsior_badge.png?raw=true)](http://www.excelsiorjet.com)
