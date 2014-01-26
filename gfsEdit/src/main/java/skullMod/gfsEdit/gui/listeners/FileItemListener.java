@@ -1,4 +1,4 @@
-package skullMod.gfsEdit.gui;
+package skullMod.gfsEdit.gui.listeners;
 
 import skullMod.gfsEdit.processing.GFS;
 import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;

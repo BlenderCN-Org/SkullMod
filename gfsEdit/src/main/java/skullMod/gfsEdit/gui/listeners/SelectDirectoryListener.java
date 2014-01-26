@@ -1,4 +1,4 @@
-package skullMod.gfsEdit.gui;
+package skullMod.gfsEdit.gui.listeners;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

@@ -1,6 +1,10 @@
 package skullMod.gfsEdit.gui;
 
 import skullMod.gfsEdit.dataStructures.GFSInternalFileReference;
+import skullMod.gfsEdit.gui.listeners.FileItemListener;
+import skullMod.gfsEdit.gui.listeners.PackActionListener;
+import skullMod.gfsEdit.gui.listeners.SelectDirectoryListener;
+import skullMod.gfsEdit.gui.listeners.UnpackActionListener;
 import skullMod.gfsEdit.utility.Utility;
 
 import javax.imageio.ImageIO;
@@ -46,22 +50,11 @@ public class MainWindow extends JFrame{
             JOptionPane.showMessageDialog(this,"Couldn't load application icon","Error",JOptionPane.ERROR_MESSAGE);
         }
 
-        //Going with nimbus, looks better (fonts) and is the same on all platforms but requires JDK 7
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            // Set look of the application to mimic the OS GUI
-            try{
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }
-            catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException ex) {
-                System.err.println("Setting look and feel failed"); //This should happen silently
-            }
+        /**Set look of the application to mimic the OS GUI*/
+        try{
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+            System.err.println("Setting look and feel failed"); //This should happen silently
         }
 
         /**Get default font and make a bold/italic copy of it*/
@@ -319,6 +312,9 @@ public class MainWindow extends JFrame{
 
         //*****Misc stuff*****
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+        this.setLocation(100,100);
 
         this.pack();
         this.setVisible(true);

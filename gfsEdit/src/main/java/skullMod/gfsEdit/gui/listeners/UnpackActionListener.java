@@ -1,6 +1,7 @@
-package skullMod.gfsEdit.gui;
+package skullMod.gfsEdit.gui.listeners;
 
-import skullMod.gfsEdit.processing.GFS;
+import skullMod.gfsEdit.gui.ModalProgressBarDialog;
+import skullMod.gfsEdit.processing.UnpackWorker;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -21,22 +22,11 @@ public class UnpackActionListener implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent e) {
-        ComboBoxModel<File> model = files.getModel();
-        int size = model.getSize();
 
-        for(int i=0;i < size;i++){
-            try {
-                GFS.unpack(model.getElementAt(i), dropTargetCheckboxCreateDirectoryWithFilename.isSelected(), dropTargetCheckboxOverwriteFiles.isSelected());
-            } catch (FileNotFoundException fnfe ) {
-                JOptionPane.showMessageDialog(parent,fnfe.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
-            } catch (IOException ioe){
-                JOptionPane.showMessageDialog(parent,ioe.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
-            } catch (IllegalArgumentException iae){
-                JOptionPane.showMessageDialog(parent,iae.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        if(size>0){
-            JOptionPane.showMessageDialog(parent,"Extraction finished\nFiles are in the same directory as the .gfs files","Info",JOptionPane.INFORMATION_MESSAGE);
-        }
+        ComboBoxModel<File> model = files.getModel();
+
+        UnpackWorker pw = new UnpackWorker(model, dropTargetCheckboxCreateDirectoryWithFilename.isSelected(), dropTargetCheckboxOverwriteFiles.isSelected(), parent);
+
+        new ModalProgressBarDialog(parent, "Unpack .gfs files", pw);
     }
 }

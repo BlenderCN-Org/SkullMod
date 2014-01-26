@@ -56,4 +56,14 @@ public class Utility {
         setPreferredHeightToMaxHeight(result);
         return result;
     }
+
+    public static class BorderJPanel extends JPanel{
+        public BorderJPanel(Component c, int top, int left, int bottom, int right){
+            this.setLayout(new BorderLayout());
+            this.add(c);
+
+            this.setBorder(BorderFactory.createEmptyBorder(top,left,bottom,right));
+        }
+
+    }
 }

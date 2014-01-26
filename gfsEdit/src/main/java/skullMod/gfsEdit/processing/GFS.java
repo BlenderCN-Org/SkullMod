@@ -132,6 +132,8 @@ public class GFS {
         data.s.skipBytes(headerOffset); //Skip to alignment after the header if ther is any alignment
 
         for(int i = 0;i < files.length;i++){
+            //TODO make this class local to the unpackWorker
+
             boolean noWriting = false;
 
             String basePath = outputDirectory;
@@ -145,6 +147,7 @@ public class GFS {
             System.out.println("filePath: " + filePath);
             System.out.println("currentFile: " + currentFile.getPath());
 
+            //TODO softer
             if(currentFile.isDirectory()){
                 throw new IllegalArgumentException("File can not be written, a folder is in place and won't be overwritten:\n" + currentFile.getAbsolutePath());
             }
@@ -202,6 +205,7 @@ public class GFS {
 
         GFSInternalFileReference[] files = null;
 
+        //TODO so many exceptions...
         try {
              files = GFS.getReferencesGFS(data);
             System.out.println("getReferencesGFS ran through");
