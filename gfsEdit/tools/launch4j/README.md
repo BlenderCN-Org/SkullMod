@@ -1,1 +1,0 @@
-Place the "launch4j" directory in here (tools/launch4j/launch4j should be the result) for the xml files in resources to work
