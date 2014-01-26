@@ -12,33 +12,7 @@ composition display
 
 Add license
 
-Add launch4j xml
-
 More info on "libEGL warning: failed to create a pipe screen for i965"
 on MESA drivers for OpenGL 3.1
 
 ========================================
-
-
-Current progress
-
-Data structure
-==============
-SGI done (with an unknown field)
-SGM ~
-SGA ~
-SGS none
-
-READ_... method
-===============
-SGI none
-SGM none
-SGA none
-SGS none
-
-Unknown fields
-==============
-SGI yes, probably related to pos/rotation/size of sgm file
-SGM yes, few
-SGA yes, few
-SGS yes, many

@@ -1,6 +1,7 @@
 package skullMod.launcher;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -25,13 +26,45 @@ public class Launcher extends JFrame{
     /** Create a launcher */
     public Launcher(){
         super(APPLICATION  + " Launcher " + VERSION);
+
+        /**Set look of the application to mimic the OS GUI*/
+        try{
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+            System.err.println("Setting look and feel failed"); //This should happen silently
+        }
+
         this.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        this.setLocation(100,100);
+
         gfsEditButton = new JButton("gfsEdit");
+        gfsEditButton.setPreferredSize(new Dimension(100,25));
         lvlEditButton = new JButton("lvlEdit");
+        lvlEditButton.setPreferredSize(new Dimension(100,25));
         sprConvButton = new JButton("sprConv");
+        sprConvButton.setPreferredSize(new Dimension(100,25));
+
+        JPanel gfsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        setAlignmentTopLeft(gfsPanel);
+
+        JPanel lvlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        setAlignmentTopLeft(lvlPanel);
+        JPanel sprPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        setAlignmentTopLeft(sprPanel);
+
+        gfsPanel.add(gfsEditButton);
+        gfsPanel.add(new JLabel("Pack/Unpack .gfs files"));
+
+        lvlPanel.add(lvlEditButton);
+        lvlPanel.add(new JLabel("Create/Edit .lvl stages"));
+
+        sprPanel.add(sprConvButton);
+        sprPanel.add(new JLabel("Convert sprites (.spr.msb <-> .png)"));
+
+
 
         ButtonListener listener = new ButtonListener();
 
@@ -39,9 +72,9 @@ public class Launcher extends JFrame{
         lvlEditButton.addActionListener(listener);
         sprConvButton.addActionListener(listener);
 
-        this.add(gfsEditButton);
-        this.add(lvlEditButton);
-        this.add(sprConvButton);
+        this.add(gfsPanel);
+        this.add(lvlPanel);
+        this.add(sprPanel);
 
         this.pack();
         this.setVisible(true);
@@ -86,5 +119,10 @@ public class Launcher extends JFrame{
                     break;
             }
         }
+    }
+
+    public static void setAlignmentTopLeft(JComponent c) {
+        c.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+        c.setAlignmentY(JComponent.TOP_ALIGNMENT);
     }
 }

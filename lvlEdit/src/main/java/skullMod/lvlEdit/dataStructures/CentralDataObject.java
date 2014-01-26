@@ -3,7 +3,6 @@ package skullMod.lvlEdit.dataStructures;
 import skullMod.lvlEdit.gui.DDS_Panel;
 import skullMod.lvlEdit.gui.modeChange.ModeChanger;
 
-import javax.media.opengl.awt.GLCanvas;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 

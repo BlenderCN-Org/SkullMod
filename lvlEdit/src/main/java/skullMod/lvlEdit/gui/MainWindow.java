@@ -54,13 +54,6 @@ public class MainWindow extends JFrame {
     public MainWindow(){
         super(APPLICATION + " " + VERSION); //Set title
 
-        JOptionPane.showMessageDialog(null,"Hi, todays build has the following new features:\n" +
-                "-)Exit button works in File menu\n" +
-                "-)Saving sgi files is possible. Not enabled yet.\n" +
-                "-)'Remember last path that was selected' in file chooser\n" +
-                "-)All models are listed in the models tab\n" +
-                "Next planned release date: January","Hi there", JOptionPane.INFORMATION_MESSAGE);
-
         //Issue a warning if Java is not found in required version
         if (Utility.getVersion() < 1.7) {
             JOptionPane.showMessageDialog(null, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 1.7 is required for this application to work properly!\nSome features might not work or crash.", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -235,8 +228,10 @@ public class MainWindow extends JFrame {
 
         this.setMinimumSize(new Dimension(400,100));
 
+
         this.pack();
         this.setVisible(true);
+
 
         this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
