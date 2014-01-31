@@ -268,7 +268,7 @@ public class MainWindow extends JFrame {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
          */
-        String filePath = "D:\\SteamLibrary\\SteamApps\\common\\Skullgirls Beta\\data01\\levels\\temp\\levels\\rooftops_night_3d.lvl";
+        String filePath = "/home/netbook/Working_files/Skullgirls_extracted/levels/rooftops_night_3d.lvl";
 
         String lvlString = null;
 
@@ -305,14 +305,14 @@ public class MainWindow extends JFrame {
 
 
 
-        ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
+        ddsPanel.changeImage("/home/netbook/Working_files/Skullgirls_extracted/levels/textures/class_notes_3d.dds");
         //ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\innsmouth_day_fgnpc_02.dds");
 
         int width = ddsPanel.getImage().getWidth();
         int height = ddsPanel.getImage().getHeight();
 
         try {
-            DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\class_notes_3d\\class_notes_npcs_01_shape.sgm.msb");
+            DataStreamIn dsi = new DataStreamIn("/home/netbook/Working_files/Skullgirls_extracted/levels/class_notes_3d/class_notes_npcs_01_shape.sgm.msb");
             //DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\innsmouth_day_3d\\innsmouth_minneteShape.sgm.msb");
 
             SGM_File sgm = new SGM_File(dsi.s);
@@ -345,8 +345,6 @@ public class MainWindow extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-
-
     }
 
     public Dimension getPreferredSize(){

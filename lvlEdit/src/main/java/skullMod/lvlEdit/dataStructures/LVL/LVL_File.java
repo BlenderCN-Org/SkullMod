@@ -31,7 +31,10 @@ public class LVL_File implements Serializable{
     public int start1, start2;
 
     //
-    public boolean shadowDirection; //Sholud not be used according to docs
+    public Boolean shadowDirection; //Should not be used according to docs
+    public boolean shadowDirectionUp = true;
+    public boolean shadowDirectionDown = false;
+
     public int shadowDistance; //Use this instead
     //
 
@@ -52,32 +55,66 @@ public class LVL_File implements Serializable{
 
             switch(fields[0]){
                 case stageSizeIdentifier:
+                    if(fields.length != 3){ throw new IllegalArgumentException("ERROR"); }
+                    this.stageSize = new LVL_StageSize(Integer.parseInt(fields[1]), Integer.parseInt(fields[2]));
                     break;
                 case bottomClearanceIdentifier:
+                    if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
+                    this.bottomClearance = Integer.parseInt(fields[1]);
                     break;
                 case start1Identifier:
+                    if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
+                    start1 = Integer.parseInt(fields[1]);
                     break;
                 case start2Identifier:
+                    if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
+                    start2 = Integer.parseInt(fields[1]);
                     break;
                 case shadowDirectionIdentifier:
+                    if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
+
+                    //Valid values U and D
+                    switch(fields[1]){
+                        case "D":
+                            shadowDirection = shadowDirectionDown;
+                            break;
+                        case "U":
+                            shadowDirection = shadowDirectionUp;
+                            break;
+                        default:
+                            throw new IllegalArgumentException("ERROR");
+                    }
                     break;
                 case shadowDistanceIdentifier:
+                    if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
                     break;
                 case lightIdentifier:
+                    if(fields.length != 5 && fields.length != 8 && fields.length != 9 && fields.length != 10){ throw new IllegalArgumentException("ERROR"); }
+
                     break;
                 case stageRelPath2DIdentifier:
+                    if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
+
                     break;
                 case cameraTiltOptionsIdentifier:
+                    if(fields.length != 4){ throw new IllegalArgumentException("ERROR"); }
                     break;
                 case cameraSetupIdentifier:
+                    if(fields.length != 2 && fields.length != 4){ throw new IllegalArgumentException("ERROR"); }
+                    //rooftops night has only one, which z near and far to choose?
+
                     break;
                 case musicIntroIdentifier:
+                    if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
                     break;
                 case musicLoopIdentifier:
+                    if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
                     break;
                 case musicInterruptIdentifier:
+                    if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
                     break;
                 case musicOutroIdentifier:
+                    if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown configuration: " + fields[0]);
