@@ -1,4 +1,4 @@
-package skullMod.lvlEdit.dataStructures.SGI;
+package skullMod.lvlEdit.dataStructures;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

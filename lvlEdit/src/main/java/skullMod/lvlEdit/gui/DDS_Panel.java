@@ -1,5 +1,6 @@
 package skullMod.lvlEdit.gui;
 
+import skullMod.lvlEdit.dataStructures.SGM.UV;
 import skullMod.lvlEdit.gui.dds_info.Animation;
 import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
 
@@ -23,16 +24,17 @@ public class DDS_Panel extends JPanel{
     private final Color lightGrayColor = new Color(150,150,150);
 
 
-    private int drawOffset = 10; //Offset for all draw operations
+    private int drawOffset = 50; //Offset for all draw operations
 
     private String fileName;
     private BufferedImage image;
     private InfoRectangle[] models;
     private Animation[] animations;
+    private UV_Triangle[] triangles;
 
     public DDS_Panel(){
         this.setOpaque(true);
-        this.setBackground(darkGrayColor);
+        this.setBackground(Color.WHITE);
     }
 
     public DDS_Panel(String fileName){
@@ -61,9 +63,16 @@ public class DDS_Panel extends JPanel{
 
     }
 
+    public BufferedImage getImage(){ return image; }
+
     //FIXME remove after testing
     public void setModels(InfoRectangle[] models){
         this.models = models;
+    }
+
+    public void setUV_Triangles(UV_Triangle[] triangles){
+        this.triangles = triangles;
+        repaint();
     }
 
     //FIXME remove after testing
@@ -91,17 +100,33 @@ public class DDS_Panel extends JPanel{
         int fontHeight = g.getFont().getSize(); //FIXME there has to be a better way to determine font height in px
 
         g.setColor(modelColor);
+
+
+
         for(InfoRectangle rectangle : models){
 
             g.drawRect(rectangle.getPoint1().getX()-1, rectangle.getPoint1().getY()-1, rectangle.getWidth()+2, rectangle.getHeight()+2);
             g.drawString(rectangle.getName(),rectangle.getPoint1().getX(), rectangle.getPoint1().getY() + fontHeight);
         }
+        if(triangles != null){
+            for(UV_Triangle triangle : triangles){
+                int width = image.getWidth();
+                int height = image.getHeight();
+
+                g.drawLine((int) (triangle.uv1.u*width), (int) (height - triangle.uv1.v*height),     (int) (triangle.uv2.u*width), (int) (height - triangle.uv2.v*height));
+                g.drawLine((int) (triangle.uv2.u*width), (int) (height - triangle.uv2.v*height),     (int) (triangle.uv3.u*width), (int) (height - triangle.uv3.v*height));
+                g.drawLine((int) (triangle.uv3.u*width), (int) (height - triangle.uv3.v*height),     (int) (triangle.uv1.u*width), (int) (height - triangle.uv1.v*height));
+
+            }
+        }
 
         g.setColor(animationColor);
-        for(Animation animation : animations){
-            for(InfoRectangle rectangle : animation.getFramesArray()){
-                drawOutlineOfRectangle(g, rectangle);
-                g.drawString(rectangle.getName(), rectangle.getPoint1().getX(), rectangle.getPoint1().getY() + fontHeight);
+        if(animations != null){
+            for(Animation animation : animations){
+                for(InfoRectangle rectangle : animation.getFramesArray()){
+                    drawOutlineOfRectangle(g, rectangle);
+                    g.drawString(rectangle.getName(), rectangle.getPoint1().getX(), rectangle.getPoint1().getY() + fontHeight);
+                }
             }
         }
     }
@@ -151,5 +176,16 @@ public class DDS_Panel extends JPanel{
 
     public Dimension getMaximumSize(){
         return getPreferredSize();
+    }
+
+    public static class UV_Triangle{
+        public UV uv1, uv2, uv3;
+
+        public UV_Triangle(UV uv1, UV uv2, UV uv3){
+            this.uv1 = uv1;
+            this.uv2 = uv2;
+            this.uv3 = uv3;
+        }
+
     }
 }

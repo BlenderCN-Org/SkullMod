@@ -27,7 +27,7 @@ struct FILE{
     uint64 nOfTriangles <fgcolor=cLtRed>;
     uint64 nOfBones <fgcolor=cLtRed>;
     struct POLYGON{
-        char data[dataFormatLengthPerPolygon] <fgcolor=cGray>;
+        uchar data[dataFormatLengthPerPolygon] <fgcolor=cGray>;
     }polygon[nOfPolygons] <optimize=false>;;
     struct TRIANGLE{
         short firstPolygonIndex <fgcolor=cLtRed>;

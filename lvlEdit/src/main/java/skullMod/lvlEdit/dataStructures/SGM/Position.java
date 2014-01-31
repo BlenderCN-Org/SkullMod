@@ -1,9 +1,15 @@
 package skullMod.lvlEdit.dataStructures.SGM;
 
-/**
- * User: Markus
- * Date: 31.12.13
- * Time: 13:39
- */
+import java.io.DataInputStream;
+import java.io.IOException;
+
 public class Position {
+    public float xPos;
+    public float yPos;
+    public float zPos;
+    public Position(DataInputStream dis) throws IOException {
+        xPos = dis.readFloat();
+        yPos = dis.readFloat();
+        zPos = dis.readFloat();
+    }
 }

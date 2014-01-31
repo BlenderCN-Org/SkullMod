@@ -1,12 +1,27 @@
 package skullMod.lvlEdit.dataStructures.SGM;
 
+import skullMod.lvlEdit.dataStructures.DataStreamIn;
+import skullMod.lvlEdit.dataStructures.Mat4;
+import skullMod.lvlEdit.utility.Utility;
+
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 
 public class SGM_File implements Serializable{
-    public String file_format_revision;
+    public static void main(String[] args) throws IOException{
+        DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\class_notes_3d\\class_notes_npcs_01_shape.sgm.msb");
+
+        SGM_File sgm = new SGM_File(dsi.s);
+
+        dsi.close();
+        System.out.println();
+    }
+
+    public String fileFormatRevision;
     public String textureName;
     public float[] fixedUnknown; //ALWAYS 52 bytes (13 * 4 byte) , a 3x4 matrix and *something* else would fit in there, why?
-    public String attributeString;
+    public String dataFormatString;
 
     public long attributeLengthPerVertex;
     public long nOfVertices;
@@ -29,5 +44,53 @@ public class SGM_File implements Serializable{
     public float zRot;
 
     public String[] jointNames;
-    public JointProperty[] jointProperties;
+    public Mat4[] jointMatrix;
+
+
+    public SGM_File(DataInputStream dis) throws IOException {
+        fileFormatRevision = Utility.readLongPascalString(dis);
+        textureName = Utility.readLongPascalString(dis);
+
+        byte[] fixedUknown = new byte[52];
+        dis.read(fixedUknown);
+
+        dataFormatString = Utility.readLongPascalString(dis);
+
+        attributeLengthPerVertex = dis.readLong();
+        nOfVertices = dis.readLong();
+        nOfTriangles = dis.readLong();
+        nOfJoints = dis.readLong();
+
+        vertices = new Vertex[(int) nOfVertices];
+
+        for(int i = 0;i < nOfVertices;i++){
+            vertices[i] = new Vertex(dis, attributeLengthPerVertex, dataFormatString);
+        }
+
+        triangles = new Triangle[(int) nOfTriangles];
+
+        for(int i = 0;i < nOfTriangles;i++){
+            triangles[i] = new Triangle(dis);
+        }
+
+        xPos = dis.readFloat();
+        yPos  = dis.readFloat();
+        zPos = dis.readFloat();
+
+        xRot = dis.readFloat();
+        yRot  = dis.readFloat();
+        zRot = dis.readFloat();
+
+        jointNames = new String[(int) nOfJoints];
+
+        for(int i = 0;i < nOfJoints;i++){
+            jointNames[i] = Utility.readLongPascalString(dis);
+        }
+
+        jointMatrix = new Mat4[(int) nOfJoints];
+
+        for(int i = 0;i < nOfJoints;i++){
+            jointMatrix[i] = new Mat4(dis);
+        }
+    }
 }

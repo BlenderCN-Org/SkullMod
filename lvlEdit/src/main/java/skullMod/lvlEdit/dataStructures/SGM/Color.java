@@ -1,9 +1,20 @@
 package skullMod.lvlEdit.dataStructures.SGM;
 
-/**
- * User: Markus
- * Date: 31.12.13
- * Time: 13:40
- */
+import java.io.DataInputStream;
+import java.io.IOException;
+
 public class Color {
+    //TODO verifiy, currently only a guess
+
+    public byte r;
+    public byte g;
+    public byte b;
+    public byte a;
+
+    public Color(DataInputStream dis) throws IOException {
+        r = dis.readByte();
+        g = dis.readByte();
+        b = dis.readByte();
+        a = dis.readByte();
+    }
 }

@@ -23,20 +23,23 @@ typedef struct{
         float u;
         float v;
     } track[nOfAnimationFrames] <optimize=false>; 
+    uint64 nOfUnknown1;
     struct UNKNOWN{
-        char unknownData[5];
-    } unknown[nOfAnimationFrames] <optimize=false>;
+        char unknownData[4];
+    } unknown[nOfUnknown1] <optimize=false>;
+    uint64 nOfTime;
     struct TIME{
-        float time;
-        char alwaysNull[4] <hidden=true>;
-    } time[nOfAnimationFrames] <optimize=false>;   
+        float u;
+        float v;
+    } time[nOfTime] <optimize=false>;   
 } UV_TRACK <read=UV_TRACK_Read>;
 
 string UV_TRACK_Read(UV_TRACK &v){ return "PLACEHOLDER"; }
 
 struct FILE{
     Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
-    char unknown1[24];
+    char unknown1[20];
+    float unknownFloat;
     Pascal64String type;
     UV_TRACK track;
 } file <read=FILE_read>;

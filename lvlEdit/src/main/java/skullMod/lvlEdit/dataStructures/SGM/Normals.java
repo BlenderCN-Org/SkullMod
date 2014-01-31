@@ -1,9 +1,16 @@
 package skullMod.lvlEdit.dataStructures.SGM;
 
-/**
- * User: Markus
- * Date: 31.12.13
- * Time: 13:39
- */
+import java.io.DataInputStream;
+import java.io.IOException;
+
 public class Normals {
+    public float normalX;
+    public float normalY;
+    public float normalZ;
+
+    public Normals(DataInputStream dis) throws IOException {
+        normalX = dis.readFloat();
+        normalY = dis.readFloat();
+        normalZ = dis.readFloat();
+    }
 }

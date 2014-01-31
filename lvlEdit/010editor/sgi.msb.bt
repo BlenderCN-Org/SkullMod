@@ -11,7 +11,7 @@ BigEndian();
 
 typedef struct{
     uint64 count <hidden=true,fgcolor=cLtGray,bgcolor=cWhite>;
-    char chars[count] <hidden=true>;
+    char chars[count] <hidden=true, optimize=false>;
 } Pascal64String <read=Pascal64String_Read>;
 
 string Pascal64String_Read(Pascal64String &v){ return v.chars; }

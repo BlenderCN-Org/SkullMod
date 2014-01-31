@@ -2,6 +2,7 @@ package skullMod.lvlEdit.dataStructures.SGI;
 
 import skullMod.lvlEdit.dataStructures.DataStreamIn;
 import skullMod.lvlEdit.dataStructures.DataStreamOut;
+import skullMod.lvlEdit.dataStructures.Mat4;
 import skullMod.lvlEdit.utility.Utility;
 
 import javax.swing.tree.DefaultMutableTreeNode;

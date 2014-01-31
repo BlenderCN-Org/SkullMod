@@ -2,8 +2,12 @@ package skullMod.lvlEdit.gui;
 
 import skullMod.lvlEdit.dataStructures.CentralDataObject;
 import skullMod.lvlEdit.dataStructures.DataStreamIn;
+import skullMod.lvlEdit.dataStructures.LVL.LVL_File;
 import skullMod.lvlEdit.dataStructures.SGI.SGI_Element;
 import skullMod.lvlEdit.dataStructures.SGI.SGI_File;
+import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
+import skullMod.lvlEdit.dataStructures.SGM.Triangle;
+import skullMod.lvlEdit.dataStructures.SGM.Vertex;
 import skullMod.lvlEdit.gui.dds_info.Animation;
 import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
 import skullMod.lvlEdit.gui.dds_info.PixelCoordinate;
@@ -22,8 +26,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.LinkedList;
 
 /**
  */
@@ -156,7 +165,7 @@ public class MainWindow extends JFrame {
         glcanvas.addGLEventListener( new GLEventListener() {
 
             @Override
-            public void reshape( GLAutoDrawable glautodrawable, int x, int y, int width, int height ) {
+            public void reshape( GLAutoDrawable glautodrawable, int xPos, int y, int width, int height ) {
                 OneTriangle.setup(glautodrawable.getGL().getGL3(), width, height);
             }
 
@@ -180,18 +189,6 @@ public class MainWindow extends JFrame {
         //TODO test data, remove it, dds panel is now global!
         DDS_Panel ddsPanel = CentralDataObject.imageView;
 
-        InfoRectangle[] models = new InfoRectangle[2];
-        models[0] = new InfoRectangle(new PixelCoordinate(5,5), new PixelCoordinate(50,50), "Test1");
-        models[1] = new InfoRectangle(new PixelCoordinate(10,60), new PixelCoordinate(100,100), "Test2 model bla bla bla");
-        ddsPanel.setModels(models);
-
-        Animation[] animations = new Animation[1];
-        InfoRectangle[] animation1 = new InfoRectangle[2];
-        //Name doesn't matter so it's empty
-        animation1[0] = new InfoRectangle(new PixelCoordinate(20,110), new PixelCoordinate(50,140));
-        animation1[1] = new InfoRectangle(new PixelCoordinate(60,110), new PixelCoordinate(90,140));
-        animations[0] = new Animation("test", animation1);
-        ddsPanel.setAnimations(animations);
 
 
         CentralDataObject.modelPanel = new JScrollPane(ddsPanel);
@@ -255,14 +252,14 @@ public class MainWindow extends JFrame {
             float maybeBoundingBox[] = Utility.readFloatArray(dsi.s,new float[6]); //Length = 6 floats = 6*4 = 24 bytes
 
             String jointNames[] = Utility.readLongPascalStringArray(dsi.s,new String[(int) nOfJoints]);
-            byte jointProperties[] = Utility.readByteArray(dsi.s,new byte[(int) (nOfJoints*16)]);
+            byte jointMatrix[] = Utility.readByteArray(dsi.s,new byte[(int) (nOfJoints*16)]);
 
 
 
             dsi.close();
 
             SGM_File file = new SGM_File(fileFormatRevision,textureName,unknown1,dataFormat,bytesPerPolygon,
-                    nOfPolygons,nOfTriangles,nOfJoints,polygonData,triangleData,maybeBoundingBox,jointNames,jointProperties);
+                    nOfPolygons,nOfTriangles,nOfJoints,polygonData,triangleData,maybeBoundingBox,jointNames,jointMatrix);
             System.out.println(file);
 
         } catch (FileNotFoundException e) {
@@ -271,6 +268,84 @@ public class MainWindow extends JFrame {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
          */
+        String filePath = "D:\\SteamLibrary\\SteamApps\\common\\Skullgirls Beta\\data01\\levels\\temp\\levels\\rooftops_night_3d.lvl";
+
+        String lvlString = null;
+
+        try {
+            lvlString = new String(Files.readAllBytes(Paths.get(filePath)), "US-ASCII");
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        String[] lvlLines = lvlString.split("[\\r\\n]+");
+
+
+
+
+        for(int i = 0;i < lvlLines.length;i++){
+            String line = lvlLines[i];
+
+
+            line = line.replaceFirst("(.*)#.*",""); //Remove comments
+            line = line.replaceAll(":",""); //Remove ":", this makes wrong files parsable theoretically, meh...
+            lvlLines[i] = line.trim().replaceAll("\\s+", " ");
+        }
+
+        LinkedList<String> attributes = new LinkedList<>();
+        for(int i = 0;i < lvlLines.length;i++){
+            String lvlLine = lvlLines[i];
+
+            if(!lvlLine.equals("") && !lvlLine.startsWith("#")){
+                attributes.addLast(lvlLine);
+            }
+        }
+
+        LVL_File file = new LVL_File(attributes.toArray(new String[0]));
+
+
+
+        ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
+        //ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\innsmouth_day_fgnpc_02.dds");
+
+        int width = ddsPanel.getImage().getWidth();
+        int height = ddsPanel.getImage().getHeight();
+
+        try {
+            DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\class_notes_3d\\class_notes_npcs_01_shape.sgm.msb");
+            //DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\innsmouth_day_3d\\innsmouth_minneteShape.sgm.msb");
+
+            SGM_File sgm = new SGM_File(dsi.s);
+
+            InfoRectangle[] points = new InfoRectangle[sgm.vertices.length];
+
+            for(int i=0;i < sgm.vertices.length;i++){
+                Vertex currentVertex = sgm.vertices[i];
+
+                PixelCoordinate point = new PixelCoordinate( (int)((double)currentVertex.uv.u * (double)width), (int) (height - ((double)currentVertex.uv.v * (double)height)) );
+
+
+                points[i] = new InfoRectangle(point,point,Integer.toString(i));
+            }
+
+            ddsPanel.setModels(points);
+
+            DDS_Panel.UV_Triangle[] triangles = new DDS_Panel.UV_Triangle[sgm.triangles.length];
+            for(int i = 0;i < sgm.triangles.length;i++){
+                Triangle currentTriangle = sgm.triangles[i];
+
+                triangles[i] = new DDS_Panel.UV_Triangle(sgm.vertices[currentTriangle.vertexIndex1].uv,sgm.vertices[currentTriangle.vertexIndex2].uv,sgm.vertices[currentTriangle.vertexIndex3].uv);
+            }
+
+            ddsPanel.setUV_Triangles(triangles);
+
+            dsi.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
 
     }
 
