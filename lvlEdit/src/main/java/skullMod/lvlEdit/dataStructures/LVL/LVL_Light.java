@@ -6,6 +6,8 @@ package skullMod.lvlEdit.dataStructures.LVL;
 public class LVL_Light {
     public static final String identifier = "Light";
 
+    public static final String neverCullString = "NeverCull";
+
     public enum LightType{
         //Ambient: ONE ambient light, hahaha
         //Directional: UPTO FOUR directional lights, hahaha (don't use more than 2)
@@ -26,24 +28,24 @@ public class LVL_Light {
 
     public LightType type;
 
-    public int r,g,b;
+    public float r,g,b;
 
     /* X+ is right, Y+ is up, Z+ is towards camera */
-    public int x,y,z; //Vector when directonal, position coordinate when point
+    public float x,y,z; //Vector when directonal, position coordinate when point
 
     public int pointLightRadiusInPx = 1000; //Only for point light
     public boolean neverCull = false; //Only for point light
 
 
     //Create ambient light
-    public LVL_Light(int r, int g, int b){
+    public LVL_Light(float r, float g, float b){
         this.type = LightType.AMBIENT;
         this.r = r;
         this.g = g;
         this.b = b;
     }
 
-    public LVL_Light(int r, int g, int b, int x, int y, int z){
+    public LVL_Light(float r, float g, float b, float x, float y, float z){
         this.type = LightType.DIRECTIONAL;
         this.r = r;
         this.g = g;
@@ -53,7 +55,7 @@ public class LVL_Light {
         this.z = z;
     }
 
-    public LVL_Light(int r, int g, int b, int x, int y, int z, int pointLightRadiusInPx, boolean neverCull){
+    public LVL_Light(float r, float g, float b, float x, float y, float z, int pointLightRadiusInPx, boolean neverCull){
         this.type = LightType.POINT;
         this.r = r;
         this.g = g;

@@ -1,6 +1,7 @@
 package skullMod.lvlEdit.dataStructures.LVL;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 //TODO test must and nice to haves when reading/writing
@@ -31,14 +32,16 @@ public class LVL_File implements Serializable{
     public int start1, start2;
 
     //
-    public Boolean shadowDirection; //Should not be used according to docs
-    public boolean shadowDirectionUp = true;
-    public boolean shadowDirectionDown = false;
+    public static final boolean shadowDirectionUp = true;
+    public static final boolean shadowDirectionDown = false;
 
-    public int shadowDistance; //Use this instead
+    //TODO May be null (use object instead!)
+    public Boolean shadowDirection; //Should not be used according to docs
+    //TODO May be null (use object instead!)
+    public Integer shadowDistance; //Use this instead
     //
 
-    public LVL_Light[] lights; //For Amb, Pt and Dir lights
+    public List<LVL_Light> lights; //For Amb, Pt and Dir lights
 
     public String stageRelPath2D;
     public CameraTilt cameraTiltOptions; //Thank you Skullgirls team for documenting lvl files
@@ -49,9 +52,15 @@ public class LVL_File implements Serializable{
     public boolean musicInterruptIntro;
     public String musicOutro; //Not used for now
 
+    //TODO meh, so much switching, reduce it
     public LVL_File(String[] lvlContent){
+        lights = new ArrayList<>();
+
+
         for(String line : lvlContent){
             String[] fields = line.split(" ");
+
+
 
             switch(fields[0]){
                 case stageSizeIdentifier:
@@ -87,38 +96,86 @@ public class LVL_File implements Serializable{
                     break;
                 case shadowDistanceIdentifier:
                     if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
+                    shadowDistance = Integer.parseInt(fields[1]);
                     break;
                 case lightIdentifier:
-                    if(fields.length != 5 && fields.length != 8 && fields.length != 9 && fields.length != 10){ throw new IllegalArgumentException("ERROR"); }
+                    switch(fields.length){
+                        case 5:
+                            if(!fields[1].equals(LVL_Light.LightType.AMBIENT.abbrevation)){ throw new IllegalArgumentException("ERROR"); }
+                            lights.add(new LVL_Light(Float.parseFloat(fields[2]),Float.parseFloat(fields[3]),Float.parseFloat(fields[4])));
+                            break;
+                        case 8:
+                            if(!fields[1].equals(LVL_Light.LightType.DIRECTIONAL.abbrevation)){ throw new IllegalArgumentException("ERROR"); }
+                            lights.add(new LVL_Light(Float.parseFloat(fields[2]),Float.parseFloat(fields[3]),Float.parseFloat(fields[4]),
+                                    Float.parseFloat(fields[5]),Float.parseFloat(fields[6]),Float.parseFloat(fields[7])));
 
+                            break;
+                        case 9:
+                            if(!fields[1].equals(LVL_Light.LightType.POINT.abbrevation)){ throw new IllegalArgumentException("ERROR"); }
+                            lights.add(new LVL_Light(Float.parseFloat(fields[2]),Float.parseFloat(fields[3]),Float.parseFloat(fields[4]),
+                                    Float.parseFloat(fields[5]),Float.parseFloat(fields[6]),Float.parseFloat(fields[7]),Integer.parseInt(fields[8]), false));
+
+                            break;
+                        case 10:
+                            if(!fields[1].equals(LVL_Light.LightType.POINT.abbrevation)){ throw new IllegalArgumentException("ERROR"); }
+                            if(!fields[9].equals(LVL_Light.neverCullString)){ throw new IllegalArgumentException("ERROR"); }
+                            lights.add(new LVL_Light(Float.parseFloat(fields[2]),Float.parseFloat(fields[3]),Float.parseFloat(fields[4]),
+                                    Float.parseFloat(fields[5]),Float.parseFloat(fields[6]),Float.parseFloat(fields[7]),Integer.parseInt(fields[8]), true));
+                            break;
+                        default:
+                            throw new IllegalArgumentException("ERROR");
+                    }
                     break;
                 case stageRelPath2DIdentifier:
                     if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
-
+                    stageRelPath2D = fields[1];
                     break;
                 case cameraTiltOptionsIdentifier:
                     if(fields.length != 4){ throw new IllegalArgumentException("ERROR"); }
+                    cameraTiltOptions = new CameraTilt(Float.parseFloat(fields[1]), Integer.parseInt(fields[2]), Integer.parseInt(fields[3]));
                     break;
                 case cameraSetupIdentifier:
                     if(fields.length != 2 && fields.length != 4){ throw new IllegalArgumentException("ERROR"); }
                     //rooftops night has only one, which z near and far to choose?
+                    //TODO fix default values
+                    if(fields.length == 2){
+                        cameraSetup = new CameraSetup(Float.parseFloat(fields[1]),0,0);
+                    }else{
+                        cameraSetup = new CameraSetup(Float.parseFloat(fields[1]),Integer.parseInt(fields[2]),Integer.parseInt(fields[3]));
+                    }
 
                     break;
                 case musicIntroIdentifier:
                     if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
+                    musicIntro = fields[1];
                     break;
                 case musicLoopIdentifier:
                     if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
+                    musicLoop = fields[1];
                     break;
                 case musicInterruptIdentifier:
                     if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
+                    int interruptIntro = Integer.parseInt(fields[1]);
+                    if(interruptIntro == 0){
+                        musicInterruptIntro = false;
+                    }else if(interruptIntro == 1){
+                        musicInterruptIntro = true;
+                    }else{
+                        throw new IllegalArgumentException("ERROR");
+                    }
                     break;
                 case musicOutroIdentifier:
                     if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
+                    musicOutro = fields[1];
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown configuration: " + fields[0]);
             }
         }
+
+        //TODO validate: all must have fields
+        //TODO validate: lights array
+        //TODO check paths
+        //TODO add replace used in river king casino
     }
 }
