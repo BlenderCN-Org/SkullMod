@@ -22,10 +22,11 @@ public class Level extends NodeAdapter {
     private Models models;
 
     public Level(){
-        stageSettings = new StageSettings();
-        music = new Music();
+        super(null); //Root node
+        stageSettings = new StageSettings(this);
+        music = new Music(this);
         lighting = new Lighting(this);
-        models = new Models();
+        models = new Models(this);
     }
 
     public StageSettings getStageSettings(){

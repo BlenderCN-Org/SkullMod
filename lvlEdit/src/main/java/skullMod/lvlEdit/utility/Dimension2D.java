@@ -1,9 +1,14 @@
 package skullMod.lvlEdit.utility;
 
-public class Dimension2D<T extends Number> {
+import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafAdapter;
+
+import javax.swing.tree.TreeNode;
+
+public class Dimension2D<T extends Number> extends LeafAdapter{
     private T x,y;
 
-    public Dimension2D(T x, T y){
+    public Dimension2D(TreeNode node, T x, T y){
+        super(node);
         setX(x);
         setY(y);
     }

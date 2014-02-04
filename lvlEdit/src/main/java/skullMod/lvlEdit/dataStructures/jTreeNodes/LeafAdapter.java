@@ -9,11 +9,15 @@ public class LeafAdapter implements TreeNode{
     public LeafAdapter(TreeNode parent){
         this.parent = parent;
     }
-    public TreeNode getChildAt(int childIndex) { return null; }
-    public int getChildCount() { return 0; }
+    public TreeNode getChildAt(int childIndex) {
+        throw new IllegalArgumentException();
+    }
+    public int getChildCount() {
+        return 0;
+    }
     public TreeNode getParent() { return parent; }
-    public int getIndex(TreeNode node) { return -1; }
+    public int getIndex(TreeNode node) { throw new IllegalArgumentException(); }
     public boolean getAllowsChildren() { return false; }
     public boolean isLeaf() { return true; }
-    public Enumeration children() { return null; }
+    public Enumeration children() { throw new IllegalArgumentException(); }
 }

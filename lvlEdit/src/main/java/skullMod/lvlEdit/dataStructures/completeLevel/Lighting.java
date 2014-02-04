@@ -1,6 +1,7 @@
 package skullMod.lvlEdit.dataStructures.completeLevel;
 
 import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafAdapter;
+import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafContentNode;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
 
 import javax.swing.tree.TreeNode;
@@ -9,23 +10,24 @@ import java.util.Collections;
 import java.util.Enumeration;
 
 public class Lighting extends NodeAdapter{
-    private final AmbientLight ambientLight;
-    private final DirectionalLight[] directionalLights;
-    private final PointLight[] pointLights;
+    private final LeafContentNode<AmbientLight> ambientLight;
+    private final LeafContentNode<DirectionalLight[]> directionalLights;
+    private final LeafContentNode<PointLight[]> pointLights;
 
     public Lighting(TreeNode parent){
         super(parent);
-        this.ambientLight = new AmbientLight(255,255,255);
-        this.directionalLights = new DirectionalLight[4];
-        this.pointLights = new PointLight[4];
+        this.ambientLight = new LeafContentNode<>(this,"Ambient light", new AmbientLight(255,255,255));
+        //TODO arrays are no leafs
+        this.directionalLights = new LeafContentNode<>(this,"Directional lights", new DirectionalLight[4]);
+        this.pointLights = new LeafContentNode<>(this,"Point lights", new PointLight[4]);
     }
 
     public Lighting(TreeNode parent, AmbientLight ambientLight, DirectionalLight[] directionalLights, PointLight[] pointLights){
          super(parent);
         //TODO verify
-        this.ambientLight = ambientLight;
-        this.directionalLights = directionalLights;
-        this.pointLights = pointLights;
+        this.ambientLight = new LeafContentNode<>(this,"Ambient light", ambientLight);
+        this.directionalLights = new LeafContentNode<>(this,"Directional lights", directionalLights);
+        this.pointLights = new LeafContentNode<>(this,"Point lights", pointLights);
     }
 
     public class AmbientLight extends LeafAdapter{
@@ -93,42 +95,21 @@ public class Lighting extends NodeAdapter{
         }
     }
 
-    public TreeNode getChildAt(int childIndex) {
-        int nOfDirectionalLights = getNumberOfNonNullElements(directionalLights);
-
-        if(childIndex == 0){ return ambientLight; }
-        if(nOfDirectionalLights > 0 && childIndex < nOfDirectionalLights+1){
-            return directionalLights[childIndex-1];
-        }else{
-            return pointLights[childIndex-1 + nOfDirectionalLights];
-        }
-    }
 
     public int getChildCount() {
-        int nOfDirectionalLights = getNumberOfNonNullElements(directionalLights);
-        int nOfPointLights = getNumberOfNonNullElements(pointLights);
+        int nOfDirectionalLights = getNumberOfNonNullElements(directionalLights.getContent());
+        int nOfPointLights = getNumberOfNonNullElements(pointLights.getContent());
 
         return 1 + nOfDirectionalLights + nOfPointLights; //Ambient + directional + point
     }
 
-    public int getIndex(TreeNode node) {
-        if(node instanceof AmbientLight){ return 0; }
-        if(node instanceof DirectionalLight){
-            return getElementPosition(directionalLights, node)+1;
-        }
-        if(node instanceof PointLight){
-            return getElementPosition(pointLights, node)+1+getNumberOfNonNullElements(directionalLights);
-        }
-        return -1;
-    }
-
-    public Enumeration children() {
+    public Enumeration<TreeNode> children() {
         ArrayList<TreeNode> list = new ArrayList<>();
         list.add(ambientLight);
-        for(DirectionalLight directionalLight : directionalLights){
+        for(DirectionalLight directionalLight : directionalLights.getContent()){
             if(directionalLight != null){ list.add(directionalLight); }
         }
-        for(PointLight pointLight : pointLights){
+        for(PointLight pointLight : pointLights.getContent()){
             if(pointLight != null){ list.add(pointLight); }
         }
         return Collections.enumeration(list);
@@ -140,13 +121,6 @@ public class Lighting extends NodeAdapter{
             if(o != null){ i++; }
         }
         return i;
-    }
-    //TODO find a better way
-    private static int getElementPosition(Object[] a, Object b){
-        for(int i = 0;i < a.length;i++){
-            if(a[i] == b){ return i; }
-        }
-        return -1;
     }
 
     public String toString(){

@@ -1,41 +1,47 @@
 package skullMod.lvlEdit.dataStructures.completeLevel;
 
+import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafContentNode;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
 
 import javax.swing.tree.TreeNode;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 
 public class Music extends NodeAdapter{
-    private String musicIntro;
-    private boolean interruptIntro;
-    private String musicLoop;
-    private String musicOutro;
+    private LeafContentNode<String> musicIntro;
+    private LeafContentNode<Boolean> interruptIntro;
+    private LeafContentNode<String> musicLoop;
+    private LeafContentNode<String> musicOutro;
 
     private static final String defaultSong = "blankmusic";
 
     public static enum MUSIC_TYPES{ INTRO,LOOP,OUTRO }
 
-    public Music(String musicIntro, String musicLoop, boolean interruptIntro, String musicOutro){
+    public Music(TreeNode parent, String musicIntro, String musicLoop, boolean interruptIntro, String musicOutro){
+        super(parent);
         setMusic(MUSIC_TYPES.INTRO, musicIntro);
+        setInterruptIntro(interruptIntro);
         setMusic(MUSIC_TYPES.LOOP, musicLoop);
         setMusic(MUSIC_TYPES.OUTRO, musicOutro);
     }
 
-    public Music(){
-        musicIntro = defaultSong;
-        interruptIntro = false;
-        musicLoop = defaultSong;
-        musicOutro = defaultSong;
+    public Music(TreeNode parent){
+        super(parent);
+        musicIntro = new LeafContentNode<>(this,"Music intro", defaultSong);
+        interruptIntro = new LeafContentNode<>(this,"Interrupt intro", false);
+        musicLoop = new LeafContentNode<>(this,"Music loop", defaultSong);
+        musicOutro = new LeafContentNode<>(this,"Music outro", defaultSong);
     }
 
     public String getMusic(MUSIC_TYPES type){
         switch(type){
             case INTRO:
-                return musicIntro;
+                return musicIntro.getContent();
             case LOOP:
-                return musicLoop;
+                return musicLoop.getContent();
             case OUTRO:
-                return musicOutro;
+                return musicOutro.getContent();
             default:
                 throw new IllegalArgumentException("Unknown enum");
         }
@@ -46,44 +52,40 @@ public class Music extends NodeAdapter{
 
         switch(type){
             case INTRO:
-                musicIntro = song;
+                musicIntro.setContent(song);
                 break;
             case LOOP:
-                musicLoop = song;
+                musicLoop.setContent(song);
                 break;
             case OUTRO:
-                musicOutro = song;
+                musicOutro.setContent(song);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown enum");
         }
     }
 
-
     public void setInterruptIntro(boolean interrupt){
-        this.interruptIntro = interrupt;
+        interruptIntro.setContent(interrupt);
     }
     public boolean getInterruptIntro(){
-        return interruptIntro;
-    }
-
-
-
-    public TreeNode getChildAt(int childIndex) {
-        return null;
+        return interruptIntro.getContent();
     }
 
     public int getChildCount() { return 4; }
 
-    public int getIndex(TreeNode node) {
+    public Enumeration<TreeNode> children() {
+        ArrayList<TreeNode> list = new ArrayList<>(getChildCount());
 
+        list.add(musicIntro);
+        list.add(interruptIntro);
+        list.add(musicLoop);
+        list.add(musicOutro);
 
-        return -1;
+        return Collections.enumeration(list);
     }
 
-
-    public Enumeration children() {
-        return null;
+    public String toString(){
+        return "Music";
     }
-
 }

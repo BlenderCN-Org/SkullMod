@@ -1,5 +1,6 @@
 package skullMod.lvlEdit.dataStructures;
 
+import skullMod.lvlEdit.dataStructures.completeLevel.Level;
 import skullMod.lvlEdit.gui.DDS_Panel;
 import skullMod.lvlEdit.gui.modeChange.ModeChanger;
 
@@ -36,6 +37,7 @@ public final class CentralDataObject {
     public final static DefaultMutableTreeNode animationRoot = new DefaultMutableTreeNode("animationRoot");
     public final static DefaultMutableTreeNode shapeRoot = new DefaultMutableTreeNode("shapeRoot");
 
+    public final static JTree level = new JTree(new Level());
 
     //Are the JTrees required too?, yeah
     public final static JTree sceneTree = new JTree(sceneRoot);

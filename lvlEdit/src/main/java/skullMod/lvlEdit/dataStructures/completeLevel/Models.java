@@ -1,38 +1,19 @@
 package skullMod.lvlEdit.dataStructures.completeLevel;
 
 
+import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafAdapter;
+import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
+
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
 
-public class Models implements TreeNode{
+public class Models extends LeafAdapter {
 
 
-
-    public TreeNode getChildAt(int childIndex) {
-        return null;
+    public Models(TreeNode parent) {
+        super(parent);
     }
-
-    public int getChildCount() {
-        return 0;
-    }
-
-    public TreeNode getParent() {
-        return null;
-    }
-
-    public int getIndex(TreeNode node) {
-        return 0;
-    }
-
-    public boolean getAllowsChildren() {
-        return false;
-    }
-
-    public boolean isLeaf() {
-        return false;
-    }
-
-    public Enumeration children() {
-        return null;
+    public String toString(){
+        return "Models";
     }
 }
