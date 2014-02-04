@@ -3,17 +3,15 @@ package skullMod.lvlEdit.dataStructures.completeLevel;
 
 import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafContentNode;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
-import skullMod.lvlEdit.utility.ArrayEnumerationFactory;
 import skullMod.lvlEdit.utility.Dimension2D;
 
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.LinkedList;
 
 public class StageSettings extends NodeAdapter{
-    public Dimension2D<Integer> stageSize;
+    public LeafContentNode<Dimension2D<Integer>> stageSize;
     public LeafContentNode<Integer> bottomClearance;
     public LeafContentNode<Integer> startPlayer1;
     public LeafContentNode<Integer> startPlayer2;
@@ -35,7 +33,7 @@ public class StageSettings extends NodeAdapter{
                          float fieldOfView, float zNear, float zFar, float tiltRate, float tiltHeight1, float tiltHeight2){
         super(parent);
         //TODO verfiy
-        this.stageSize = new Dimension2D<>(this, xStageSize,yStageSize);
+        this.stageSize = new LeafContentNode<Dimension2D<Integer>>(this,"Stage size",new Dimension2D<>(null, xStageSize,yStageSize));
         this.bottomClearance = new LeafContentNode<>(this,"Bottom clearance",bottomClearance);
         this.startPlayer1 = new LeafContentNode<>(this,"Start player 1", startPlayer1);
         this.startPlayer2 = new LeafContentNode<>(this,"Start player 2", startPlayer2);

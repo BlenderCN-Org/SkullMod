@@ -28,4 +28,8 @@ public class Dimension2D<T extends Number> extends LeafAdapter{
     public void setY(T y){
         this.y = y;
     }
+
+    public String toString(){
+        return "X: " + x + " Y: " + y;
+    }
 }

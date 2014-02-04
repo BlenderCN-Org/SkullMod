@@ -11,13 +11,12 @@ public abstract class NodeAdapter implements TreeNode{
     public boolean isLeaf() { return false; }
 
     public TreeNode getChildAt(int childIndex) {
-
         Enumeration<TreeNode> nodes = children();
         int index = 0;
         while(nodes.hasMoreElements()){
             TreeNode childNode = nodes.nextElement();
             if(childIndex == index){
-                System.out.println("Node " + this.toString() + " requests node number " + childIndex + " and gets " + childNode.toString() + " at " + index);
+                //DEBUG System.out.println("Node " + this.toString() + " requests node number " + childIndex + " and gets " + childNode.toString() + " at " + index);
                 return childNode;
             }
             index++;
@@ -27,7 +26,6 @@ public abstract class NodeAdapter implements TreeNode{
     }
 
     public int getIndex(TreeNode node) {
-        System.out.println("NOPE");
         Enumeration<TreeNode> nodes = children();
         int index = 0;
         while(nodes.hasMoreElements()){
