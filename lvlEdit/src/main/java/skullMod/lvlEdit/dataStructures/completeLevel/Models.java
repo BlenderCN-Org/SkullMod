@@ -13,7 +13,7 @@ public class Models extends NodeAdapter {
     public Models(TreeNode parent, SGM_Model[] models) {
         super(parent);
 
-        //TODO verfiy input
+        //TODO verify input
 
         this.models = new LinkedList<>();
 
@@ -25,6 +25,7 @@ public class Models extends NodeAdapter {
     public Models(TreeNode parent){
         super(parent);
         this.models = new LinkedList<>();
+        this.models.add(new SGM_Model(this));
     }
 
     public String toString(){
