@@ -1,7 +1,11 @@
 package skullMod.lvlEdit.dataStructures.LVL;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 //TODO test must and nice to haves when reading/writing
@@ -171,11 +175,54 @@ public class LVL_File implements Serializable{
                 default:
                     throw new IllegalArgumentException("Unknown configuration: " + fields[0]);
             }
+
+
         }
 
         //TODO validate: all must have fields
         //TODO validate: lights array
         //TODO check paths
         //TODO add replace used in river king casino
+    }
+
+
+    public static String[] prepareLVL(String filePath){
+        //String filePath = "/home/netbook/Working_files/Skullgirls_extracted/levels/rooftops_night_3d.lvl";
+        //TODO verify
+
+
+
+        String fileContent;
+
+        try {
+            fileContent = new String(Files.readAllBytes(Paths.get(filePath)), "US-ASCII");
+        } catch (IOException e) {
+            //TODO better handling
+            throw new IllegalArgumentException("NOPE");
+        }
+
+        String[] lvlLines = fileContent.split("[\\r\\n]+"); //Split on line endings
+
+        for(int i = 0;i < lvlLines.length;i++){
+            String line = lvlLines[i];
+
+            line = line.replaceFirst("#.*",""); //Remove comments
+            line = line.replaceAll(":",""); //Remove ":", this makes wrong files parsable theoretically, meh... TODO keep behaviour?
+            lvlLines[i] = line.trim().replaceAll("\\s+", " "); //Change aby whitespace to a single space
+        }
+
+        ArrayList<String> result = new ArrayList<>();
+        for (String lvlLine : lvlLines) {
+            if (!lvlLine.equals("") && !lvlLine.startsWith("#")) { //TODO is # still required?
+                result.add(lvlLine);
+            }
+        }
+
+        // http://stackoverflow.com/questions/174093/toarraynew-myclass0-or-toarraynew-myclassmylist-size
+        return result.toArray(new String[result.size()]);
+    }
+
+    public String toString(){
+        return "LVL file";
     }
 }

@@ -1,6 +1,7 @@
 package skullMod.lvlEdit.dataStructures.completeLevel;
 
 
+import skullMod.lvlEdit.dataStructures.LVL.LVL_File;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafContentNode;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
 import skullMod.lvlEdit.utility.Dimension2D;
@@ -29,11 +30,31 @@ public class StageSettings extends NodeAdapter{
         this(parent,stageSizeDefaultX, stageSizeDefaultY,64,1675,2075,66f,3f,20000f,0.001f,0f,200f);
     }
 
+    public StageSettings(TreeNode parent, LVL_File lvl){
+        super(parent);
+
+        //TODO verfiy
+        this.stageSize = new LeafContentNode<>(this,"Stage size",new Dimension2D<>(null, lvl.stageSize.width, lvl.stageSize.height));
+        this.bottomClearance = new LeafContentNode<>(this,"Bottom clearance",lvl.bottomClearance);
+        this.startPlayer1 = new LeafContentNode<>(this,"Start player 1", lvl.start1);
+        this.startPlayer2 = new LeafContentNode<>(this,"Start player 2", lvl.start2);
+
+        this.fieldOfView = new LeafContentNode<>(this,"Field of view", lvl.cameraSetup.fieldOfView);
+        this.zNear = new LeafContentNode<>(this,"zNear", lvl.cameraSetup.zNear);
+        this.zFar = new LeafContentNode<>(this,"zFar", lvl.cameraSetup.zFar);
+
+        this.tiltRate = new LeafContentNode<>(this,"Tilt rate", lvl.cameraTiltOptions.tiltRate);
+        //TODO float only
+        this.tiltHeight1 = new LeafContentNode<>(this,"Tilt height 1", (float) lvl.cameraTiltOptions.tiltHeight1);
+        this.tiltHeight2 = new LeafContentNode<>(this,"Tilt height 2", (float) lvl.cameraTiltOptions.tiltHeight2);
+    }
+
+    //TODO still relevant? alternativly scrap constructor above
     public StageSettings(TreeNode parent, int xStageSize, int yStageSize, int bottomClearance, int startPlayer1, int startPlayer2,
                          float fieldOfView, float zNear, float zFar, float tiltRate, float tiltHeight1, float tiltHeight2){
         super(parent);
         //TODO verfiy
-        this.stageSize = new LeafContentNode<Dimension2D<Integer>>(this,"Stage size",new Dimension2D<>(null, xStageSize,yStageSize));
+        this.stageSize = new LeafContentNode<>(this,"Stage size",new Dimension2D<>(null, xStageSize,yStageSize));
         this.bottomClearance = new LeafContentNode<>(this,"Bottom clearance",bottomClearance);
         this.startPlayer1 = new LeafContentNode<>(this,"Start player 1", startPlayer1);
         this.startPlayer2 = new LeafContentNode<>(this,"Start player 2", startPlayer2);

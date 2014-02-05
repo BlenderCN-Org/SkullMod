@@ -1,5 +1,6 @@
 package skullMod.lvlEdit.dataStructures.completeLevel;
 
+import skullMod.lvlEdit.dataStructures.LVL.LVL_File;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafContentNode;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
 
@@ -17,6 +18,15 @@ public class Music extends NodeAdapter{
     private static final String defaultSong = "blankmusic";
 
     public static enum MUSIC_TYPES{ INTRO,LOOP,OUTRO }
+
+    public Music(TreeNode parent, LVL_File lvl){
+        super(parent);
+
+        setMusic(MUSIC_TYPES.INTRO, lvl.musicIntro);
+        setInterruptIntro(lvl.musicInterruptIntro);
+        setMusic(MUSIC_TYPES.LOOP, lvl.musicLoop);
+        setMusic(MUSIC_TYPES.OUTRO, lvl.musicOutro);
+    }
 
     public Music(TreeNode parent, String musicIntro, String musicLoop, boolean interruptIntro, String musicOutro){
         super(parent);
@@ -43,7 +53,7 @@ public class Music extends NodeAdapter{
             case OUTRO:
                 return musicOutro.getContent();
             default:
-                throw new IllegalArgumentException("Unknown enum");
+                throw new IllegalArgumentException("Unknown enum"); //TODO can this even happen?
         }
     }
 

@@ -1,6 +1,5 @@
 package skullMod.lvlEdit.dataStructures.SGM;
 
-import skullMod.lvlEdit.dataStructures.DataStreamIn;
 import skullMod.lvlEdit.dataStructures.Mat4;
 import skullMod.lvlEdit.utility.Utility;
 
@@ -9,15 +8,6 @@ import java.io.IOException;
 import java.io.Serializable;
 
 public class SGM_File implements Serializable{
-    public static void main(String[] args) throws IOException{
-        DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\class_notes_3d\\class_notes_npcs_01_shape.sgm.msb");
-
-        SGM_File sgm = new SGM_File(dsi.s);
-
-        dsi.close();
-        System.out.println();
-    }
-
     public String fileFormatRevision;
     public String textureName;
     public float[] fixedUnknown; //ALWAYS 52 bytes (13 * 4 byte) , a 3x4 matrix and *something* else would fit in there, why?
@@ -93,4 +83,6 @@ public class SGM_File implements Serializable{
             jointMatrix[i] = new Mat4(dis);
         }
     }
+
+    //TODO add write to stream
 }

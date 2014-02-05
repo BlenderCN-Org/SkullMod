@@ -49,4 +49,8 @@ public class SGI_File implements Serializable{
             currentElement.addToNode(currentNode);
         }
     }
+
+    public String toString(){
+        return "lvl file";
+    }
 }

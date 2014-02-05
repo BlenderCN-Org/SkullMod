@@ -1,11 +1,21 @@
 package skullMod.lvlEdit.dataStructures.completeLevel;
 
+import skullMod.lvlEdit.dataStructures.DataStreamIn;
+import skullMod.lvlEdit.dataStructures.LVL.LVL_File;
+import skullMod.lvlEdit.dataStructures.SGA.SGA_File;
+import skullMod.lvlEdit.dataStructures.SGI.SGI_Animation;
+import skullMod.lvlEdit.dataStructures.SGI.SGI_Element;
+import skullMod.lvlEdit.dataStructures.SGI.SGI_File;
+import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
 import skullMod.lvlEdit.utility.AutoReentrantLock;
 
 import javax.swing.tree.TreeNode;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 
 /**
  * This class is checked by the reentrant lock, its children aren't.
@@ -20,6 +30,102 @@ public class Level extends NodeAdapter {
     private Music music;
     private Lighting lighting; //Done
     private Models models;
+
+    public static final String lvlExtension = ".lvl";
+    public static final String ddsExtension = ".dds";
+    public static final String sgiExtension = ".sgi.msb";
+    public static final String sgmExtension = ".sgm.msb";
+    public static final String sgaExtension = ".sga.msb";
+    public static final String sgsExtension = ".sgs.msb";
+
+    public static void main(String[] args){
+        new Level("C:\\levels\\temp\\levels","class_notes_3d");
+    }
+
+    public Level(String mainDirectory, String lvlName) throws IllegalArgumentException{
+        super(null);
+
+        //Set up paths
+
+        String texturePath = mainDirectory + File.separator + "textures";
+        String lvlFilePath = mainDirectory + File.separator + lvlName + lvlExtension;
+        String lvlDirectoryPath = mainDirectory + File.separator + lvlName;
+        String sgiFilePath = lvlDirectoryPath + File.separator + "background" + sgiExtension;
+
+        //Check files and directories
+        if(! new File(mainDirectory).isDirectory()){
+            throw new IllegalArgumentException("Given directory for levels does not exist");
+        }
+        if(! new File(texturePath).isDirectory()){
+            throw new IllegalArgumentException("No texture directory");
+        }
+        if(! new File(lvlFilePath).isFile()){
+            throw new IllegalArgumentException("No .lvl file in directory");
+        }
+        if(! new File(lvlDirectoryPath).isDirectory()){
+            throw new IllegalArgumentException("No directory for the given level");
+        }
+        if(! new File(sgiFilePath).isFile()){
+            throw new IllegalArgumentException("No background.sgi.msb file found");
+        }
+
+        //Read lvl
+        LVL_File lvlData = new LVL_File(LVL_File.prepareLVL(lvlFilePath));
+        //Read sgi
+        SGI_File sgiData = null;
+        try {
+            DataStreamIn dsi = new DataStreamIn(sgiFilePath);
+            //TODO change to DataInputStream directly
+            sgiData = new SGI_File(dsi);
+            dsi.close();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("IO error");
+            //TODO fitting catch
+        }
+
+        HashMap<String, SGM_File> models = new HashMap<>(); //Key is the model name found in the sgi file
+        HashMap<String, HashMap<String, SGA_File>> animations = new HashMap<>();
+
+        for(SGI_Element model : sgiData.elements){
+            //Read sgm file
+            String pathToCurrentModel = lvlDirectoryPath + File.separator + model.modelFileName + sgmExtension;
+
+            try {
+                DataStreamIn dsi = new DataStreamIn(pathToCurrentModel);
+                models.put(model.elementName, new SGM_File(dsi.s));
+                dsi.close();
+            } catch (IOException e) {
+                //TODO proper exception
+                throw new IllegalArgumentException("Couldn't read file x" );
+            }
+
+            HashMap<String, SGA_File> currentAnimations = new HashMap<>();
+            for(SGI_Animation animation : model.animations){
+                //Read sga files
+
+                String pathToCurrentAnimation = lvlDirectoryPath + File.separator + animation.animationFileName + sgaExtension;
+                try {
+                    DataStreamIn dsi = new DataStreamIn(pathToCurrentAnimation);
+                    currentAnimations.put(animation.animationName, new SGA_File(dsi.s));
+                    dsi.close();
+                } catch (IOException e) {
+                    //TODO proper exception
+                    throw new IllegalArgumentException("Couldn't read file x" );
+                }
+
+                //TODO more verification
+            }
+
+            //TODO check for dds files
+
+            animations.put(model.elementName, currentAnimations);
+        }
+
+        this.stageSettings = new StageSettings(this, lvlData);
+        this.lighting = new Lighting(this, lvlData);
+        this.music = new Music(this, lvlData);
+
+    }
 
     public Level(){
         super(null); //Root node

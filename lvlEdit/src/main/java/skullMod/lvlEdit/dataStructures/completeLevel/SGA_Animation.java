@@ -3,6 +3,8 @@ package skullMod.lvlEdit.dataStructures.completeLevel;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
 
 import javax.swing.tree.TreeNode;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 
 public class SGA_Animation extends NodeAdapter{
@@ -18,7 +20,8 @@ public class SGA_Animation extends NodeAdapter{
     }
 
     public Enumeration children() {
-        return null;
+        ArrayList<TreeNode> list = new ArrayList<>();
+        return Collections.enumeration(list);
     }
 
     public String toString(){

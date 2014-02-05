@@ -1,5 +1,6 @@
 package skullMod.lvlEdit.dataStructures.completeLevel;
 
+import skullMod.lvlEdit.dataStructures.LVL.LVL_File;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafAdapter;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafContentNode;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
@@ -20,6 +21,16 @@ public class Lighting extends NodeAdapter{
         //TODO arrays are no leafs
         this.directionalLights = new LeafContentNode<>(this,"Directional lights", new DirectionalLight[4]);
         this.pointLights = new LeafContentNode<>(this,"Point lights", new PointLight[4]);
+    }
+
+    public Lighting(TreeNode parent, LVL_File lvl){
+        super(parent);
+
+        AmbientLight ambientLight = new AmbientLight();
+
+        this.ambientLight = new LeafContentNode<>(this,"Ambient light", ambientLight);
+        this.directionalLights = new LeafContentNode<>(this,"Directional lights", directionalLights);
+        this.pointLights = new LeafContentNode<>(this,"Point lights", pointLights);
     }
 
     public Lighting(TreeNode parent, AmbientLight ambientLight, DirectionalLight[] directionalLights, PointLight[] pointLights){

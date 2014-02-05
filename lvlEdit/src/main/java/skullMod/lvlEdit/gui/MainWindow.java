@@ -268,6 +268,7 @@ public class MainWindow extends JFrame {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
          */
+        /*
         //String filePath = "/home/netbook/Working_files/Skullgirls_extracted/levels/rooftops_night_3d.lvl";
         String filePath = "C:/levels/temp/levels/class_notes_3d.lvl";
 
@@ -304,7 +305,7 @@ public class MainWindow extends JFrame {
         }
 
         LVL_File file = new LVL_File(attributes.toArray(new String[0]));
-
+        */
 
 
         ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
