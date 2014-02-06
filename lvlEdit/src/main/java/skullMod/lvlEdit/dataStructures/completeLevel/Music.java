@@ -22,6 +22,13 @@ public class Music extends NodeAdapter{
     public Music(TreeNode parent, LVL_File lvl){
         super(parent);
 
+        //TODO unify
+        this.musicIntro = new LeafContentNode<>(this,"Music intro", defaultSong);
+        this.interruptIntro = new LeafContentNode<>(this,"Interrupt intro", false);
+        this.musicLoop = new LeafContentNode<>(this,"Music loop", defaultSong);
+        this.musicOutro = new LeafContentNode<>(this,"Music outro", defaultSong);
+
+
         setMusic(MUSIC_TYPES.INTRO, lvl.musicIntro);
         setInterruptIntro(lvl.musicInterruptIntro);
         setMusic(MUSIC_TYPES.LOOP, lvl.musicLoop);
@@ -30,6 +37,14 @@ public class Music extends NodeAdapter{
 
     public Music(TreeNode parent, String musicIntro, String musicLoop, boolean interruptIntro, String musicOutro){
         super(parent);
+
+        //TODO unify
+        this.musicIntro = new LeafContentNode<>(this,"Music intro", defaultSong);
+        this.interruptIntro = new LeafContentNode<>(this,"Interrupt intro", false);
+        this.musicLoop = new LeafContentNode<>(this,"Music loop", defaultSong);
+        this.musicOutro = new LeafContentNode<>(this,"Music outro", defaultSong);
+
+
         setMusic(MUSIC_TYPES.INTRO, musicIntro);
         setInterruptIntro(interruptIntro);
         setMusic(MUSIC_TYPES.LOOP, musicLoop);

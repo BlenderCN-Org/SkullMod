@@ -39,7 +39,10 @@ public class Level extends NodeAdapter {
     public static final String sgsExtension = ".sgs.msb";
 
     public static void main(String[] args){
-        new Level("C:\\levels\\temp\\levels","class_notes_3d");
+        //WIN new Level("C:\\levels\\temp\\levels","class_notes_3d");
+        //UNIX new Level("/home/netbook/Working_files/Skullgirls_extracted/levels", "class_notes_3d");
+        new Level("/home/netbook/Working_files/Skullgirls_extracted/levels", "class_notes_3d");
+
     }
 
     public Level(String mainDirectory, String lvlName) throws IllegalArgumentException{
@@ -72,7 +75,7 @@ public class Level extends NodeAdapter {
         //Read lvl
         LVL_File lvlData = new LVL_File(LVL_File.prepareLVL(lvlFilePath));
         //Read sgi
-        SGI_File sgiData = null;
+        SGI_File sgiData;
         try {
             DataStreamIn dsi = new DataStreamIn(sgiFilePath);
             //TODO change to DataInputStream directly
@@ -125,6 +128,7 @@ public class Level extends NodeAdapter {
         this.lighting = new Lighting(this, lvlData);
         this.music = new Music(this, lvlData);
 
+        this.models = new Models(this, sgiData, models, animations);
     }
 
     public Level(){

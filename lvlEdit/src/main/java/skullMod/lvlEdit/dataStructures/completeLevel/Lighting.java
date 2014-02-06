@@ -1,6 +1,7 @@
 package skullMod.lvlEdit.dataStructures.completeLevel;
 
 import skullMod.lvlEdit.dataStructures.LVL.LVL_File;
+import skullMod.lvlEdit.dataStructures.LVL.LVL_Light;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafAdapter;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafContentNode;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
@@ -9,6 +10,8 @@ import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+
+import static skullMod.lvlEdit.dataStructures.LVL.LVL_Light.LightType.AMBIENT;
 
 public class Lighting extends NodeAdapter{
     private final LeafContentNode<AmbientLight> ambientLight;
@@ -26,11 +29,30 @@ public class Lighting extends NodeAdapter{
     public Lighting(TreeNode parent, LVL_File lvl){
         super(parent);
 
-        AmbientLight ambientLight = new AmbientLight();
+        AmbientLight ambientLight = null;
+        ArrayList<DirectionalLight> directionalLights = new ArrayList<>();
+        ArrayList<PointLight> pointLights = new ArrayList<>();
+
+        for(LVL_Light light : lvl.lights){
+            //TODO is float for rgb a good choice in LVL_Light?
+            switch(light.type){
+                case AMBIENT:
+                    ambientLight = new AmbientLight((int)light.r, (int)light.g, (int)light.b);
+                    break;
+                case DIRECTIONAL:
+                    directionalLights.add(new DirectionalLight((int) light.r, (int) light.g, (int) light.b, light.x, light.y, light.z));
+                    break;
+                case POINT:
+                    pointLights.add(new PointLight((int) light.r, (int) light.g, (int) light.b, light.x, light.y, light.z, light.pointLightRadiusInPx, light.neverCull ));
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown enum"); //TODO is this necessary
+            }
+        }
 
         this.ambientLight = new LeafContentNode<>(this,"Ambient light", ambientLight);
-        this.directionalLights = new LeafContentNode<>(this,"Directional lights", directionalLights);
-        this.pointLights = new LeafContentNode<>(this,"Point lights", pointLights);
+        this.directionalLights = new LeafContentNode<>(this,"Directional lights", directionalLights.toArray(new DirectionalLight[0]));
+        this.pointLights = new LeafContentNode<>(this,"Point lights", pointLights.toArray(new PointLight[0]));
     }
 
     public Lighting(TreeNode parent, AmbientLight ambientLight, DirectionalLight[] directionalLights, PointLight[] pointLights){

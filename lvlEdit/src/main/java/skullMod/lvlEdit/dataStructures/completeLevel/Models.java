@@ -1,10 +1,14 @@
 package skullMod.lvlEdit.dataStructures.completeLevel;
 
+import skullMod.lvlEdit.dataStructures.SGA.SGA_File;
+import skullMod.lvlEdit.dataStructures.SGI.SGI_File;
+import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
 
 import javax.swing.tree.TreeNode;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Models extends NodeAdapter {
@@ -26,6 +30,12 @@ public class Models extends NodeAdapter {
         super(parent);
         this.models = new LinkedList<>();
         this.models.add(new SGM_Model(this));
+    }
+
+    public Models(TreeNode parent, Level level, SGI_File sgiData, HashMap<String, SGM_File> models, HashMap<String, HashMap<String,SGA_File>> animations) {
+        super(parent);
+
+        this.models = new LinkedList<>();
     }
 
     public String toString(){
