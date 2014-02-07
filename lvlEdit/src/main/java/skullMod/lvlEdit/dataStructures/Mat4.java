@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 /**
  * A 4x4 matrix
+ *
+ * COLUMN major?
  */
 public class Mat4 implements Serializable {
     float[] matrix = new float[16]; //Goes from top to bottom then one right
@@ -36,5 +38,18 @@ public class Mat4 implements Serializable {
         for(float component : matrix){
             s.writeFloat(component);
         }
+    }
+
+    public static String toString(Mat4 matrix){
+        String result = "";
+
+        float[] matrixFloats = matrix.get();
+
+        result += matrixFloats[0] + " " + matrixFloats[4] + " " + matrixFloats[8] + " " + matrixFloats[12];
+        result += matrixFloats[1] + " " + matrixFloats[5] + " " + matrixFloats[9] + " " + matrixFloats[13];
+        result += matrixFloats[2] + " " + matrixFloats[6] + " " + matrixFloats[10] + " " + matrixFloats[14];
+        result += matrixFloats[3] + " " + matrixFloats[7] + " " + matrixFloats[11] + " " + matrixFloats[15];
+
+        return result;
     }
 }

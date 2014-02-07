@@ -17,6 +17,11 @@ import skullMod.lvlEdit.gui.rightPane.RightJPane;
 import skullMod.lvlEdit.utility.Utility;
 
 import javax.imageio.ImageIO;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLProfile;
+import javax.media.opengl.awt.GLCanvas;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultTreeModel;
@@ -156,32 +161,6 @@ public class MainWindow extends JFrame {
          */
         contentPane = new JTabbedPane();
 
-        //FIXME currently a GL3 context is requested, find a "softer" way to get the desired context
-        /*
-        GLProfile glprofile = GLProfile.get(GLProfile.GL3);
-        GLCapabilities glcapabilities = new GLCapabilities( glprofile );
-        final GLCanvas glcanvas = new GLCanvas( glcapabilities );
-        glcanvas.setSize(300,300);
-        glcanvas.addGLEventListener( new GLEventListener() {
-
-            @Override
-            public void reshape( GLAutoDrawable glautodrawable, int xPos, int y, int width, int height ) {
-                OneTriangle.setup(glautodrawable.getGL().getGL3(), width, height);
-            }
-
-            public void init( GLAutoDrawable glautodrawable ) {
-            }
-
-
-            public void dispose( GLAutoDrawable glautodrawable ) {
-            }
-
-            public void display( GLAutoDrawable glautodrawable ) {
-                OneTriangle.render( glautodrawable.getGL().getGL3(), glautodrawable.getWidth(), glautodrawable.getHeight() );
-            }
-        });
-        */
-
         CentralDataObject.scenePanel = new JPanel();
 
         contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
@@ -268,54 +247,18 @@ public class MainWindow extends JFrame {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
          */
-        /*
-        //String filePath = "/home/netbook/Working_files/Skullgirls_extracted/levels/rooftops_night_3d.lvl";
-        String filePath = "C:/levels/temp/levels/class_notes_3d.lvl";
-
-        String lvlString = null;
-
-        try {
-            lvlString = new String(Files.readAllBytes(Paths.get(filePath)), "US-ASCII");
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        String[] lvlLines = lvlString.split("[\\r\\n]+");
 
 
-
-
-        for(int i = 0;i < lvlLines.length;i++){
-            String line = lvlLines[i];
-
-
-            line = line.replaceFirst("#.*",""); //Remove comments
-            line = line.replaceAll(":",""); //Remove ":", this makes wrong files parsable theoretically, meh...
-            System.out.println(line);
-            lvlLines[i] = line.trim().replaceAll("\\s+", " ");
-        }
-
-        LinkedList<String> attributes = new LinkedList<>();
-        for(int i = 0;i < lvlLines.length;i++){
-            String lvlLine = lvlLines[i];
-
-            if(!lvlLine.equals("") && !lvlLine.startsWith("#")){
-                attributes.addLast(lvlLine);
-            }
-        }
-
-        LVL_File file = new LVL_File(attributes.toArray(new String[0]));
-        */
-
-
-        ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
+        ddsPanel.changeImage("/home/netbook/Working_files/Skullgirls_extracted/levels/textures/class_notes_3d.dds");
+        //ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
         //ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\innsmouth_day_fgnpc_02.dds");
 
         int width = ddsPanel.getImage().getWidth();
         int height = ddsPanel.getImage().getHeight();
 
         try {
-            DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\class_notes_3d\\class_notes_npcs_01_shape.sgm.msb");
+            DataStreamIn dsi = new DataStreamIn("/home/netbook/Working_files/Skullgirls_extracted/levels/class_notes_3d/class_notes_npcs_01_shape.sgm.msb");
+            //DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\class_notes_3d\\class_notes_npcs_01_shape.sgm.msb");
             //DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\innsmouth_day_3d\\innsmouth_minneteShape.sgm.msb");
 
             SGM_File sgm = new SGM_File(dsi.s);
