@@ -41,7 +41,7 @@ public class Level extends NodeAdapter {
     public static void main(String[] args){
         //WIN new Level("C:\\levels\\temp\\levels","class_notes_3d");
         //UNIX new Level("/home/netbook/Working_files/Skullgirls_extracted/levels", "class_notes_3d");
-        new Level("/home/netbook/Working_files/Skullgirls_extracted/levels", "class_notes_3d");
+        new Level("C:\\levels\\temp\\levels","class_notes_3d");
 
     }
 
@@ -119,7 +119,7 @@ public class Level extends NodeAdapter {
                 //TODO more verification
             }
 
-            //TODO check for dds files
+            //TODO check for dds files and music files
 
             animations.put(model.elementName, currentAnimations);
         }
@@ -129,6 +129,8 @@ public class Level extends NodeAdapter {
         this.music = new Music(this, lvlData);
 
         this.models = new Models(this, sgiData, models, animations);
+
+
     }
 
     public Level(){

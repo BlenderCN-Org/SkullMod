@@ -22,7 +22,7 @@ public class CenterSelectorPanel extends JPanel {
         //sceneTree.expandRow(0);
         //sceneTree.setRootVisible(false);
 
-        JTree levelTree =new JTree(new Level());
+        JTree levelTree =new JTree(new Level("C:\\levels\\temp\\levels","class_notes_3d"));
         levelTree.addMouseListener(new RightClickListener(levelTree));
         this.add(new JScrollPane(levelTree),SCENE.toString());
         this.add(new JScrollPane(CentralDataObject.modelTree),MODEL.toString());
