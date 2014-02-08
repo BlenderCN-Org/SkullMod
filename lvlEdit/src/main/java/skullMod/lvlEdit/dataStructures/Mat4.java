@@ -23,6 +23,10 @@ public class Mat4 implements Serializable {
         set(matrix);
     }
 
+    public Mat4() {
+        this.matrix = new float[16];
+    }
+
     public float[] get(){
         return matrix.clone();
     }
@@ -32,6 +36,14 @@ public class Mat4 implements Serializable {
         if(matrix.length != 16){ throw new IllegalArgumentException("Given matrix is not a 4x4 matrix, length is: " + matrix.length); }
         //TODO can one entry be null?
         this.matrix = matrix.clone();
+    }
+
+    public static Mat4 readFromStream(DataInputStream s) throws IOException{
+        float[] result = new float[16];
+        for(int i = 0;i < 16;i++){
+            result[i] = s.readFloat();
+        }
+        return new Mat4(result);
     }
 
     public void writeToStream(DataOutputStream s) throws IOException{

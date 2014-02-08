@@ -2,6 +2,15 @@ package skullMod.lvlEdit.openGL;
 
 import skullMod.lvlEdit.dataStructures.Mat4;
 
+import javax.media.opengl.GL;
+import javax.media.opengl.GL3;
+
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+
+import static javax.media.opengl.GL.*;
+
 public final class Mini_GLUT {
     private Mini_GLUT(){}
 
@@ -46,4 +55,103 @@ public final class Mini_GLUT {
     }
 
 
+    public static void checkGlError(GL gl) {
+        ArrayList<String> errorList = new ArrayList<>();
+
+        int errorID = gl.glGetError();
+
+        String currentError;
+
+        while(errorID != GL_NO_ERROR) {
+            switch(errorID) {
+                case GL_INVALID_OPERATION:
+                    currentError = "INVALID_OPERATION";
+                    break;
+                case GL_INVALID_ENUM:
+                    currentError = "INVALID_ENUM";
+                    break;
+                case GL_INVALID_VALUE:
+                    currentError = "INVALID_VALUE";
+                    break;
+                case GL_OUT_OF_MEMORY:
+                    currentError = "OUT_OF_MEMORY";
+                    break;
+                case GL_INVALID_FRAMEBUFFER_OPERATION:
+                    currentError = "INVALID_FRAMEBUFFER_OPERATION";
+                    break;
+                default:
+                    currentError = "Unknown error";
+            }
+
+            //TODO no robust enough
+            System.out.println(currentError);
+
+
+
+            errorID = gl.glGetError();
+        }
+
+        if(errorList.size() > 0){ throw new OGLException(errorList.toArray(new String[errorList.size()])); }
+    }
+
+    public static String checkGLShaderCompileError(GL gl, int shaderID){
+        GL3 gl3 = gl.getGL3();
+
+        int status[] = { 0 };
+        gl3.glGetShaderiv(shaderID,GL3.GL_COMPILE_STATUS, status,0);
+
+        if (status[0] == GL_FALSE){
+            int[] val = { 0 };
+            gl3.glGetShaderiv(shaderID, GL3.GL_INFO_LOG_LENGTH, val, 0);
+            int length = val[0];
+
+            byte[] log = new byte[length];
+            gl3.glGetShaderInfoLog(shaderID, length, val, 0, log, 0);
+            return new String(log);
+        }else{
+            return null;
+        }
+    }
+
+    public static String checkGLShaderLinkError(GL gl, int shaderProgramID){
+        GL3 gl3 = gl.getGL3();
+        IntBuffer linkSuccess = IntBuffer.allocate(1);
+        gl3.glGetProgramiv(shaderProgramID, GL3.GL_LINK_STATUS, linkSuccess);
+
+
+        if(linkSuccess.array()[0] == GL3.GL_FALSE){
+            IntBuffer infoLogLength = IntBuffer.allocate(1);
+            gl3.glGetProgramiv(shaderProgramID, GL3.GL_INFO_LOG_LENGTH, infoLogLength);
+            int size = infoLogLength.get(0);
+
+            String exceptionText;
+            if (size > 0){
+                ByteBuffer byteBuffer = ByteBuffer.allocate(size);
+                gl3.glGetProgramInfoLog(shaderProgramID, size, infoLogLength, byteBuffer);
+                exceptionText = "Program link error: " + new String(byteBuffer.array());
+            }else{
+                exceptionText = "Unknown shader link error, no info log provided";
+            }
+            return exceptionText;
+        }else{
+            return null;
+        }
+    }
+
+
+
+
+    public static void buildProjectionMatrix(float fov, float ratio, float nearP, float farP, Mat4 projectionMatrix) {
+        float[] result = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 }; //Start with identity matrix
+        float f =  (float) (1.0f / Math.tan(fov * (Math.PI / 360.0)));
+
+        result[0] = f / ratio;
+        result[1 * 4 + 1] = f;
+        result[2 * 4 + 2] = (farP + nearP) / (nearP - farP);
+        result[3 * 4 + 2] = (2.0f * farP * nearP) / (nearP - farP);
+        result[2 * 4 + 3] = -1.0f;
+        result[3 * 4 + 3] = 0.0f;
+
+        projectionMatrix.set(result);
+    }
 }
