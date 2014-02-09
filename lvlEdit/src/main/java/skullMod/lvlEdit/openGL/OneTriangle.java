@@ -45,10 +45,13 @@ public class OneTriangle {
 
         gl3.glBindVertexArray(sampleVAO.vaoID);
         gl3.glDrawElements(GL.GL_TRIANGLES, 3,GL.GL_UNSIGNED_SHORT, 0);
+
+        System.out.println(Mini_GLUT.getUniformsInfo(gl3, sampleVAO.shaderProgram.shaderProgramID));
         gl3.glBindVertexArray(0);
         gl3.glUseProgram(0);
 
 
         Mini_GLUT.checkGlError(gl3.getGL());
+
     }
 }

@@ -5,10 +5,7 @@ import skullMod.lvlEdit.dataStructures.Mat4;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -58,6 +55,20 @@ public final class Mini_GLUT {
         return matrixArray;
     }
 
+
+    public static void buildProjectionMatrix(float fov, float ratio, float nearP, float farP, Mat4 projectionMatrix) {
+        float[] result = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 }; //Start with identity matrix
+        float f =  (float) (1.0f / Math.tan(fov * (Math.PI / 360.0)));
+
+        result[0] = f / ratio;
+        result[1 * 4 + 1] = f;
+        result[2 * 4 + 2] = (farP + nearP) / (nearP - farP);
+        result[3 * 4 + 2] = (2.0f * farP * nearP) / (nearP - farP);
+        result[2 * 4 + 3] = -1.0f;
+        result[3 * 4 + 3] = 0.0f;
+
+        projectionMatrix.set(result);
+    }
 
     public static void checkGlError(GL gl) {
         ArrayList<String> errorList = new ArrayList<>();
@@ -142,25 +153,12 @@ public final class Mini_GLUT {
         }
     }
 
-
-
-
-    public static void buildProjectionMatrix(float fov, float ratio, float nearP, float farP, Mat4 projectionMatrix) {
-        float[] result = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 }; //Start with identity matrix
-        float f =  (float) (1.0f / Math.tan(fov * (Math.PI / 360.0)));
-
-        result[0] = f / ratio;
-        result[1 * 4 + 1] = f;
-        result[2 * 4 + 2] = (farP + nearP) / (nearP - farP);
-        result[3 * 4 + 2] = (2.0f * farP * nearP) / (nearP - farP);
-        result[2 * 4 + 3] = -1.0f;
-        result[3 * 4 + 3] = 0.0f;
-
-        projectionMatrix.set(result);
-    }
-
-
-    public static String loadFileAsString(String fileName) throws IOException {
+    /**
+     * Load text file (or shaders)
+     * @param fileName
+     * @return
+     */
+    public static String loadFileAsString(String fileName) {
         try(BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
@@ -171,6 +169,79 @@ public final class Mini_GLUT {
                 line = br.readLine();
             }
             return sb.toString();
+        }catch(FileNotFoundException fnfe){
+            throw new OGLException("File " + fileName + " not found");
+        }catch(IOException ioe){
+            throw new OGLException("IO exception for file " + fileName);
         }
+    }
+
+    public static String getAttributesInfo(GL3 gl3, int shaderProgramID){
+        String result = "The program with the id " + shaderProgramID + " contains the following attributes: ";
+
+        int nOfActiveAttributes = -1;
+        { //Query number of active attributes
+            IntBuffer nOfActiveAttributesBuffer = IntBuffer.allocate(1);
+            gl3.glGetProgramiv( shaderProgramID, GL3.GL_ACTIVE_ATTRIBUTES,nOfActiveAttributesBuffer);
+            nOfActiveAttributes = nOfActiveAttributesBuffer.get(0);
+        }
+
+        for(int i=0;i < nOfActiveAttributes;i++){
+            IntBuffer lengthBuffer = IntBuffer.allocate(1);
+            ByteBuffer nameBuffer = ByteBuffer.allocate(100);
+            IntBuffer sizeBuffer = IntBuffer.allocate(1);
+            IntBuffer typeBuffer = IntBuffer.allocate(1);
+            gl3.glGetActiveAttrib(shaderProgramID,i,100,lengthBuffer,sizeBuffer,typeBuffer,nameBuffer);
+
+
+            result += "\n";
+        }
+
+        return result;
+    }
+
+    /**
+     * Get textual info about the uniforms of a LINKED shader program
+     *
+     * @param gl3 GL3 instance
+     * @param shaderProgramID The id of the ALREADY LINKED shader program
+     * @return A textual description of all unfiforms and their types
+     */
+    public static String getUniformsInfo(GL3 gl3, int shaderProgramID){
+        String result = "The program with the id " + shaderProgramID + " contains the following uniforms: ";
+
+        int nOfActiveUniforms = -1; //TODO query for errors in the next block?
+        { //Query number of active uniforms
+            IntBuffer nOfActiveUniformsBuffer = IntBuffer.allocate(1);
+            gl3.glGetProgramiv( shaderProgramID, GL3.GL_ACTIVE_UNIFORMS, nOfActiveUniformsBuffer);
+            nOfActiveUniforms = nOfActiveUniformsBuffer.get(0);
+        }
+
+        for(int i=0;i < nOfActiveUniforms;++i) {
+            //----- WORKAROUND ZONE
+            //FIXME JOGL does not accept null as the last param of glGetActiveUniformName but should, file bug report. http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniformName.xml
+            //Also see http://stackoverflow.com/questions/12555165/incorrect-value-from-glgetprogramivprogram-gl-active-uniform-max-length-outpa
+            IntBuffer nameLengthBuffer = IntBuffer.allocate(1);
+            ByteBuffer nameLengthTempBuffer = ByteBuffer.allocate(0); //An empty buffer is required for JOGL, if null is used the jvm crashes
+            gl3.glGetActiveUniformName(shaderProgramID, i, 100 /* maximum length of uniform name this call will accept */, nameLengthBuffer, nameLengthTempBuffer);
+            //-----
+
+            int nameLength = nameLengthBuffer.array()[0] + 1; //glGetActiveUniforms adds a native null terminator at the end of the byte buffer, we have to make room for it and trim it off later
+
+            IntBuffer sizeBuffer = IntBuffer.allocate(1);
+            IntBuffer typeBuffer = IntBuffer.allocate(1);
+            ByteBuffer nameBuffer = ByteBuffer.allocate(nameLength+1); // TODO make this into a sane value with querying
+            gl3.glGetActiveUniform(shaderProgramID, i,nameLength+1,(IntBuffer)null,sizeBuffer,typeBuffer,nameBuffer);
+
+            String uniformName = new String(nameBuffer.array()).trim(); //Trimming tailing null bytes off
+            int location = gl3.glGetUniformLocation( shaderProgramID, uniformName );
+            int uniformSize = sizeBuffer.array()[0]; //http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
+            int typeIndex = typeBuffer.array()[0]; //TODO translate with a table http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
+
+            result += "\n(" + (i+1) + " of " + nOfActiveUniforms + ") Name:" + uniformName + " Location: " + location + " Uniform size:" + uniformSize + " Type index: " + typeIndex;
+        }
+
+        Mini_GLUT.checkGlError(gl3.getGL());  //Just to feel save
+        return result;
     }
 }

@@ -42,7 +42,6 @@ public class Level extends NodeAdapter {
         //WIN new Level("C:\\levels\\temp\\levels","class_notes_3d");
         //UNIX new Level("/home/netbook/Working_files/Skullgirls_extracted/levels", "class_notes_3d");
         new Level("C:\\levels\\temp\\levels","class_notes_3d");
-
     }
 
     public Level(String mainDirectory, String lvlName) throws IllegalArgumentException{

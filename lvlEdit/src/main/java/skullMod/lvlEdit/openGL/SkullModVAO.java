@@ -39,8 +39,9 @@ public class SkullModVAO {
                     "void main(){\n" +
                     " gl_Position = p * vec4(pos, 1.0);\n" +
                     "}";
-            String fragmentShaderSource = "void main(){\n" +
-                    " gl_FragColor = vec4(1.0,0.0,0.0,0.5);\n" +
+            String fragmentShaderSource = "#version 150\n out vec4 fragmentColor;" +
+                    "void main(){\n" +
+                    " fragmentColor = vec4(1.0,0.0,0.0,0.5);\n" +
                     "}";
 
 
