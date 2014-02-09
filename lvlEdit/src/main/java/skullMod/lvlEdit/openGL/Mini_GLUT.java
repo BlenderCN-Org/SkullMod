@@ -195,6 +195,33 @@ public final class Mini_GLUT {
 
 
             result += "\n";
+
+
+            #version 150
+
+            uniform mat4 viewMatrix, projMatrix;
+
+            in vec4 position;
+            in vec3 color;
+
+            out vec3 Color;
+
+            void main()
+            {
+                Color = color;
+                gl_Position = projMatrix * viewMatrix * position ;
+            }
+
+
+            #version 150
+
+            in vec3 Color;
+            out vec4 outputF;
+
+            void main()
+            {
+                outputF = vec4(Color,1.0);
+            }
         }
 
         return result;
