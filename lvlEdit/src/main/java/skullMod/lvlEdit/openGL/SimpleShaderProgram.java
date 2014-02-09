@@ -1,5 +1,7 @@
 package skullMod.lvlEdit.openGL;
 
+import skullMod.lvlEdit.dataStructures.Mat4;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import java.io.File;
@@ -67,7 +69,7 @@ public class SimpleShaderProgram {
 
         //CHECK LINKING STATUS FOR ERRORS
         String linkerErrorLog = checkGLShaderLinkError(gl3, shaderProgramID);
-        if(linkerErrorLog == null){ throw new OGLException(linkerErrorLog); }
+        if(linkerErrorLog != null){ throw new OGLException(linkerErrorLog); }
 
         //Not required for normal operations. Just for debugging.
         this.uniforms = new ShaderUniforms(gl3, shaderProgramID, uniforms);
@@ -103,17 +105,43 @@ public class SimpleShaderProgram {
         public ShaderAttributes(GL3 gl, int shaderProgramID, String[] shaderAttributes){
             this.attributes = new HashMap<>();
             for(int i = 0;i < shaderAttributes.length;i++){
-                attributes.put(shaderAttributes[i], gl.glGetAttribLocation(shaderProgramID, shaderAttributes[i]));
+                int location = gl.glGetAttribLocation(shaderProgramID, shaderAttributes[i]);
+                if(location == -1){ throw new OGLException("Attribute is not found within shader: " + shaderAttributes[i]); }
+                attributes.put(shaderAttributes[i], location);
+
             }
+        }
+
+        public String toString(){
+            String result = "ShaderAttributes are: \n";
+            String[] keyArray = attributes.keySet().toArray(new String[0]);
+            for(String key : keyArray){
+
+                result += "Key: " + key + " Value: " + attributes.get(key) + "\n";
+            }
+            return result;
         }
     }
     public static class ShaderUniforms{
-        private final HashMap<String,Integer> uniforms;
+        public final HashMap<String,Integer> uniforms;
         public ShaderUniforms(GL3 gl, int shaderProgramID, String[] shaderUniforms){
             uniforms = new HashMap<>();
             for(int i  = 0;i < shaderUniforms.length;i++){
-                uniforms.put(shaderUniforms[i], gl.glGetUniformLocation(shaderProgramID,shaderUniforms[i]));
+                int location = gl.glGetUniformLocation(shaderProgramID, shaderUniforms[i]);
+                if(location == -1){ throw new OGLException("Uniform is not found within shader: " + shaderUniforms[i]); }
+                uniforms.put(shaderUniforms[i], location);
             }
+
+        }
+
+
+        public String toString(){
+            String result = "ShaderUniforms are: \n";
+
+            for(String key : uniforms.keySet().toArray(new String[0])){
+                result += "Key: " + key + " Value: " + uniforms.get(key) + "\n";
+            }
+            return result;
         }
     }
 

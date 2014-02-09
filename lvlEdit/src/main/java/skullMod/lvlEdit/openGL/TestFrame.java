@@ -34,7 +34,7 @@ public class TestFrame extends JFrame{
         canvas.setSize(300,300);
 
 
-        canvas.addGLEventListener(new GL_listener(canvas));
+        canvas.addGLEventListener(new GL_listener());
         return canvas;
     }
 }

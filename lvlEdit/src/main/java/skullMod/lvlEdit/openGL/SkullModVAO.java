@@ -18,9 +18,11 @@ import java.nio.ShortBuffer;
 public class SkullModVAO {
     private final int NO_BUFFER = 0;
 
-    private final int vaoID;
+    public final int vaoID;
     public VBO vbo;
     public IBO ibo;
+
+    public final SimpleShaderProgram shaderProgram;
 
     public final boolean useBones;
 
@@ -30,6 +32,27 @@ public class SkullModVAO {
         this.useBones = useBones;
 
         GL3 gl3 = gl.getGL3();
+
+        { //Create Shader
+            String vertexShaderSource = "attribute vec3 pos;\n" +
+                    "uniform mat4 p;\n" +
+                    "void main(){\n" +
+                    " gl_Position = p * vec4(pos, 1.0);\n" +
+                    "}";
+            String fragmentShaderSource = "void main(){\n" +
+                    " gl_FragColor = vec4(1.0,0.0,0.0,0.5);\n" +
+                    "}";
+
+
+
+            String[] attributes = new String[1];
+            attributes[0] = "pos";
+
+            String[] uniforms = new String[1];
+            uniforms[0] = "p";
+
+            shaderProgram = new SimpleShaderProgram("SAMPLE SHADER", vertexShaderSource, fragmentShaderSource,attributes, uniforms,gl);
+        }
 
 
         { //Generate VAO
@@ -66,6 +89,9 @@ public class SkullModVAO {
         gl3.glBindVertexArray(vaoID);
 
         gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER,vbo.id);
+        //TODO oh why, this seems chaotic how to bind directly to the attribute instead of 0
+        gl3.glEnableVertexAttribArray(0);
+        gl3.glVertexAttribPointer(0,3,GL3.GL_FLOAT,false,Float.SIZE*3,0);
 
         gl3.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, ibo.id);
 

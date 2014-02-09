@@ -57,11 +57,15 @@ public class Mat4 implements Serializable {
 
         float[] matrixFloats = matrix.get();
 
-        result += matrixFloats[0] + " " + matrixFloats[4] + " " + matrixFloats[8] + " " + matrixFloats[12];
-        result += matrixFloats[1] + " " + matrixFloats[5] + " " + matrixFloats[9] + " " + matrixFloats[13];
-        result += matrixFloats[2] + " " + matrixFloats[6] + " " + matrixFloats[10] + " " + matrixFloats[14];
-        result += matrixFloats[3] + " " + matrixFloats[7] + " " + matrixFloats[11] + " " + matrixFloats[15];
+        result += matrixFloats[0] + " " + matrixFloats[4] + " " + matrixFloats[8] + " " + matrixFloats[12] + "\n";
+        result += matrixFloats[1] + " " + matrixFloats[5] + " " + matrixFloats[9] + " " + matrixFloats[13] + "\n";
+        result += matrixFloats[2] + " " + matrixFloats[6] + " " + matrixFloats[10] + " " + matrixFloats[14] + "\n";
+        result += matrixFloats[3] + " " + matrixFloats[7] + " " + matrixFloats[11] + " " + matrixFloats[15] + "\n";
 
         return result;
+    }
+
+    public String toString(){
+        return toString(this);
     }
 }

@@ -5,6 +5,10 @@ import skullMod.lvlEdit.dataStructures.Mat4;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -153,5 +157,20 @@ public final class Mini_GLUT {
         result[3 * 4 + 3] = 0.0f;
 
         projectionMatrix.set(result);
+    }
+
+
+    public static String loadFileAsString(String fileName) throws IOException {
+        try(BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            return sb.toString();
+        }
     }
 }
