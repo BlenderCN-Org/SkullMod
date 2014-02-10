@@ -197,32 +197,48 @@ public final class Mini_GLUT {
             result += "\n";
 
 
-            #version 150
-
-            uniform mat4 viewMatrix, projMatrix;
-
-            in vec4 position;
-            in vec3 color;
-
-            out vec3 Color;
-
-            void main()
-            {
-                Color = color;
-                gl_Position = projMatrix * viewMatrix * position ;
-            }
-
-
-            #version 150
-
-            in vec3 Color;
-            out vec4 outputF;
-
-            void main()
-            {
-                outputF = vec4(Color,1.0);
-            }
         }
+
+        return result;
+    }
+
+    public String getVendor(GL gl3){
+        return gl3.glGetString(GL_VENDOR);
+    }
+
+    public static String getRendererName(GL3 gl3){
+        return gl3.glGetString(GL3.GL_RENDERER);
+    }
+
+    public static String getGLVersionInfoString(GL3 gl3){
+        return gl3.glGetString(GL_VERSION);
+    }
+
+    public static int getGLMajorVersion(GL3 gl3){
+        IntBuffer majorVersion = IntBuffer.allocate(1);
+        gl3.glGetIntegerv(GL3.GL_MAJOR_VERSION,majorVersion);
+        return majorVersion.get(0);
+    }
+
+    public static int getGLMinorVersion(GL3 gl3){
+        IntBuffer minorVersion = IntBuffer.allocate(1);
+        gl3.glGetIntegerv(GL3.GL_MINOR_VERSION,minorVersion);
+        return minorVersion.get(0);
+    }
+
+    public static String getGLVersion(GL3 gl3){
+        return getGLMajorVersion(gl3) + "." + getGLMinorVersion(gl3);
+    }
+
+
+    public static String[] getShadingLanguageVersions(GL3 gl3){
+        String[] result = new String[0];
+
+
+
+        //TODO WRITE ME
+
+
 
         return result;
     }
