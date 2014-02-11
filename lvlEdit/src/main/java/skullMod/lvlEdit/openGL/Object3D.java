@@ -4,7 +4,6 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 
 /**
  * Limitations
@@ -15,46 +14,23 @@ import java.nio.ShortBuffer;
  */
 
 /** Vertex Array Object only for the specific use cases for this tool */
-public class SkullModVAO {
+public class Object3D {
     private final int NO_BUFFER = 0;
 
     public final int vaoID;
     public VBO vbo;
     public IBO ibo;
 
-    public final SimpleShaderProgram shaderProgram;
-
     public final boolean useBones;
 
     private boolean deleted = false;
 
-    public SkullModVAO(GL gl, boolean useBones, FloatBuffer vboData, ShortBuffer iboData){
+    //TODO shaderProgramID should be removed
+    //TODO change vboColorData to iboData after triangle
+    public Object3D(GL gl, boolean useBones, FloatBuffer vboData, FloatBuffer vboColorData, int shaderProgramID){
         this.useBones = useBones;
 
         GL3 gl3 = gl.getGL3();
-
-        { //Create Shader
-            String vertexShaderSource = "attribute vec3 pos;\n" +
-                    "uniform mat4 p;\n" +
-                    "void main(){\n" +
-                    " gl_Position = p * vec4(pos, 1.0);\n" +
-                    "}";
-            String fragmentShaderSource = "#version 150\n out vec4 fragmentColor;" +
-                    "void main(){\n" +
-                    " fragmentColor = vec4(1.0,0.0,0.0,0.5);\n" +
-                    "}";
-
-
-
-            String[] attributes = new String[1];
-            attributes[0] = "pos";
-
-            String[] uniforms = new String[1];
-            uniforms[0] = "p";
-
-            shaderProgram = new SimpleShaderProgram("SAMPLE SHADER", vertexShaderSource, fragmentShaderSource,attributes, uniforms,gl);
-        }
-
 
         { //Generate VAO
             IntBuffer vaos = IntBuffer.allocate(1);
@@ -62,6 +38,11 @@ public class SkullModVAO {
 
             this.vaoID = vaos.array()[0];
         }
+
+        //Bind VAO, all states until unbinding the vao are "recorded" (vbo attributes as well) //TODO are they?
+        //(the states are saved, no actual replication is done when binding it again)
+        //Things that are not bound (non extensive list): shaders
+        gl3.glBindVertexArray(this.vaoID);
 
         { //Generate VBO and IBO, only one gen buffers is required but for better readability this is done using two calls
             IntBuffer vbos = IntBuffer.allocate(1);
@@ -72,34 +53,54 @@ public class SkullModVAO {
             this.ibo = new IBO(ibos.array()[0]);
         }
 
+        //TODO remove
+        int vertexLoc = gl3.glGetAttribLocation(shaderProgramID, "position");
+        int colorLoc = gl3.glGetAttribLocation(shaderProgramID, "color");
+
+
+
         { //Bind and fill VBO
-            gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER,vbo.id);
-            //Get data from outside source (the parameters of this constructor)
-            gl3.glBufferData(GL3.GL_ARRAY_BUFFER, vboData.array().length * Float.SIZE, vboData, GL.GL_STATIC_DRAW);
+            gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, vbo.id);
+            gl3.glBufferData(GL3.GL_ARRAY_BUFFER, 12 * Float.SIZE / 8, vboData, GL.GL_STATIC_DRAW);
+
+            //TODO fixed code
+
+
+            gl3.glEnableVertexAttribArray(vertexLoc);
+            gl3.glVertexAttribPointer(vertexLoc, 4, GL3.GL_FLOAT, false,0,0);
+
+
+
+
+
+            gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, ibo.id);
+            gl3.glBufferData(GL3.GL_ARRAY_BUFFER, 12 * Float.SIZE / 8, vboColorData, GL3.GL_STATIC_DRAW);
+
+            gl3.glEnableVertexAttribArray(colorLoc);
+            gl3.glVertexAttribPointer(colorLoc, 4, GL3.GL_FLOAT, false, 0,0);
+
         }
 
+        /*
         { //Bind and fill IBO
-            gl3.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER,ibo.id);
-            gl3.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, iboData.array().length * Short.SIZE, iboData, GL.GL_STATIC_DRAW);
+            gl3.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, ibo.id);
+            gl3.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, iboData.array().length * Float.SIZE, iboData, GL.GL_STATIC_DRAW);
+
+            //TODO fixed code
+
         }
+        */
 
-        //Bind VAO, all states until unbinding the vao are "recorded" (vbo attributes as well) //TODO are they?
-        //(the states are saved, no actual replication is done when binding it again)
-        //Things that are not bound (non extensive list): shaders
-        //TODO is binding the buffers again (see above binding) required?
-        gl3.glBindVertexArray(vaoID);
 
-        gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER,vbo.id);
-        //TODO oh why, this seems chaotic how to bind directly to the attribute instead of 0
-        gl3.glEnableVertexAttribArray(0);
-        gl3.glVertexAttribPointer(0,3,GL3.GL_FLOAT,false,Float.SIZE*3,0);
 
-        gl3.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, ibo.id);
+
 
         //Unbind VAO, VBO, IBO TODO is the VBO and IBO unbinding necessary?
+        /*
         gl3.glBindVertexArray(NO_BUFFER);
         gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, NO_BUFFER);
         gl3.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, NO_BUFFER);
+        */
     }
 
     public void delete(GL gl){

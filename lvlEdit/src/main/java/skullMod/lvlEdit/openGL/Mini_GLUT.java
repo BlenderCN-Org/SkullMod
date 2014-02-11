@@ -1,5 +1,6 @@
 package skullMod.lvlEdit.openGL;
 
+import com.sun.istack.internal.Nullable;
 import skullMod.lvlEdit.dataStructures.Mat4;
 
 import javax.media.opengl.GL;
@@ -286,5 +287,26 @@ public final class Mini_GLUT {
 
         Mini_GLUT.checkGlError(gl3.getGL());  //Just to feel save
         return result;
+    }
+
+    public static void changeViewport(GL3 gl3, int width, int height){
+        //Disallow 0 width or height (1x1 is the minimal size of a viewport)
+        if(width <= 0){ width = 1; }
+        if(height <= 0){ height = 1; }
+
+        gl3.glViewport( 0, 0, width, height );
+    }
+
+    public static Mat4 recalculateProjectionMatrix(int width, int height, float fieldOfView, float zNear, float zFar,  @Nullable Mat4 projectionMatrix){
+        if(projectionMatrix == null){ projectionMatrix = new Mat4(); }
+
+        //Disallow 0 width or height (1x1 is the minimal size of a viewport)
+        if(width <= 0){ width = 1; }
+        if(height <= 0){ height = 1; }
+
+        float ratio = (1.0f * width) / height;
+
+        Mini_GLUT.buildProjectionMatrix(fieldOfView, ratio, zNear, zFar, projectionMatrix);
+        return projectionMatrix;
     }
 }

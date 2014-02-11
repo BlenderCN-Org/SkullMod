@@ -10,8 +10,9 @@ import java.nio.ShortBuffer;
 
 
 public class OneTriangle {
+    /*
     public static Mat4 projectionMatrix;
-    public static SkullModVAO sampleVAO;
+    public static Object3D sampleVAO;
     protected static void setup( GL3 gl3, int width, int height ) {
         gl3.glViewport( 0, 0, width, height );
         float ratio = (1.0f * width) / height;
@@ -33,7 +34,7 @@ public class OneTriangle {
 
 
 
-        sampleVAO = new SkullModVAO(gl3.getGL(), false, vertexData, iboData);
+        sampleVAO = new Object3D(gl3.getGL(), false, vertexData, iboData);
     }
 
     protected static void render( GL3 gl3, int width, int height ) {
@@ -54,4 +55,5 @@ public class OneTriangle {
         Mini_GLUT.checkGlError(gl3.getGL());
 
     }
+    */
 }

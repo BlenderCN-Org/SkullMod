@@ -1,11 +1,7 @@
 package skullMod.lvlEdit.openGL;
 
-import skullMod.lvlEdit.dataStructures.Mat4;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
-import java.io.File;
-import java.util.HashMap;
 
 import static skullMod.lvlEdit.openGL.Mini_GLUT.*;
 
@@ -13,14 +9,14 @@ import static skullMod.lvlEdit.openGL.Mini_GLUT.*;
 public class SimpleShaderProgram {
     public final String name;
     public final String vertexSourceCode, fragmentShaderSourceCode;
-    public final ShaderAttributes attributes;
-    public final ShaderUniforms uniforms;
 
     public final int shaderProgramID;
 
     private boolean deleted = false;
 
-    public SimpleShaderProgram(String name, String vertexShaderSourceCode, String fragmentShaderSourceCode, String[] attributes, String[] uniforms, GL gl){
+    private final int DEFAULT_FRAGMENT_OUTPUT_INDEX = 0;
+
+    public SimpleShaderProgram(String name, String vertexShaderSourceCode, String fragmentShaderSourceCode, GL gl){
         //TODO check for null or invalid stuff
 
         this.name = name;
@@ -34,21 +30,9 @@ public class SimpleShaderProgram {
         int vertexShaderID = gl3.glCreateShader(GL3.GL_VERTEX_SHADER);
         int fragmentShaderID = gl3.glCreateShader(GL3.GL_FRAGMENT_SHADER);
 
-        //TODO is this complexity required?
-        //SOURCE FOR SHADERS
-        String[] vertexShaderSourceCodeArray = new String[1];
-        vertexShaderSourceCodeArray[0] = vertexShaderSourceCode;
-        int[] vertexShaderSourceCodeLineLength = new int[1];
-        vertexShaderSourceCodeLineLength[0] = vertexShaderSourceCode.length();
-
-        String[] fragmentShaderSourceCodeArray = new String[1];
-        fragmentShaderSourceCodeArray[0] = fragmentShaderSourceCode;
-        int[] fragmentShaderSourceCodeLineLength = new int[1];
-        fragmentShaderSourceCodeLineLength[0] = fragmentShaderSourceCode.length();
-
-        //ADD SOURCE
-        gl3.glShaderSource(vertexShaderID,1,vertexShaderSourceCodeArray,vertexShaderSourceCodeLineLength, 0);
-        gl3.glShaderSource(fragmentShaderID,1,fragmentShaderSourceCodeArray,fragmentShaderSourceCodeLineLength, 0);
+        //ADD SOURCE FOR SHADERS
+        gl3.glShaderSource(vertexShaderID,1, new String[] { vertexShaderSourceCode }, null);
+        gl3.glShaderSource(fragmentShaderID,1, new String[] { fragmentShaderSourceCode } , null);
 
         //COMPILE AND CHECK
         gl3.glCompileShader(vertexShaderID);
@@ -63,6 +47,9 @@ public class SimpleShaderProgram {
         gl3.glAttachShader(shaderProgramID, vertexShaderID);
         gl3.glAttachShader(shaderProgramID, fragmentShaderID);
 
+        //TODO remove this, just for testing
+        gl3.glBindFragDataLocation(shaderProgramID, DEFAULT_FRAGMENT_OUTPUT_INDEX, "outputF");
+
         //LINK SHADERS
         gl3.glLinkProgram(shaderProgramID);
         gl3.glValidateProgram(shaderProgramID);
@@ -71,17 +58,15 @@ public class SimpleShaderProgram {
         String linkerErrorLog = checkGLShaderLinkError(gl3, shaderProgramID);
         if(linkerErrorLog != null){ throw new OGLException(linkerErrorLog); }
 
-        //Not required for normal operations. Just for debugging.
-        this.uniforms = new ShaderUniforms(gl3, shaderProgramID, uniforms);
-        this.attributes = new ShaderAttributes(gl3, shaderProgramID, attributes);
-
-        //Shader objects are not required except if they are reused for another program
+        /* TODO enable again after working triangle
+        //Shader objects are not required except if they are reused for another program so they can be removed from the shader
         gl3.glDetachShader(shaderProgramID, vertexShaderID);
         gl3.glDetachShader(shaderProgramID, fragmentShaderID);
 
         //Delete shaders, they are only deleted when they are NOT attached to ANY program
         gl3.glDeleteShader(vertexShaderID);
         gl3.glDeleteShader(fragmentShaderID);
+        */
     }
 
     public void enableShader(GL3 gl, boolean enable){
@@ -99,67 +84,15 @@ public class SimpleShaderProgram {
         checkGlError(gl);
     }
 
-    //TODO redo those classes, or remove them altogether
-    public static class ShaderAttributes{
-        public final HashMap<String, Integer> attributes;
-        public ShaderAttributes(GL3 gl, int shaderProgramID, String[] shaderAttributes){
-            this.attributes = new HashMap<>();
-            for(int i = 0;i < shaderAttributes.length;i++){
-                int location = gl.glGetAttribLocation(shaderProgramID, shaderAttributes[i]);
-                if(location == -1){ throw new OGLException("Attribute is not found within shader: " + shaderAttributes[i]); }
-                attributes.put(shaderAttributes[i], location);
-
-            }
-        }
-
-        public String toString(){
-            String result = "ShaderAttributes are: \n";
-            String[] keyArray = attributes.keySet().toArray(new String[0]);
-            for(String key : keyArray){
-
-                result += "Key: " + key + " Value: " + attributes.get(key) + "\n";
-            }
-            return result;
-        }
-    }
-    public static class ShaderUniforms{
-        public final HashMap<String,Integer> uniforms;
-        public ShaderUniforms(GL3 gl, int shaderProgramID, String[] shaderUniforms){
-            uniforms = new HashMap<>();
-            for(int i  = 0;i < shaderUniforms.length;i++){
-                int location = gl.glGetUniformLocation(shaderProgramID, shaderUniforms[i]);
-                if(location == -1){ throw new OGLException("Uniform is not found within shader: " + shaderUniforms[i]); }
-                uniforms.put(shaderUniforms[i], location);
-            }
-
-        }
-
-
-        public String toString(){
-            String result = "ShaderUniforms are: \n";
-
-            for(String key : uniforms.keySet().toArray(new String[0])){
-                result += "Key: " + key + " Value: " + uniforms.get(key) + "\n";
-            }
-            return result;
-        }
-    }
-
     public String toString(){
         return name;
     }
 
-    public String getInfos(){
+    public String getInfos(GL3 gl3){
         String info = "";
-        info += "Shadername: " + name + " with id " + shaderProgramID + File.separator;
-
-        for(String key : attributes.attributes.keySet().toArray(new String[0])){
-            info += "Attribute: " + key + " with location " + attributes.attributes.get(key) + "\n";
-        }
-
-        for(String key : uniforms.uniforms.keySet().toArray(new String[0])){
-            info += "Uniform: " + key + " with location " + uniforms.uniforms.get(key) + "\n";
-        }
+        info += "Shadername: " + name + "\n";
+        info += Mini_GLUT.getAttributesInfo(gl3, shaderProgramID);
+        info += Mini_GLUT.getUniformsInfo(gl3, shaderProgramID);
         return info;
     }
 }

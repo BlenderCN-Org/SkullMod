@@ -1,6 +1,6 @@
 package skullMod.lvlEdit.openGL2;
 
-import skullMod.lvlEdit.openGL.GL_listener;
+import skullMod.lvlEdit.openGL.OpenGLApplication;
 
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
@@ -35,7 +35,7 @@ public class TestFrame extends JFrame{
         canvas.setSize(300,300);
 
 
-        canvas.addGLEventListener(new GL_listener());
+        canvas.addGLEventListener(new OpenGLApplication());
         return canvas;
     }
 }
