@@ -1,4 +1,7 @@
-package skullMod.lvlEdit.openGL;
+package skullMod.lvlEdit.dataStructures.openGL;
+
+import skullMod.lvlEdit.openGL.Mini_GLUT;
+import skullMod.lvlEdit.openGL.OGLException;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
@@ -47,8 +50,8 @@ public class SimpleShaderProgram {
         gl3.glAttachShader(shaderProgramID, vertexShaderID);
         gl3.glAttachShader(shaderProgramID, fragmentShaderID);
 
-        //TODO remove this, just for testing
-        gl3.glBindFragDataLocation(shaderProgramID, DEFAULT_FRAGMENT_OUTPUT_INDEX, "outputF");
+        //TODO make this a param?
+        //gl3.glBindFragDataLocation(shaderProgramID, DEFAULT_FRAGMENT_OUTPUT_INDEX, "outputF");
 
         //LINK SHADERS
         gl3.glLinkProgram(shaderProgramID);
@@ -58,7 +61,7 @@ public class SimpleShaderProgram {
         String linkerErrorLog = checkGLShaderLinkError(gl3, shaderProgramID);
         if(linkerErrorLog != null){ throw new OGLException(linkerErrorLog); }
 
-        /* TODO enable again after working triangle
+
         //Shader objects are not required except if they are reused for another program so they can be removed from the shader
         gl3.glDetachShader(shaderProgramID, vertexShaderID);
         gl3.glDetachShader(shaderProgramID, fragmentShaderID);
@@ -66,7 +69,7 @@ public class SimpleShaderProgram {
         //Delete shaders, they are only deleted when they are NOT attached to ANY program
         gl3.glDeleteShader(vertexShaderID);
         gl3.glDeleteShader(fragmentShaderID);
-        */
+
     }
 
     public void enableShader(GL3 gl, boolean enable){

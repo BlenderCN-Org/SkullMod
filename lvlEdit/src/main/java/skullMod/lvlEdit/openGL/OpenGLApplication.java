@@ -2,6 +2,7 @@ package skullMod.lvlEdit.openGL;
 
 import com.jogamp.common.nio.Buffers;
 import skullMod.lvlEdit.dataStructures.Mat4;
+import skullMod.lvlEdit.dataStructures.openGL.SimpleShaderProgram;
 import skullMod.lvlEdit.openGL3.MiniGLUT2;
 
 import javax.media.opengl.GL3;

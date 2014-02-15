@@ -3,8 +3,10 @@ package skullMod.lvlEdit.openGL;
 import com.sun.istack.internal.Nullable;
 import skullMod.lvlEdit.dataStructures.Mat4;
 
+import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
+import javax.swing.*;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -154,12 +156,27 @@ public final class Mini_GLUT {
         }
     }
 
+    public static String loadFileAsString(String filename){
+        return loadFileAsString(filename, false);
+    }
+
     /**
      * Load text file (or shaders)
      * @param fileName
      * @return
      */
-    public static String loadFileAsString(String fileName) {
+    public static String loadFileAsString(String fileName, boolean internalResource) {
+        if(fileName == null){ throw new IllegalArgumentException("Given file name is null"); }
+        if(internalResource){
+            try{
+                    fileName = Thread.currentThread().getContextClassLoader().getResource(fileName).getPath();
+            }catch(NullPointerException npe){
+                throw new IllegalArgumentException("Given internal file \"" + fileName + "\" wasn't found");
+            }
+        }
+
+        if(! new File(fileName).exists()){ throw new IllegalArgumentException("Given file \"" + fileName + "\" doesn't exist"); }
+
         try(BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();

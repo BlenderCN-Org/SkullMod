@@ -21,8 +21,8 @@ import skullMod.lvlEdit.openGL.Mini_GLUT;
                 0.0f, -20.0f, 0.0f, 1.0f, 0.0f, 20.0f, 0.0f, 1.0f,
                 0.0f, 0.0f, -20.0f, 1.0f, 0.0f, 0.0f, 20.0f, 1.0f };
 
-        float colorAxis[] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        float colorAxis[] = { 0.0f, 0.0f, 0.0f, 0.0f,   0.0f, 0.0f, 0.0f, 0.0f,
+                0.0f,0.0f, 0.0f, 0.0f,     0.0f, 0.0f, 0.0f, 0.0f,     0.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 0.0f };
         // Data for triangle 1
         float vertices1[] = { -3.0f, 0.0f, -5.0f, 1.0f, -1.0f, 0.0f, -5.0f, 1.0f,-2.0f, 2.0f, -5.0f, 1.0f };

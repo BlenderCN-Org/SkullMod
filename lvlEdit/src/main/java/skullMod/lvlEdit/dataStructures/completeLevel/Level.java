@@ -56,7 +56,7 @@ public class Level extends NodeAdapter {
 
         //Check files and directories
         if(! new File(mainDirectory).isDirectory()){
-            throw new IllegalArgumentException("Given directory for levels does not exist");
+            throw new IllegalArgumentException("Given directory for levels does not exist" + mainDirectory);
         }
         if(! new File(texturePath).isDirectory()){
             throw new IllegalArgumentException("No texture directory");

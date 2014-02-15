@@ -1,43 +1,47 @@
-package skullMod.lvlEdit.openGL3;
+package skullMod.lvlEdit.openGL4;
 
 import com.jogamp.common.nio.Buffers;
 import skullMod.lvlEdit.dataStructures.Mat4;
+import skullMod.lvlEdit.dataStructures.openGL.IBOData;
+import skullMod.lvlEdit.dataStructures.openGL.SimpleObject3D;
+import skullMod.lvlEdit.dataStructures.openGL.VBOData;
 import skullMod.lvlEdit.openGL.Mini_GLUT;
 import skullMod.lvlEdit.dataStructures.openGL.SimpleShaderProgram;
+import skullMod.lvlEdit.openGL3.MiniGLUT2;
 
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 import static javax.media.opengl.GL.*;
 
 /**
  * http://www.lighthouse3d.com/cg-topics/code-samples/opengl-3-3-glsl-1-5-sample/
  */
-public class FinalTest implements GLEventListener {
+public class FinalTest3 implements GLEventListener {
+    SimpleObject3D axis, triangle1;
+
     // Data for drawing Axis
-    float verticesAxis[] = {    -20.0f, 0.0f, 0.0f,     20.0f, 0.0f, 0.0f,
-                                0.0f, -20.0f, 0.0f,     0.0f, 20.0f, 0.0f ,
-                                0.0f, 0.0f, -20.0f,     0.0f, 0.0f, 20.0f };
+    float axisVertexData[] = {    -20.0f, 0.0f, 0.0f,    /*Color*/  0.5f, 0.0f, 0.0f,       20.0f, 0.0f, 0.0f,   /*Color*/   1.0f, 0.0f, 0.0f,
+                                0.0f, -20.0f, 0.0f,  /*Color*/  0.0f, 0.5f, 0.0f,      0.0f, 20.0f, 0.0f,  /*Color*/   0.0f, 1.0f, 0.0f,
+                                0.0f, 0.0f, -20.0f,  /*Color*/ 0.0f, 0.0f, 0.5f,     0.0f, 0.0f, 20.0f,  /*Color*/     0.0f, 0.0f, 1.0f};
+    int axisStride = Float.SIZE / 8  * 6;
 
-
-    float colorAxis[] = { 0.5f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f,
-                          0.0f, 0.5f, 0.0f,    0.0f, 1.0f, 0.0f,
-                          0.0f, 0.0f, 0.5f,    0.0f, 0.0f, 1.0f };
     // Data for triangle 1
-    float vertices1[] = { -3.0f, 0.0f, -5.0f,     -1.0f, 0.0f, -5.0f,    -2.0f, 2.0f, -5.0f    };
-    int vertices1IBO[] = { 0,1,2};
-    float colors1[] = { 0.0f, 0.0f, 1.0f,
-                        1.0f, 0.0f, 0.0f,
-                        1.0f,0.0f, 1.0f};
+    float triangle1VertexData[] = { -3.0f, 0.0f, -5.0f, /*Color*/ 1.0f, 0.0f, 0.0f,       -1.0f, 0.0f, -5.0f,    /*Color*/ 0.0f, 1.0f, 0.0f,     -2.0f, 2.0f, -5.0f,  /*COLOR*/   0.0f,0.0f, 1.0f,
+            -2.0f, 2.0f, -10.0f,  /*COLOR*/   0.0f,1.0f, 1.0f};
+    int triangle1IndicesData[] = { 0,1,2, 2,1,3};
+
+    int triangleStride = Float.SIZE / 8 * 6;
+
     // Data for triangle 2
-    float vertices2[] = { 1.0f, 0.0f, -5.0f,     3.0f, 0.0f, -5.0f,   2.0f, 2.0f, -5.0f    };
-    int vertices2IBO[] = {0,1,2};
-    float colors2[] = { 1.0f, 0.0f, 0.0f,
-                        1.0f, 0.0f, 0.0f,
-                        1.0f, 0.0f, 0.0f};
+    float triangle2VertexData[] = { 1.0f, 0.0f, -5.0f, /*Color*/ 1.0f, 0.0f, 0.0f,      3.0f, 0.0f, -5.0f,   /*Color*/1.0f, 0.0f, 0.0f,      2.0f, 2.0f, -5.0f,   /*COLOR*/ 1.0f, 0.0f, 0.0f};
+    int triangle2Stride = Float.SIZE / 8 * 6;
+    //int triangle2IndicesData[] = { 0,1,2};
 
     SimpleShaderProgram shaderProgram;
 
@@ -75,71 +79,90 @@ public class FinalTest implements GLEventListener {
 
     void setupBuffers(GL3 gl) {
 
+
         int buffers[] = new int[2];
         gl.glGenVertexArrays(3, vao, 0);
+
+
+        //gl.glBindVertexArray(vao[2]);
+
+
+        ArrayList<VBOData.VertexAttribute> attributes = new ArrayList<>(1);
+
+        attributes.add(new VBOData.VertexAttribute(vertexLoc, axisStride, 0, GL_FLOAT, 3));
+        attributes.add(new VBOData.VertexAttribute(colorLoc, axisStride, 12, GL_FLOAT, 3));
+
+        VBOData vboData = new VBOData(Buffers.newDirectFloatBuffer(axisVertexData), attributes,  null,axisVertexData.length * Float.SIZE / 8, 6,  GL_LINES);
+        axis = new SimpleObject3D(gl, vboData);
+
+
+
+
+
+
+        ArrayList<VBOData.VertexAttribute> attributesTriangle1 = new ArrayList<>(1);
+
+        attributesTriangle1.add(new VBOData.VertexAttribute(vertexLoc, triangleStride, 0, GL_FLOAT, 3));
+        attributesTriangle1.add(new VBOData.VertexAttribute(colorLoc, triangleStride, 12, GL_FLOAT, 3));
+
+        IBOData iboData = new IBOData(Buffers.newDirectIntBuffer(triangle1IndicesData), triangle1IndicesData.length * Integer.SIZE / 8, GL_UNSIGNED_INT);
+        VBOData vboDataTriangle = new VBOData(Buffers.newDirectFloatBuffer(triangle1VertexData), attributesTriangle1 , iboData,  triangle1VertexData.length * Float.SIZE / 8,6,GL_TRIANGLES);
+
+        triangle1 = new SimpleObject3D(gl, vboDataTriangle);
+
+/*
 // VAO for first triangle
         gl.glBindVertexArray(vao[0]);
 // Generate two slots for the vertex and color buffers
-        gl.glGenBuffers(2, buffers, 0);
+        gl.glGenBuffers(1, buffers, 0);
 // bind buffer for vertices and copy data into buffer
         gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-        gl.glBufferData(GL_ARRAY_BUFFER, vertices1.length * Float.SIZE / 8,
-                Buffers.newDirectFloatBuffer(vertices1), GL_STATIC_DRAW);
+        gl.glBufferData(GL_ARRAY_BUFFER, triangle1VertexData.length * Float.SIZE / 8,
+                Buffers.newDirectFloatBuffer(triangle1VertexData), GL_STATIC_DRAW);
 
         int[] iboBuffer = new int[1];
         gl.glGenBuffers(1,iboBuffer,0);
         gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboBuffer[0]);
-        gl.glBufferData(GL_ELEMENT_ARRAY_BUFFER, Integer.SIZE /8 * 3 , Buffers.newDirectIntBuffer(vertices1IBO), GL_STATIC_DRAW);
+        gl.glBufferData(GL_ELEMENT_ARRAY_BUFFER, Integer.SIZE /8 * 3 , Buffers.newDirectIntBuffer(triangle1IndicesData), GL_STATIC_DRAW);
 
 
 
         gl.glEnableVertexAttribArray(vertexLoc);
-        gl.glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, false, 0, 0);
-
-// bind buffer for colors and copy data into buffer
-        gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-        gl.glBufferData(GL_ARRAY_BUFFER, colors1.length * Float.SIZE / 8,
-                Buffers.newDirectFloatBuffer(colors1), GL_STATIC_DRAW);
         gl.glEnableVertexAttribArray(colorLoc);
-        gl.glVertexAttribPointer(colorLoc, 3, GL_FLOAT, false, 0, 0);
 
+        gl.glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, false, triangle1Stride, 0);                    //Layout float 0-3
+        gl.glVertexAttribPointer(colorLoc, 3, GL_FLOAT, false, triangle1Stride, 3 * Float.SIZE / 8);    //Layout float 4-6
+*/
 // VAO for second triangle
         gl.glBindVertexArray(vao[1]);
 // Generate two slots for the vertex and color buffers
-        gl.glGenBuffers(2, buffers, 0);
+        gl.glGenBuffers(1, buffers, 0);
 
 // bind buffer for vertices and copy data into buffer
         gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-        gl.glBufferData(GL_ARRAY_BUFFER, vertices2.length * Float.SIZE / 8,
-                Buffers.newDirectFloatBuffer(vertices2), GL_STATIC_DRAW);
-        gl.glEnableVertexAttribArray(vertexLoc);
-        gl.glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, false, 0, 0);
+        gl.glBufferData(GL_ARRAY_BUFFER, triangle2VertexData.length * Float.SIZE / 8,
+                Buffers.newDirectFloatBuffer(triangle2VertexData), GL_STATIC_DRAW);
 
-// bind buffer for colors and copy data into buffer
-        gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-        gl.glBufferData(GL_ARRAY_BUFFER, colors2.length * Float.SIZE / 8,
-                Buffers.newDirectFloatBuffer(colors2), GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(vertexLoc);
         gl.glEnableVertexAttribArray(colorLoc);
-        gl.glVertexAttribPointer(colorLoc, 3, GL_FLOAT, false, 0, 0);
+
+        gl.glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, false, triangle2Stride, 0);
+        gl.glVertexAttribPointer(colorLoc,  3, GL_FLOAT, false, triangle2Stride, 3 * (Float.SIZE / 8));
 
 // This VAO is for the Axis
-        gl.glBindVertexArray(vao[2]);
+        /*gl.glBindVertexArray(vao[2]);
 // Generate two slots for the vertex and color buffers
         gl.glGenBuffers(2, buffers, 0);
 // bind buffer for vertices and copy data into buffer
         gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-        gl.glBufferData(GL_ARRAY_BUFFER, verticesAxis.length * Float.SIZE / 8,
-                Buffers.newDirectFloatBuffer(verticesAxis), GL_STATIC_DRAW);
+        gl.glBufferData(GL_ARRAY_BUFFER, axisVertexData.length * Float.SIZE / 8,
+                Buffers.newDirectFloatBuffer(axisVertexData), GL_STATIC_DRAW);
         gl.glEnableVertexAttribArray(vertexLoc);
-        gl.glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, false, 0, 0);
-
-// bind buffer for colors and copy data into buffer
-        gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-        gl.glBufferData(GL_ARRAY_BUFFER, colorAxis.length * Float.SIZE / 8,
-                Buffers.newDirectFloatBuffer(colorAxis), GL_STATIC_DRAW);
         gl.glEnableVertexAttribArray(colorLoc);
-        gl.glVertexAttribPointer(colorLoc, 3, GL_FLOAT, false, 0, 0);
 
+        gl.glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, false, axisStride, 0);
+        gl.glVertexAttribPointer(colorLoc,  3, GL_FLOAT, false, axisStride, 3 * Float.SIZE / 8);  */
     }
 
     void setUniforms(GL3 gl) {
@@ -158,15 +181,19 @@ public class FinalTest implements GLEventListener {
         gl.glUseProgram(shaderProgram.shaderProgramID);
         setUniforms(gl);
 
-        gl.glBindVertexArray(vao[0]);
+        //gl.glBindVertexArray(vao[0]);
         //gl.glDrawArrays(GL_TRIANGLES, 0, 3);
-        gl.glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT,0);
+        //gl.glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT,0);
+        triangle1.render(gl);
 
         gl.glBindVertexArray(vao[1]);
         gl.glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        gl.glBindVertexArray(vao[2]);
-        gl.glDrawArrays(GL_LINES, 0, 6);
+        //gl.glBindVertexArray(vao[2]);
+        //gl.glDrawArrays(GL_LINES, 0, 6);
+
+        axis.render(gl);
+
     }
 
     void setupShaders(GL3 gl) {
@@ -211,7 +238,16 @@ public class FinalTest implements GLEventListener {
 
     /** Main entry point for the application */
     public static void main(String[] args) {
-        FinalTest sample = new FinalTest();
+        FinalTest3 sample = new FinalTest3();
+
+        if(GLProfile.isAvailable("GL3")){
+            JOptionPane.showMessageDialog(null,"OpenGL 3 is supported");
+        }else{
+            JOptionPane.showMessageDialog(null,"OpenGL 3 is NOT supported");
+        }
+
+
+
 
         GLProfile glp = GLProfile.get(GLProfile.GL3);
         GLCapabilities glCapabilities = new GLCapabilities(glp);

@@ -1,5 +1,6 @@
 package skullMod.lvlEdit.gui;
 
+import com.jogamp.opengl.util.FPSAnimator;
 import skullMod.lvlEdit.dataStructures.CentralDataObject;
 import skullMod.lvlEdit.dataStructures.DataStreamIn;
 import skullMod.lvlEdit.dataStructures.LVL.LVL_File;
@@ -8,6 +9,7 @@ import skullMod.lvlEdit.dataStructures.SGI.SGI_File;
 import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
 import skullMod.lvlEdit.dataStructures.SGM.Triangle;
 import skullMod.lvlEdit.dataStructures.SGM.Vertex;
+import skullMod.lvlEdit.dataStructures.openGL.OpenGL_Frame;
 import skullMod.lvlEdit.gui.dds_info.Animation;
 import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
 import skullMod.lvlEdit.gui.dds_info.PixelCoordinate;
@@ -161,7 +163,7 @@ public class MainWindow extends JFrame {
          */
         contentPane = new JTabbedPane();
 
-        CentralDataObject.scenePanel = new JPanel();
+        CentralDataObject.scenePanel = OpenGL_Frame.getNewFrame();
 
         contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
 
@@ -179,7 +181,7 @@ public class MainWindow extends JFrame {
 
         CentralDataObject.animationPanel = new JScrollPane(new AnimationPanel());
 
-        contentPane.setMinimumSize(new Dimension(200,200));
+        contentPane.setMinimumSize(new Dimension(200, 200));
 
         /**
          * Layout
@@ -249,16 +251,16 @@ public class MainWindow extends JFrame {
          */
 
 
-        ddsPanel.changeImage("/home/netbook/Working_files/Skullgirls_extracted/levels/textures/class_notes_3d.dds");
-        //ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
+        //ddsPanel.changeImage("/home/netbook/Working_files/Skullgirls_extracted/levels/textures/class_notes_3d.dds");
+        ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
         //ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\innsmouth_day_fgnpc_02.dds");
 
         int width = ddsPanel.getImage().getWidth();
         int height = ddsPanel.getImage().getHeight();
 
         try {
-            DataStreamIn dsi = new DataStreamIn("/home/netbook/Working_files/Skullgirls_extracted/levels/class_notes_3d/class_notes_npcs_01_shape.sgm.msb");
-            //DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\class_notes_3d\\class_notes_npcs_01_shape.sgm.msb");
+            //DataStreamIn dsi = new DataStreamIn("/home/netbook/Working_files/Skullgirls_extracted/levels/class_notes_3d/class_notes_npcs_01_shape.sgm.msb");
+            DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\class_notes_3d\\class_notes_npcs_01_shape.sgm.msb");
             //DataStreamIn dsi = new DataStreamIn("C:\\levels\\temp\\levels\\innsmouth_day_3d\\innsmouth_minneteShape.sgm.msb");
 
             SGM_File sgm = new SGM_File(dsi.s);

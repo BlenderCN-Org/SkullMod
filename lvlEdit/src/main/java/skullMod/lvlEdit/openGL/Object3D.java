@@ -25,7 +25,6 @@ public class Object3D {
 
     private boolean deleted = false;
 
-    //TODO shaderProgramID should be removed
     //TODO change vboColorData to iboData after triangle
     public Object3D(GL gl, boolean useBones, FloatBuffer vboData, FloatBuffer vboColorData, int shaderProgramID){
         this.useBones = useBones;
