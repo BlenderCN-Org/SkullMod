@@ -1,32 +1,22 @@
 package skullMod.lvlEdit.gui;
 
-import com.jogamp.opengl.util.FPSAnimator;
 import skullMod.lvlEdit.dataStructures.CentralDataObject;
 import skullMod.lvlEdit.dataStructures.DataStreamIn;
-import skullMod.lvlEdit.dataStructures.LVL.LVL_File;
 import skullMod.lvlEdit.dataStructures.SGI.SGI_Element;
 import skullMod.lvlEdit.dataStructures.SGI.SGI_File;
 import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
 import skullMod.lvlEdit.dataStructures.SGM.Triangle;
 import skullMod.lvlEdit.dataStructures.SGM.Vertex;
 import skullMod.lvlEdit.dataStructures.openGL.OpenGL_Frame;
-import skullMod.lvlEdit.gui.dds_info.Animation;
 import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
 import skullMod.lvlEdit.gui.dds_info.PixelCoordinate;
 import skullMod.lvlEdit.gui.leftPane.SelectorPanel;
 import skullMod.lvlEdit.gui.modeChange.ModeChanger;
-import skullMod.lvlEdit.gui.rightPane.RightJPane;
 import skullMod.lvlEdit.utility.Utility;
 
 import javax.imageio.ImageIO;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,10 +26,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.LinkedList;
 
 /**
  */
@@ -153,10 +139,14 @@ public class MainWindow extends JFrame {
 
         this.setJMenuBar(menuBar);
 
-        /**Get default font and make a bold/italic copy of it*/
-        Font defaultFont = UIManager.getDefaults().getFont("Label.font");
-        Font boldFont = defaultFont.deriveFont(Font.BOLD);
-        Font italicFont = defaultFont.deriveFont(Font.ITALIC);
+
+        CentralDataObject.ddsPanel = new DDS_Panel();
+
+
+
+
+        CentralDataObject.animationPanel = new JScrollPane(new AnimationPanel());
+
 
         /**
          * Mainpane
@@ -165,21 +155,20 @@ public class MainWindow extends JFrame {
 
         CentralDataObject.scenePanel = OpenGL_Frame.getNewFrame();
 
-        contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
-
-        //TODO test data, remove it, dds panel is now global!
-        DDS_Panel ddsPanel = CentralDataObject.imageView;
-
-
-
-        CentralDataObject.modelPanel = new JScrollPane(ddsPanel);
-
+        //Make a scrollpane around ddsPanel
         final int SCROLL_SPEED = 8; // TODO make this an option
+        JScrollPane ddsScrollPanel = new JScrollPane(CentralDataObject.ddsPanel);
+        ddsScrollPanel.getHorizontalScrollBar().setUnitIncrement(SCROLL_SPEED);
+        ddsScrollPanel.getVerticalScrollBar().setUnitIncrement(SCROLL_SPEED);
 
-        CentralDataObject.modelPanel.getHorizontalScrollBar().setUnitIncrement(SCROLL_SPEED);
-        CentralDataObject.modelPanel.getVerticalScrollBar().setUnitIncrement(SCROLL_SPEED);
 
-        CentralDataObject.animationPanel = new JScrollPane(new AnimationPanel());
+        contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
+        contentPane.add(IMAGE_PANEL, ddsScrollPanel);
+        contentPane.add(ANIMATION_PANEL, CentralDataObject.animationPanel);
+
+
+
+
 
         contentPane.setMinimumSize(new Dimension(200, 200));
 
@@ -193,9 +182,9 @@ public class MainWindow extends JFrame {
 
         this.setLayout(new BorderLayout());
         this.add(splitPane, BorderLayout.CENTER);
-        this.add(new RightJPane(), BorderLayout.EAST);
 
-        CentralDataObject.modeList.addItemListener(new ModeListItemListener());
+
+        //CentralDataObject.modeList.addItemListener(new ModeListItemListener());
 
         this.setSize(getPreferredSize());
 
@@ -214,49 +203,12 @@ public class MainWindow extends JFrame {
         this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
 
-        /**
-        try {
-            DataStreamIn dsi = new DataStreamIn("D:/test.sgm.msb");
-
-            String fileFormatRevision = Utility.readLongPascalString(dsi.s);
-            String textureName = Utility.readLongPascalString(dsi.s);
-            float unknown1[] = Utility.readFloatArray(dsi.s,new float[13]); //13 entries
-            String dataFormat = Utility.readLongPascalString(dsi.s);
-
-            long bytesPerPolygon = dsi.s.readLong();
-            long nOfPolygons = dsi.s.readLong();
-            long nOfTriangles = dsi.s.readLong();
-            long nOfJoints = dsi.s.readLong();
-
-            byte polygonData[] = Utility.readByteArray(dsi.s,new byte[(int) (nOfPolygons*bytesPerPolygon)]);
-            short triangleData[] = Utility.readShortArray(dsi.s,new short[(int) (nOfTriangles*3)]);
-            float maybeBoundingBox[] = Utility.readFloatArray(dsi.s,new float[6]); //Length = 6 floats = 6*4 = 24 bytes
-
-            String jointNames[] = Utility.readLongPascalStringArray(dsi.s,new String[(int) nOfJoints]);
-            byte jointMatrix[] = Utility.readByteArray(dsi.s,new byte[(int) (nOfJoints*16)]);
-
-
-
-            dsi.close();
-
-            SGM_File file = new SGM_File(fileFormatRevision,textureName,unknown1,dataFormat,bytesPerPolygon,
-                    nOfPolygons,nOfTriangles,nOfJoints,polygonData,triangleData,maybeBoundingBox,jointNames,jointMatrix);
-            System.out.println(file);
-
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        } catch (IOException e){
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-         */
-
-
         //ddsPanel.changeImage("/home/netbook/Working_files/Skullgirls_extracted/levels/textures/class_notes_3d.dds");
-        ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
+        CentralDataObject.ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
         //ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\innsmouth_day_fgnpc_02.dds");
 
-        int width = ddsPanel.getImage().getWidth();
-        int height = ddsPanel.getImage().getHeight();
+        int width = CentralDataObject.ddsPanel.getImage().getWidth();
+        int height = CentralDataObject.ddsPanel.getImage().getHeight();
 
         try {
             //DataStreamIn dsi = new DataStreamIn("/home/netbook/Working_files/Skullgirls_extracted/levels/class_notes_3d/class_notes_npcs_01_shape.sgm.msb");
@@ -276,7 +228,7 @@ public class MainWindow extends JFrame {
                 points[i] = new InfoRectangle(point,point,Integer.toString(i));
             }
 
-            ddsPanel.setModels(points);
+            CentralDataObject.ddsPanel.setModels(points);
 
             DDS_Panel.UV_Triangle[] triangles = new DDS_Panel.UV_Triangle[sgm.triangles.length];
             for(int i = 0;i < sgm.triangles.length;i++){
@@ -285,7 +237,7 @@ public class MainWindow extends JFrame {
                 triangles[i] = new DDS_Panel.UV_Triangle(sgm.vertices[currentTriangle.vertexIndex1].uv,sgm.vertices[currentTriangle.vertexIndex2].uv,sgm.vertices[currentTriangle.vertexIndex3].uv);
             }
 
-            ddsPanel.setUV_Triangles(triangles);
+            CentralDataObject.ddsPanel.setUV_Triangles(triangles);
 
             dsi.close();
         } catch (FileNotFoundException e) {
@@ -326,7 +278,7 @@ public class MainWindow extends JFrame {
                 if(item.equals(ModeChanger.Modes.MODEL.name)){
                     contentPane.removeAll();
                     contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
-                    contentPane.add(IMAGE_PANEL, CentralDataObject.modelPanel);
+                    contentPane.add(IMAGE_PANEL, CentralDataObject.ddsPanel);
 
                 }
                 if(item.equals(ModeChanger.Modes.ANIMATION.name)){
@@ -351,7 +303,6 @@ public class MainWindow extends JFrame {
         }
     }
 
-
     private class ReadSGI_Listener implements ActionListener{
         private String lastPath = ".";
 
@@ -367,7 +318,6 @@ public class MainWindow extends JFrame {
                 if(selectedFile != null && selectedFile.exists()){
                     lastPath = selectedFile.getParent();
                 }
-
 
                 //Cancel if nothing was selected
                 if(selectedFile == null){ JOptionPane.showMessageDialog(MainWindow.this,"Nothing selected"); return; }
@@ -409,11 +359,8 @@ public class MainWindow extends JFrame {
 
                     dsi.close();
 
-                    CentralDataObject.sceneRoot.removeAllChildren();
-                    sgi.addToNode(CentralDataObject.sceneRoot);
 
-                    DefaultTreeModel treeModel = (DefaultTreeModel) CentralDataObject.sceneTree.getModel();
-                    treeModel.reload();
+
 
 
 
@@ -437,7 +384,7 @@ public class MainWindow extends JFrame {
 
                         System.out.println(texturePath);
 
-                        CentralDataObject.imageView.changeImage(texturePath);
+                        CentralDataObject.ddsPanel.changeImage(texturePath);
                     }catch(IOException ioe){
                         System.out.println("IOEXCEPTION");
                     }
