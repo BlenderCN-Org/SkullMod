@@ -9,7 +9,6 @@ public class SelectorPanel extends JPanel {
 
         CenterSelectorPanel centerPanel = new CenterSelectorPanel();
 
-        this.add(new TopSelectorPanel(centerPanel), BorderLayout.NORTH);
         this.add(centerPanel, BorderLayout.CENTER);
     }
 }

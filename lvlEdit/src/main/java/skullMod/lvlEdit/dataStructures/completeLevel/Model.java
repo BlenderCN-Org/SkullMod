@@ -21,6 +21,8 @@ public class Model extends NodeAdapter{
     private LeafContentNode<Mat4> transformationMatrix;
     //TODO unknown 2 bytes see SGI_Element
 
+    private LeafContentNode<VertexData> modelData;
+
 
     public Model(TreeNode parent){
         super(parent);
@@ -40,12 +42,12 @@ public class Model extends NodeAdapter{
         this.animations = new Animations(this, modelMetadata.animations, animations);
 
         //TODO add model attributes
-
+        modelData = new LeafContentNode<>(this,"Data",new VertexData(model.vertices,model.triangles,false));
     }
 
 
     public int getChildCount() {
-        return 4;
+        return 5;
     }
 
     public Enumeration children() {
@@ -53,6 +55,7 @@ public class Model extends NodeAdapter{
         list.add(animations);
         list.add(modelName);
         list.add(fileName);
+        list.add(modelData);
         list.add(transformationMatrix);
         return Collections.enumeration(list);
     }

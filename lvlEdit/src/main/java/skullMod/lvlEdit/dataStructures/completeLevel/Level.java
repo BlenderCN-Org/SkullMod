@@ -8,6 +8,7 @@ import skullMod.lvlEdit.dataStructures.SGI.SGI_Element;
 import skullMod.lvlEdit.dataStructures.SGI.SGI_File;
 import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
+import skullMod.lvlEdit.dataStructures.openGL.OpenGL_Listener;
 import skullMod.lvlEdit.utility.AutoReentrantLock;
 
 import javax.swing.tree.TreeNode;
@@ -128,8 +129,6 @@ public class Level extends NodeAdapter {
         this.music = new Music(this, lvlData);
 
         this.models = new Models(this, sgiData, models, animations);
-
-
     }
 
     public Level(){

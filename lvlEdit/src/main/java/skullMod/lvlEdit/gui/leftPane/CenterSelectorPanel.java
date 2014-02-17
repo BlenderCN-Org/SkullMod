@@ -4,37 +4,22 @@ import skullMod.lvlEdit.dataStructures.CentralDataObject;
 import skullMod.lvlEdit.dataStructures.completeLevel.Level;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 
-import static skullMod.lvlEdit.gui.modeChange.ModeChanger.Modes.*;
 
 public class CenterSelectorPanel extends JPanel {
-    private CardLayout layout;
+    private BorderLayout layout;
 
 
     public CenterSelectorPanel(){
-        layout = new CardLayout();
+        layout = new BorderLayout();
         this.setLayout(layout);
 
-        JTree levelTree =new JTree(new Level("C:\\levels\\temp\\levels","class_notes_3d"));
+        JTree levelTree = new JTree(new Level("C:\\levels\\temp\\levels","class_notes_3d"));
         //JTree levelTree = new JTree(new Level("/home/netbook/Working_files/Skullgirls_extracted/levels/","class_notes_3d"));
         levelTree.addMouseListener(new RightClickListener(levelTree));
-        this.add(new JScrollPane(levelTree),SCENE.toString());
-        this.add(new JScrollPane(CentralDataObject.modelTree),MODEL.toString());
-        this.add(new JScrollPane(CentralDataObject.animationTree),ANIMATION.toString());
-        this.add(new JScrollPane(CentralDataObject.shapeTree),SHAPE.toString());
+        CentralDataObject.level = levelTree;
+        this.add(new JScrollPane(levelTree),BorderLayout.CENTER);
 
-        layout.show(this, SCENE.toString());
-    }
-
-    public void showCard(String cardName){
-        if(cardName == null){ throw new IllegalArgumentException("Given cardName is null"); }
-        //FIXME make this dynamic
-        if(cardName.equals(SCENE.toString()) || cardName.equals(MODEL.toString()) || cardName.equals(ANIMATION.toString()) || cardName.equals(SHAPE.toString())){
-            layout.show(this, cardName);
-        }else{
-            throw new IllegalArgumentException("Invalid cardName identifier: " + cardName);
-        }
     }
 }

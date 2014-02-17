@@ -13,18 +13,23 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Models extends NodeAdapter {
+
+    //FIXME temp
+    public static Models model;
+
     private final LinkedList<Model> models;
 
     public Models(TreeNode parent, Model[] models) {
         super(parent);
 
+        //FIXME temp
+        model = this;
+
         //TODO verify input
 
         this.models = new LinkedList<>();
 
-        for(Model model : models){
-            this.models.add(model);
-        }
+        Collections.addAll(this.models, models);
     }
 
     public Models(TreeNode parent){

@@ -32,7 +32,6 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
         for(VBOData data: vboData){
             models.add(new SimpleObject3D(gl3,data));
         }
-
     }
 
     public void setupCamera(){
@@ -45,8 +44,7 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
         sensitivity = 10f;
 
         cameraTime = System.currentTimeMillis();
-        float[] array = {1,0,0,0,   0,1,0,0,    0,0,1,0,    0,0,0,1};
-        viewMatrix = array;
+        viewMatrix = new float[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
     }
 
     public void updateCamera(){
@@ -133,12 +131,19 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
 
     private ArrayList<SimpleObject3D> models = new ArrayList<>(1);
 
-    private SimpleShaderProgram shader;
-    private int projMatrixLoc;
-    private int viewMatrixLoc;
-    private int modelMatrixLoc;
-    private int vertexLoc;
-    private int colorLoc;
+    private SimpleShaderProgram axisShader;
+
+    private SimpleShaderProgram skullGirlsShader;
+
+    private int axisShaderProjectionMatrixLoc;
+    private int axisShaderViewMatrixLoc;
+    private int axisShaderModelMatrixLoc;
+
+    private int skullgirlsShaderVertexLoc;
+
+    private int skullgirlsShaderProjectionMatrixLoc;
+    private int skullgirlsShaderViewMatrixLoc;
+    private int skullgirlsShaderModelMatrixLoc;
 
     public void init(GLAutoDrawable drawable) {
         setupCamera();
@@ -146,24 +151,31 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
         gl3.glEnable(GL_DEPTH_TEST);
         gl3.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        shader = new SimpleShaderProgram("default", Mini_GLUT.loadFileAsString("shaders/vertexColor.vs",true),Mini_GLUT.loadFileAsString("shaders/vertexColor.fs",true), gl3);
+        axisShader = new SimpleShaderProgram("axis", Mini_GLUT.loadFileAsString("shaders/vertexColor.vs",true),Mini_GLUT.loadFileAsString("shaders/vertexColor.fs",true), gl3);
+        skullGirlsShader = new SimpleShaderProgram("defaultNoBones", Mini_GLUT.loadFileAsString("shaders/skullgirlsShader.vs",true), Mini_GLUT.loadFileAsString("shaders/skullgirlsShader.fs",true),gl3);
 
-        vertexLoc = gl3.glGetAttribLocation(shader.shaderProgramID, "vertexPosition");
-        colorLoc = gl3.glGetAttribLocation(shader.shaderProgramID, "vertexColor");
+        //AXIS shader and data
+        int axisShaderVertexLoc = gl3.glGetAttribLocation(axisShader.shaderProgramID, "vertexPosition");
+        int axisShaderColorLoc = gl3.glGetAttribLocation(axisShader.shaderProgramID, "vertexColor");
 
-        projMatrixLoc = gl3.glGetUniformLocation(shader.shaderProgramID, "projectionMatrix");
-        viewMatrixLoc = gl3.glGetUniformLocation(shader.shaderProgramID, "viewMatrix");
-        modelMatrixLoc = gl3.glGetUniformLocation(shader.shaderProgramID, "modelMatrix");
-
-
+        axisShaderProjectionMatrixLoc = gl3.glGetUniformLocation(axisShader.shaderProgramID, "projectionMatrix");
+        axisShaderViewMatrixLoc = gl3.glGetUniformLocation(axisShader.shaderProgramID, "viewMatrix");
+        axisShaderModelMatrixLoc = gl3.glGetUniformLocation(axisShader.shaderProgramID, "modelMatrix");
 
         ArrayList<VBOData.VertexAttribute> attributes = new ArrayList<>(1);
 
-        attributes.add(new VBOData.VertexAttribute(vertexLoc, axisStride, 0, GL_FLOAT, 3));
-        attributes.add(new VBOData.VertexAttribute(colorLoc, axisStride, 12, GL_FLOAT, 3));
+        attributes.add(new VBOData.VertexAttribute(axisShaderVertexLoc, axisStride, 0, GL_FLOAT, 3));
+        attributes.add(new VBOData.VertexAttribute(axisShaderColorLoc, axisStride, 12, GL_FLOAT, 3));
 
         VBOData vboData = new VBOData(Buffers.newDirectFloatBuffer(axisVertexData), attributes,  null,axisVertexData.length * Float.SIZE / 8, 6,  GL_LINES);
         axis = new SimpleObject3D(gl3, vboData);
+
+        //Skullgirls shader
+        skullgirlsShaderVertexLoc = gl3.glGetAttribLocation(skullGirlsShader.shaderProgramID, "vertexPosition");
+
+        skullgirlsShaderProjectionMatrixLoc = gl3.glGetUniformLocation(skullGirlsShader.shaderProgramID, "projectionMatrix");
+        skullgirlsShaderViewMatrixLoc = gl3.glGetUniformLocation(skullGirlsShader.shaderProgramID, "viewMatrix");
+        skullgirlsShaderModelMatrixLoc = gl3.glGetUniformLocation(skullGirlsShader.shaderProgramID, "modelMatrix");
     }
 
     private int windowWidth, windowHeight;
@@ -179,7 +191,7 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
         if (windowHeight == 0){ windowHeight = 1; }
 
         // Set the viewport to be the entire window
-        gl3.glViewport(0, 0, width, height);
+        gl3.glViewport(0, 0, windowWidth, windowHeight);
 
 
 
@@ -206,19 +218,23 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
         setXYZ(viewMatrix, cameraX, cameraY, cameraZ);
 
 
-        gl3.glUseProgram(shader.shaderProgramID);
+        gl3.glUseProgram(axisShader.shaderProgramID);
         setUniforms(gl3);
 
         //{1,0,0,0,    0,1,0,0,     0,0,1,0,    0,0,0,1}
         float[] tempFloat = {1,0,0,0,    0,1,0,0,     0,0,1,0,    0,0,0,1};
-        gl3.glUniformMatrix4fv(modelMatrixLoc,1, false, tempFloat,0);
+        gl3.glUniformMatrix4fv(axisShaderModelMatrixLoc,1, false, tempFloat,0);
         axis.render(gl3);
 
+        gl3.glUseProgram(skullGirlsShader.shaderProgramID);
+        gl3.glUniformMatrix4fv(skullgirlsShaderProjectionMatrixLoc, 1, false, projMatrix, 0);
+        gl3.glUniformMatrix4fv(skullgirlsShaderViewMatrixLoc, 1, false, viewMatrix, 0);
+
         for(SimpleObject3D model : models){
+            gl3.glUniformMatrix4fv(skullgirlsShaderModelMatrixLoc, 1, false, model.modelMatrix.get(), 0);
             model.render(gl3);
         }
     }
-
 
 
     public void dispose(GLAutoDrawable drawable) {
@@ -227,8 +243,8 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
 
     void setUniforms(GL3 gl) {
         // must be called after glUseProgram
-        gl.glUniformMatrix4fv(projMatrixLoc, 1, false, projMatrix, 0);
-        gl.glUniformMatrix4fv(viewMatrixLoc, 1, false, viewMatrix, 0);
+        gl.glUniformMatrix4fv(axisShaderProjectionMatrixLoc, 1, false, projMatrix, 0);
+        gl.glUniformMatrix4fv(axisShaderViewMatrixLoc, 1, false, viewMatrix, 0);
     }
 
     boolean mouseActive = false;
