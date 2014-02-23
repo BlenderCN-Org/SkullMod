@@ -2,8 +2,6 @@ package skullMod.lvlEdit.gui;
 
 import skullMod.lvlEdit.dataStructures.CentralDataObject;
 import skullMod.lvlEdit.dataStructures.DataStreamIn;
-import skullMod.lvlEdit.dataStructures.SGI.SGI_Element;
-import skullMod.lvlEdit.dataStructures.SGI.SGI_File;
 import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
 import skullMod.lvlEdit.dataStructures.SGM.Triangle;
 import skullMod.lvlEdit.dataStructures.SGM.Vertex;
@@ -11,17 +9,17 @@ import skullMod.lvlEdit.dataStructures.completeLevel.Level;
 import skullMod.lvlEdit.dataStructures.openGL.OpenGL_Frame;
 import skullMod.lvlEdit.gui.animationPane.InfoRectangle;
 import skullMod.lvlEdit.gui.animationPane.PixelCoordinate;
+import skullMod.lvlEdit.gui.menuListeners.LoadLevelListener;
+import skullMod.lvlEdit.gui.menuListeners.NewLevelListener;
 import skullMod.lvlEdit.gui.selectorPane.SelectorPanel;
 import skullMod.lvlEdit.utility.Utility;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,8 +29,8 @@ import java.io.InputStream;
 public class MainWindow extends JFrame {
     public static final String APPLICATION  = "LVL edit";
     public static final String AUTHOR       = "0xFAIL";
-    public static final String VERSION      = "0.2 testing";
-    public static final String DATE         = "2014-01-26";
+    public static final String VERSION      = "0.5";
+    public static final String DATE         = "2014-02-23";
     public static final String GAME         = "Skullgirls (PC)";
 
     public static final String ANIMATION_PANEL = "Animation";
@@ -46,10 +44,6 @@ public class MainWindow extends JFrame {
     public final JMenuItem imageToDDSMenuItem;
     public final JMenuItem aboutMenuItem, helpMenuItem;
 
-    //FIXME
-    public final JMenu devMenu;
-    public final JMenuItem loadSGI;
-
     public final JTabbedPane contentPane;
 
     public MainWindow(){
@@ -57,7 +51,7 @@ public class MainWindow extends JFrame {
 
         //Issue a warning if Java is not found in required version
         if (Utility.getVersion() < 1.7) {
-            JOptionPane.showMessageDialog(null, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 1.7 is required for this application to work properly!\nSome features might not work or crash.", "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 7 is required for this application to work properly!\nSome features might not work or crash.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
 
         /**Set icon*/
@@ -95,13 +89,6 @@ public class MainWindow extends JFrame {
         exitMenuItem = new JMenuItem("Exit");
 
 
-        //FIXME DEVOPTIONS
-        devMenu = new JMenu("DEVOPTIONS (everything except this doesn't work yet)");
-        loadSGI = new JMenuItem("Load .sgi.msb");
-
-        devMenu.add(loadSGI);
-
-
 
         fileMenu.add(newLevelMenuItem);
         fileMenu.addSeparator();
@@ -132,15 +119,19 @@ public class MainWindow extends JFrame {
         menuBar.add(toolsMenu);
         menuBar.add(aboutMenu);
 
-        //FIXME DEVOPTIONS
-        menuBar.add(devMenu);
-        loadSGI.addActionListener(new ReadSGI_Listener());
+        /* Add listeners */
+        newLevelMenuItem.addActionListener(new NewLevelListener());
+        loadMenuItem.addActionListener(new LoadLevelListener(this));
+        exitMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MainWindow.this.dispose();
+            }
+        });
 
         this.setJMenuBar(menuBar);
 
 
         CentralDataObject.ddsPanel = new DDS_Panel();
-
 
         /**
          * Mainpane
@@ -180,7 +171,7 @@ public class MainWindow extends JFrame {
 
 
         //*****Misc stuff*****
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //FIXME is this the problem of the awt crash with file/directory select dialogs
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //FIXME is this the problem of the awt crash with file/directory select dialogs?
 
 
         this.setMinimumSize(new Dimension(400,100));
@@ -264,7 +255,7 @@ public class MainWindow extends JFrame {
             }
         }
     }
-
+    /*
     private class ReadSGI_Listener implements ActionListener{
         private String lastPath = ".";
 
@@ -284,6 +275,7 @@ public class MainWindow extends JFrame {
                 //Cancel if nothing was selected
                 if(selectedFile == null){ JOptionPane.showMessageDialog(MainWindow.this,"Nothing selected"); return; }
 
+*/
                 //Something was selected
                 //Let's read it
                 /*
@@ -314,7 +306,7 @@ public class MainWindow extends JFrame {
                 }
                 */
                 //Smarter reading!
-
+                /*
                 try{
                     DataStreamIn dsi = new DataStreamIn(selectedFile.getAbsolutePath());
                     SGI_File sgi = new SGI_File(dsi);
@@ -334,7 +326,7 @@ public class MainWindow extends JFrame {
 
                     String sgmPath = selectedFile.getParent() + File.separator + sgmFileName;
                     try{
-                        // FIXME try-catch resource?
+                        // FIXME try-catch resource? Error handling?
                         DataStreamIn sgmStream =  new DataStreamIn(sgmPath);
 
                         String fileVersion = Utility.readLongPascalString(sgmStream.s);
@@ -359,18 +351,7 @@ public class MainWindow extends JFrame {
 
             }
         }
+        */
 
-        private class SGI_FileFilter extends FileFilter{
-            public boolean accept(File f) {
-                if(f.isDirectory() || (f.getName().endsWith(".sgi.msb") && f.isFile())){
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-            public String getDescription() {
-                return "*.sgi.msb";
-            }
-        }
-    }
+
 }
