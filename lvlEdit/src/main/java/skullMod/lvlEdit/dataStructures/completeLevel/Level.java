@@ -39,12 +39,6 @@ public class Level extends NodeAdapter {
     public static final String sgaExtension = ".sga.msb";
     public static final String sgsExtension = ".sgs.msb";
 
-    public static void main(String[] args){
-        //WIN new Level("C:\\levels\\temp\\levels","class_notes_3d");
-        //UNIX new Level("/home/netbook/Working_files/Skullgirls_extracted/levels", "class_notes_3d");
-        new Level("C:\\levels\\temp\\levels","class_notes_3d");
-    }
-
     public Level(String mainDirectory, String lvlName) throws IllegalArgumentException{
         super(null);
 
@@ -133,6 +127,7 @@ public class Level extends NodeAdapter {
 
     public Level(){
         super(null); //Root node
+
         stageSettings = new StageSettings(this);
         music = new Music(this);
         lighting = new Lighting(this);

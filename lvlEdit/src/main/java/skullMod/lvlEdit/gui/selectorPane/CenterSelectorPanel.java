@@ -1,7 +1,6 @@
-package skullMod.lvlEdit.gui.leftPane;
+package skullMod.lvlEdit.gui.selectorPane;
 
 import skullMod.lvlEdit.dataStructures.CentralDataObject;
-import skullMod.lvlEdit.dataStructures.completeLevel.Level;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,10 +14,8 @@ public class CenterSelectorPanel extends JPanel {
         layout = new BorderLayout();
         this.setLayout(layout);
 
-        JTree levelTree = new JTree(new Level("C:\\levels\\temp\\levels","class_notes_3d"));
-        //JTree levelTree = new JTree(new Level("/home/netbook/Working_files/Skullgirls_extracted/levels/","class_notes_3d"));
+        JTree levelTree = CentralDataObject.level;
         levelTree.addMouseListener(new RightClickListener(levelTree));
-        CentralDataObject.level = levelTree;
         this.add(new JScrollPane(levelTree),BorderLayout.CENTER);
 
     }

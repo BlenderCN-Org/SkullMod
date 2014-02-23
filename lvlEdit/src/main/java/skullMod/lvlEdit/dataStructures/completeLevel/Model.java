@@ -7,6 +7,7 @@ import skullMod.lvlEdit.dataStructures.SGI.SGI_Element;
 import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafContentNode;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
+import skullMod.lvlEdit.openGL3.MiniGLUT2;
 
 import javax.swing.tree.TreeNode;
 import java.util.*;
@@ -28,8 +29,14 @@ public class Model extends NodeAdapter{
         super(parent);
 
         //TODO add other requirements
+        this.modelName = new LeafContentNode<>(this, "Name", "defaultElement");
+        this.fileName = new LeafContentNode<>(this, "File", "defaultName");
 
-        animations = new Animations(this);
+        float[] tempMatrix = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+        this.transformationMatrix = new LeafContentNode<>(this, "Transformation matrix", new Mat4(tempMatrix));
+        this.animations = new Animations(this);
+
+        this.modelData = new LeafContentNode<>(this, "Data", new VertexData());
     }
 
     public Model(TreeNode parent, SGI_Element modelMetadata, SGM_File model, HashMap<String, SGA_File> animations) {

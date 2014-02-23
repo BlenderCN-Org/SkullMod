@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * A 4x4 matrix
  *
- * COLUMN major?
+ * TODO COLUMN major?
  */
 public class Mat4 implements Serializable {
     float[] matrix = new float[16]; //Goes from top to bottom then one right

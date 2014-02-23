@@ -1,4 +1,4 @@
-package skullMod.lvlEdit.gui.dds_info;
+package skullMod.lvlEdit.gui.animationPane;
 
 import java.io.Serializable;
 

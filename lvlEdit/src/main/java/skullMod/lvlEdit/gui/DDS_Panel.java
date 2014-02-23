@@ -1,20 +1,16 @@
 package skullMod.lvlEdit.gui;
 
 import skullMod.lvlEdit.dataStructures.SGM.UV;
-import skullMod.lvlEdit.gui.dds_info.Animation;
-import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
+import skullMod.lvlEdit.gui.animationPane.Animation;
+import skullMod.lvlEdit.gui.animationPane.InfoRectangle;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.FileImageInputStream;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 
 public class DDS_Panel extends JPanel{
     private final Color modelColor = new Color(255,0,0,128);

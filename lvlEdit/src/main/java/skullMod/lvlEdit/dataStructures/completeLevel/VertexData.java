@@ -4,6 +4,15 @@ import skullMod.lvlEdit.dataStructures.SGM.Triangle;
 import skullMod.lvlEdit.dataStructures.SGM.Vertex;
 
 public class VertexData{
+    /**
+     * Default triangle
+     * TODO change to modern vertex data
+     */
+    public VertexData(){
+        this.vertexData = new float[]{ 0,0,0, 0,1,0, 0,1,1};
+        this.iboData = new short[]{0, 1, 2};
+    }
+
     public VertexData(Vertex[] vertices, Triangle[] triangles, boolean hasBones){
         this.hasBones = hasBones;
 

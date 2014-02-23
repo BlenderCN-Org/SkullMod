@@ -7,21 +7,20 @@ import skullMod.lvlEdit.dataStructures.SGI.SGI_File;
 import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
 import skullMod.lvlEdit.dataStructures.SGM.Triangle;
 import skullMod.lvlEdit.dataStructures.SGM.Vertex;
+import skullMod.lvlEdit.dataStructures.completeLevel.Level;
 import skullMod.lvlEdit.dataStructures.openGL.OpenGL_Frame;
-import skullMod.lvlEdit.gui.dds_info.InfoRectangle;
-import skullMod.lvlEdit.gui.dds_info.PixelCoordinate;
-import skullMod.lvlEdit.gui.leftPane.SelectorPanel;
-import skullMod.lvlEdit.gui.modeChange.ModeChanger;
+import skullMod.lvlEdit.gui.animationPane.InfoRectangle;
+import skullMod.lvlEdit.gui.animationPane.PixelCoordinate;
+import skullMod.lvlEdit.gui.selectorPane.SelectorPanel;
 import skullMod.lvlEdit.utility.Utility;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -143,17 +142,12 @@ public class MainWindow extends JFrame {
         CentralDataObject.ddsPanel = new DDS_Panel();
 
 
-
-
-        CentralDataObject.animationPanel = new JScrollPane(new AnimationPanel());
-
-
         /**
          * Mainpane
          */
         contentPane = new JTabbedPane();
 
-        CentralDataObject.scenePanel = OpenGL_Frame.getNewFrame();
+        CentralDataObject.scenePanel = OpenGL_Frame.getNewPanel(this);
 
         //Make a scrollpane around ddsPanel
         final int SCROLL_SPEED = 8; // TODO make this an option
@@ -165,10 +159,6 @@ public class MainWindow extends JFrame {
         contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
         contentPane.add(IMAGE_PANEL, ddsScrollPanel);
         contentPane.add(ANIMATION_PANEL, CentralDataObject.animationPanel);
-
-
-
-
 
         contentPane.setMinimumSize(new Dimension(200, 200));
 
@@ -202,6 +192,10 @@ public class MainWindow extends JFrame {
 
         this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
+
+        //WIN new Level("C:\\levels\\temp\\levels","class_notes_3d");
+        //UNIX new Level("/home/netbook/Working_files/Skullgirls_extracted/levels", "class_notes_3d");
+        CentralDataObject.level.setModel(new DefaultTreeModel(new Level("C:\\levels\\temp\\levels","class_notes_3d")));
 
         //ddsPanel.changeImage("/home/netbook/Working_files/Skullgirls_extracted/levels/textures/class_notes_3d.dds");
         CentralDataObject.ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
@@ -261,39 +255,7 @@ public class MainWindow extends JFrame {
         return new Dimension(suggestedWidth, suggestedHeight);
     }
 
-    private class ModeListItemListener implements ItemListener {
-        public void itemStateChanged(ItemEvent itemEvent) {
-            if(itemEvent.getStateChange() == ItemEvent.SELECTED){
-                String item = (String) itemEvent.getItem();
 
-                // TODO I don't know any good looking switch statement that can take care of this situation
-                //We are gonna use many sweet ifs
-
-                //TODO fix model / image panel names, choose one and stick with it
-
-                if(item.equals(ModeChanger.Modes.SCENE.name)){
-                    contentPane.removeAll();
-                    contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
-                }
-                if(item.equals(ModeChanger.Modes.MODEL.name)){
-                    contentPane.removeAll();
-                    contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
-                    contentPane.add(IMAGE_PANEL, CentralDataObject.ddsPanel);
-
-                }
-                if(item.equals(ModeChanger.Modes.ANIMATION.name)){
-                    contentPane.removeAll();
-                    contentPane.add(ANIMATION_PANEL, CentralDataObject.animationPanel);
-
-                }
-                if(item.equals(ModeChanger.Modes.SHAPE.name)){
-                    contentPane.removeAll();
-                    //TODO temporary
-                    contentPane.add(SCENE_PANEL, CentralDataObject.scenePanel);
-                }
-            }
-        }
-    }
 
     private class ExitApplicationListener implements ActionListener{
         public void actionPerformed(ActionEvent e){

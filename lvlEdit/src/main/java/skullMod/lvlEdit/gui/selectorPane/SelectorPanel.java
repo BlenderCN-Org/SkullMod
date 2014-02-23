@@ -1,4 +1,4 @@
-package skullMod.lvlEdit.gui.leftPane;
+package skullMod.lvlEdit.gui.selectorPane;
 
 import javax.swing.*;
 import java.awt.*;

@@ -38,7 +38,7 @@ public class Music extends NodeAdapter{
     public Music(TreeNode parent, String musicIntro, String musicLoop, boolean interruptIntro, String musicOutro){
         super(parent);
 
-        //TODO unify
+        //TODO unify with other constructor
         this.musicIntro = new LeafContentNode<>(this,"Music intro", defaultSong);
         this.interruptIntro = new LeafContentNode<>(this,"Interrupt intro", false);
         this.musicLoop = new LeafContentNode<>(this,"Music loop", defaultSong);

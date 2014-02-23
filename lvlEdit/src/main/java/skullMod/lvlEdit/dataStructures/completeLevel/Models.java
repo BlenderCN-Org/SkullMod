@@ -13,17 +13,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Models extends NodeAdapter {
-
-    //FIXME temp
-    public static Models model;
-
     private final LinkedList<Model> models;
 
     public Models(TreeNode parent, Model[] models) {
         super(parent);
-
-        //FIXME temp
-        model = this;
 
         //TODO verify input
 
@@ -35,7 +28,6 @@ public class Models extends NodeAdapter {
     public Models(TreeNode parent){
         super(parent);
         this.models = new LinkedList<>();
-        this.models.add(new Model(this));
     }
 
     public Models(TreeNode parent, SGI_File sgiData, HashMap<String, SGM_File> models, HashMap<String, HashMap<String,SGA_File>> animations) {
@@ -47,6 +39,7 @@ public class Models extends NodeAdapter {
             this.models.add(new Model(this, modelMetadata, models.get(modelMetadata.elementName), animations.get(modelMetadata.elementName)));
         }
     }
+
 
     public String toString(){
         return "Models";
