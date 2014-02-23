@@ -10,10 +10,10 @@ import java.util.Collections;
 import java.util.Enumeration;
 
 public class Music extends NodeAdapter{
-    private LeafContentNode<String> musicIntro;
-    private LeafContentNode<Boolean> interruptIntro;
-    private LeafContentNode<String> musicLoop;
-    private LeafContentNode<String> musicOutro;
+    public LeafContentNode<String> musicIntro;
+    public LeafContentNode<Boolean> interruptIntro;
+    public LeafContentNode<String> musicLoop;
+    public LeafContentNode<String> musicOutro;
 
     private static final String defaultSong = "blankmusic";
 

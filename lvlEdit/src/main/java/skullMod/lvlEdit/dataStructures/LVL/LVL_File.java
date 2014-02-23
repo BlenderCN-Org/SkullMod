@@ -10,9 +10,6 @@ import java.util.List;
 
 //TODO test must and nice to haves when reading/writing
 public class LVL_File implements Serializable{
-    public final static String colon = ":";
-
-
     public final static String stageSizeIdentifier = "StageSize";
     public final static String bottomClearanceIdentifier = "BottomClearance";
     public final static String start1Identifier = "Start1";
@@ -30,7 +27,6 @@ public class LVL_File implements Serializable{
     public final static String musicInterruptIdentifier = "Music_InterruptIntro";
     public final static String musicOutroIdentifier = "Music_Outro";
 
-
     public LVL_StageSize stageSize;
     public int bottomClearance;
     public int start1, start2;
@@ -42,7 +38,7 @@ public class LVL_File implements Serializable{
     //TODO May be null (use object instead!)
     public Boolean shadowDirection; //Should not be used according to docs
     //TODO May be null (use object instead!)
-    public Integer shadowDistance; //Use this instead
+    public Integer shadowDistance = -150; //Use this instead FIXME hardcoded start value
     //
 
     public List<LVL_Light> lights; //For Amb, Pt and Dir lights

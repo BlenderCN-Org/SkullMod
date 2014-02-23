@@ -1,9 +1,7 @@
 package skullMod.lvlEdit.dataStructures.openGL;
 
 
-import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
-import skullMod.lvlEdit.dataStructures.CentralDataObject;
 
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
@@ -11,7 +9,6 @@ import javax.media.opengl.awt.GLCanvas;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 public class OpenGL_Frame extends GLCanvas {
     public final OpenGL_Listener listener;
@@ -43,8 +40,14 @@ public class OpenGL_Frame extends GLCanvas {
         public StopAnimatorWindowListener(FPSAnimator animator){
             this.animator = animator;
         }
-
+        //TODO if dispose is called directly on the main jframe this method is not called (no idea why) but it's called when using the DIPOSE_ON_EXIT option, why?
+        /*
         public void windowClosing(WindowEvent e){
+            this.animator.stop();
+        }
+        */
+
+        public void windowClosed(WindowEvent e){
             this.animator.stop();
         }
     }
@@ -52,10 +55,6 @@ public class OpenGL_Frame extends GLCanvas {
 
     public void startAnimator(){
         this.animator.start();
-    }
-
-    public void stopAnimator(){
-        this.animator.stop();
     }
 
     public FPSAnimator getAnimator(){

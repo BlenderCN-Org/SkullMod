@@ -14,9 +14,10 @@ import java.util.Enumeration;
 import static skullMod.lvlEdit.dataStructures.LVL.LVL_Light.LightType.AMBIENT;
 
 public class Lighting extends NodeAdapter{
-    private final LeafContentNode<AmbientLight> ambientLight;
-    private final LeafContentNode<DirectionalLight[]> directionalLights;
-    private final LeafContentNode<PointLight[]> pointLights;
+    public final LeafContentNode<AmbientLight> ambientLight;
+    //FIXME make proper nodes or a good selector
+    public final LeafContentNode<DirectionalLight[]> directionalLights;
+    public final LeafContentNode<PointLight[]> pointLights;
 
     public Lighting(TreeNode parent){
         super(parent);
@@ -79,6 +80,14 @@ public class Lighting extends NodeAdapter{
             this.b = b;
         }
 
+        public int getR(){ return r; }
+        public int getG(){ return g; }
+        public int getB(){ return b; }
+
+        public String toStringRGB(){
+            return r + " " + g + " " + b;
+        }
+
         public String toString(){
             return "Ambient light";
         }
@@ -101,6 +110,10 @@ public class Lighting extends NodeAdapter{
 
         public String toString(){
             return "Directional light";
+        }
+
+        public String toStringRGBXYZ() {
+            return r + " " + g + " " + b + " " + x  + " " + y + " " + z;
         }
     }
 
@@ -125,6 +138,14 @@ public class Lighting extends NodeAdapter{
 
         public String toString(){
             return "Point light";
+        }
+
+        public String toStringData() {
+            if(neverCull){
+                return r + " " + g + " " + b + " " + x  + " " + y + " " + z + " " + lightRadiusInPx + " NeverCull";
+            }else{
+                return r + " " + g + " " + b + " " + x  + " " + y + " " + z + " " + lightRadiusInPx;
+            }
         }
     }
 

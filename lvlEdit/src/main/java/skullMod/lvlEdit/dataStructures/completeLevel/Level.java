@@ -1,6 +1,7 @@
 package skullMod.lvlEdit.dataStructures.completeLevel;
 
 import skullMod.lvlEdit.dataStructures.DataStreamIn;
+import skullMod.lvlEdit.dataStructures.DataStreamOut;
 import skullMod.lvlEdit.dataStructures.LVL.LVL_File;
 import skullMod.lvlEdit.dataStructures.SGA.SGA_File;
 import skullMod.lvlEdit.dataStructures.SGI.SGI_Animation;
@@ -12,11 +13,10 @@ import skullMod.lvlEdit.dataStructures.openGL.OpenGL_Listener;
 import skullMod.lvlEdit.utility.AutoReentrantLock;
 
 import javax.swing.tree.TreeNode;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * This class is checked by the reentrant lock, its children aren't.
@@ -32,6 +32,10 @@ public class Level extends NodeAdapter {
     private Lighting lighting; //Done
     private Models models;
 
+    private String lvlName;
+
+    private String saveDirectory;
+
     public static final String lvlExtension = ".lvl";
     public static final String ddsExtension = ".dds";
     public static final String sgiExtension = ".sgi.msb";
@@ -41,6 +45,9 @@ public class Level extends NodeAdapter {
 
     public Level(String mainDirectory, String lvlName) throws IllegalArgumentException{
         super(null);
+
+        this.lvlName = lvlName;
+        saveDirectory = mainDirectory + File.separator;
 
         //Set up paths
 
@@ -128,6 +135,9 @@ public class Level extends NodeAdapter {
     public Level(){
         super(null); //Root node
 
+        this.saveDirectory = null; //None is defined (will default while saving to current directory)
+        this.lvlName = "defaultLevel";
+
         stageSettings = new StageSettings(this);
         music = new Music(this);
         lighting = new Lighting(this);
@@ -202,10 +212,69 @@ public class Level extends NodeAdapter {
         list.add(music);
         list.add(lighting);
         list.add(models);
-        return null;
+        return Collections.enumeration(list);
     }
 
     public String toString(){
-        return "Level";
+        return lvlName;
+    }
+
+    //This overwrites everything that was before
+    public void saveLevel(){
+        if(saveDirectory == null){
+            saveDirectory = "." + File.separator;
+        }
+
+        //Guaranteed file seperator at the end of saveDirectory
+
+        //Save level
+        try{
+            DataStreamOut lvlStream = new DataStreamOut(saveDirectory + lvlName + lvlExtension);
+
+            DataOutputStream outputStream = lvlStream.s;
+
+            //TODO The : is added where they were in the original file, not tested if they are required, are they?
+            outputStream.write((LVL_File.stageSizeIdentifier + ": " + stageSettings.stageSize.getContent().getX() + " " + stageSettings.stageSize.getContent().getY() + "\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.bottomClearanceIdentifier + ": " + stageSettings.bottomClearance.getContent().toString()+"\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.start1Identifier + ": " + stageSettings.startPlayer1.getContent().toString()+"\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.start2Identifier + ": " + stageSettings.startPlayer2.getContent().toString()+"\n").getBytes("ASCII"));
+
+            outputStream.write(("\n\n").getBytes("ASCII"));
+
+            outputStream.write((LVL_File.musicIntroIdentifier + " " + music.musicIntro.getContent() + "\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.musicLoopIdentifier + " " + music.musicLoop.getContent() + "\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.musicOutroIdentifier + " " + music.musicOutro.getContent() + "\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.musicInterruptIdentifier + " " + music.musicOutro.getContent() + "\n").getBytes("ASCII"));
+
+            outputStream.write((LVL_File.shadowDistanceIdentifier + ": " + stageSettings.shadowDistance.getContent().toString() + "\n").getBytes("ASCII"));
+
+            outputStream.write((LVL_File.lightIdentifier + ": Amb " + lighting.ambientLight.getContent().toStringRGB() +"\n").getBytes("ASCII"));
+
+            for(Lighting.DirectionalLight light : lighting.directionalLights.getContent()){
+                if(light != null){ outputStream.write((LVL_File.lightIdentifier + ": Dir " + light.toStringRGBXYZ() +"\n").getBytes("ASCII")); }
+            }
+
+            for(Lighting.PointLight light : lighting.pointLights.getContent()){
+                if(light != null){ outputStream.write((LVL_File.lightIdentifier + ": Pt " + light.toStringData() + "\n").getBytes("ASCII")); }
+            }
+
+
+            outputStream.write(("\n\n").getBytes("ASCII"));
+
+            outputStream.write((LVL_File.stageRelPath2DIdentifier + " " + stageSettings.rel2dFileName.getContent() + "\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.cameraTiltOptionsIdentifier + " " + stageSettings.tiltRate.getContent() + " " + stageSettings.tiltHeight1.getContent() + " " + stageSettings.tiltHeight2.getContent() + "\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.cameraSetupIdentifier + " " + stageSettings.fieldOfView.getContent() + " " + stageSettings.zNear.getContent() + " " + stageSettings.zFar.getContent() + "\n").getBytes("ASCII"));
+
+            lvlStream.close();
+        }catch(IOException ioe){
+            System.out.println("IOEXCEPTION");
+        }
+
+
+        //Save sgi files
+        //Save sgm files
+        //Save sga files
+
+
     }
 }

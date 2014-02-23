@@ -11,6 +11,7 @@ import skullMod.lvlEdit.gui.animationPane.InfoRectangle;
 import skullMod.lvlEdit.gui.animationPane.PixelCoordinate;
 import skullMod.lvlEdit.gui.menuListeners.LoadLevelListener;
 import skullMod.lvlEdit.gui.menuListeners.NewLevelListener;
+import skullMod.lvlEdit.gui.menuListeners.SaveFileListener;
 import skullMod.lvlEdit.gui.selectorPane.SelectorPanel;
 import skullMod.lvlEdit.utility.Utility;
 
@@ -40,7 +41,7 @@ public class MainWindow extends JFrame {
 
     public final JMenuBar menuBar;
     public final JMenu fileMenu, toolsMenu, aboutMenu;
-    public final JMenuItem newLevelMenuItem, loadMenuItem, saveMenuItem, saveAsMenuItem, closeLevelItem, importMenuItem, exportMenuItem, exitMenuItem;
+    public final JMenuItem newLevelMenuItem, loadMenuItem, saveMenuItem, saveAsMenuItem, importMenuItem, exportMenuItem, exitMenuItem;
     public final JMenuItem imageToDDSMenuItem;
     public final JMenuItem aboutMenuItem, helpMenuItem;
 
@@ -83,7 +84,6 @@ public class MainWindow extends JFrame {
         loadMenuItem = new JMenuItem("Load");
         saveMenuItem = new JMenuItem("Save");
         saveAsMenuItem = new JMenuItem("Save as");
-        closeLevelItem = new JMenuItem("Close level");
         importMenuItem = new JMenuItem("Import");
         exportMenuItem = new JMenuItem("Export");
         exitMenuItem = new JMenuItem("Exit");
@@ -95,7 +95,6 @@ public class MainWindow extends JFrame {
         fileMenu.add(loadMenuItem);
         fileMenu.add(saveMenuItem);
         fileMenu.add(saveAsMenuItem);
-        fileMenu.add(closeLevelItem);
         fileMenu.addSeparator();
         fileMenu.add(importMenuItem);
         fileMenu.add(exportMenuItem);
@@ -122,6 +121,7 @@ public class MainWindow extends JFrame {
         /* Add listeners */
         newLevelMenuItem.addActionListener(new NewLevelListener());
         loadMenuItem.addActionListener(new LoadLevelListener(this));
+        saveMenuItem.addActionListener(new SaveFileListener());
         exitMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 MainWindow.this.dispose();
@@ -276,8 +276,8 @@ public class MainWindow extends JFrame {
                 if(selectedFile == null){ JOptionPane.showMessageDialog(MainWindow.this,"Nothing selected"); return; }
 
 */
-                //Something was selected
-                //Let's read it
+    //Something was selected
+    //Let's read it
                 /*
                 try{
                     DataStreamIn dsi = new DataStreamIn(selectedFile.getAbsolutePath());
@@ -305,17 +305,13 @@ public class MainWindow extends JFrame {
                     System.out.println("IOEXCEPTION");
                 }
                 */
-                //Smarter reading!
+    //Smarter reading!
                 /*
                 try{
                     DataStreamIn dsi = new DataStreamIn(selectedFile.getAbsolutePath());
                     SGI_File sgi = new SGI_File(dsi);
 
                     dsi.close();
-
-
-
-
 
 
                     SGI_Element[] models = sgi.elements;

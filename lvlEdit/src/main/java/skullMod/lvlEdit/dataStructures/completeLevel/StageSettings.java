@@ -23,11 +23,15 @@ public class StageSettings extends NodeAdapter{
     public LeafContentNode<Float> tiltRate;
     public LeafContentNode<Float> tiltHeight1, tiltHeight2;
 
+    public LeafContentNode<Integer> shadowDistance;
+
+    public LeafContentNode<String> rel2dFileName;
+
     //Thanks Mike
     private static final int stageSizeDefaultX = 3750, stageSizeDefaultY = 2000;
 
     public StageSettings(TreeNode parent){
-        this(parent,stageSizeDefaultX, stageSizeDefaultY,64,1675,2075,66f,3f,20000f,0.001f,0f,200f);
+        this(parent,stageSizeDefaultX, stageSizeDefaultY,64,1675,2075,66f,3f,20000f,0.001f,0f,200f,150,"temp/levels/2D/default2DFile");
     }
 
     public StageSettings(TreeNode parent, LVL_File lvl){
@@ -47,11 +51,14 @@ public class StageSettings extends NodeAdapter{
         //TODO float only
         this.tiltHeight1 = new LeafContentNode<>(this,"Tilt height 1", (float) lvl.cameraTiltOptions.tiltHeight1);
         this.tiltHeight2 = new LeafContentNode<>(this,"Tilt height 2", (float) lvl.cameraTiltOptions.tiltHeight2);
+
+        this.shadowDistance = new LeafContentNode<>(this, "Shadow distance", lvl.shadowDistance);
+        this.rel2dFileName = new LeafContentNode<>(this, "2D background file name", lvl.stageRelPath2D);
     }
 
     //TODO still relevant? alternativly scrap constructor above
     public StageSettings(TreeNode parent, int xStageSize, int yStageSize, int bottomClearance, int startPlayer1, int startPlayer2,
-                         float fieldOfView, float zNear, float zFar, float tiltRate, float tiltHeight1, float tiltHeight2){
+                         float fieldOfView, float zNear, float zFar, float tiltRate, float tiltHeight1, float tiltHeight2, int shadowDistance, String rel2dFileName){
         super(parent);
         //TODO verfiy
         this.stageSize = new LeafContentNode<>(this,"Stage size",new Dimension2D<>(null, xStageSize,yStageSize));
@@ -66,9 +73,12 @@ public class StageSettings extends NodeAdapter{
         this.tiltRate = new LeafContentNode<>(this,"Tilt rate", tiltRate);
         this.tiltHeight1 = new LeafContentNode<>(this,"Tilt height 1", tiltHeight1);
         this.tiltHeight2 = new LeafContentNode<>(this,"Tilt height 2", tiltHeight2);
+
+        this.shadowDistance = new LeafContentNode<>(this, "Shadow distance", shadowDistance);
+        this.rel2dFileName = new LeafContentNode<>(this, "2D background file name",rel2dFileName);
     }
 
-    public int getChildCount() { return 10; }
+    public int getChildCount() { return 12; }
 
     public Enumeration<TreeNode> children() {
         ArrayList<TreeNode> list = new ArrayList<>(getChildCount());
@@ -82,7 +92,8 @@ public class StageSettings extends NodeAdapter{
         list.add(tiltRate);
         list.add(tiltHeight1);
         list.add(tiltHeight2);
-
+        list.add(shadowDistance);
+        list.add(rel2dFileName);
         return Collections.enumeration(list);
     }
 
