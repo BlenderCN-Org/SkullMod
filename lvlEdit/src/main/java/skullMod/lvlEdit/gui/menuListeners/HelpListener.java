@@ -13,7 +13,7 @@ public class HelpListener implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent e) {
-
+        new HelpDialog();
     }
 
     private class HelpDialog extends JDialog{

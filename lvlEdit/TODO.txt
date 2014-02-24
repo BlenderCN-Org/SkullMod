@@ -1,18 +1,8 @@
 TODO till version 1.0
 =====================
+3D Stuff
 
-Icon: http://www.endlessicons.com/terms-of-use/
-Reference in about
-
-Basic GUI
-
-Display structure (of level)
 Texture display
-composition display
 
 Add license
-
-More info on "libEGL warning: failed to create a pipe screen for i965"
-on MESA drivers for OpenGL 3.1
-
 ========================================

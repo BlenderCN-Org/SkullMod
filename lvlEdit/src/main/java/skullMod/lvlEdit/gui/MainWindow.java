@@ -9,10 +9,7 @@ import skullMod.lvlEdit.dataStructures.completeLevel.Level;
 import skullMod.lvlEdit.dataStructures.openGL.OpenGL_Frame;
 import skullMod.lvlEdit.gui.animationPane.InfoRectangle;
 import skullMod.lvlEdit.gui.animationPane.PixelCoordinate;
-import skullMod.lvlEdit.gui.menuListeners.AboutListener;
-import skullMod.lvlEdit.gui.menuListeners.LoadLevelListener;
-import skullMod.lvlEdit.gui.menuListeners.NewLevelListener;
-import skullMod.lvlEdit.gui.menuListeners.SaveFileListener;
+import skullMod.lvlEdit.gui.menuListeners.*;
 import skullMod.lvlEdit.gui.selectorPane.SelectorPanel;
 import skullMod.lvlEdit.utility.Utility;
 
@@ -134,6 +131,7 @@ public class MainWindow extends JFrame {
 
 
         aboutMenuItem.addActionListener(new AboutListener(this));
+        helpMenuItem.addActionListener(new HelpListener(this));
 
         this.setJMenuBar(menuBar);
 
@@ -171,14 +169,10 @@ public class MainWindow extends JFrame {
         this.setLayout(new BorderLayout());
         this.add(splitPane, BorderLayout.CENTER);
 
-
-        //CentralDataObject.modeList.addItemListener(new ModeListItemListener());
-
         this.setSize(getPreferredSize());
 
-
         //*****Misc stuff*****
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //FIXME is this the problem of the awt crash with file/directory select dialogs?
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 
         this.setMinimumSize(new Dimension(400,100));
@@ -193,7 +187,7 @@ public class MainWindow extends JFrame {
 
         //WIN new Level("C:\\levels\\temp\\levels","class_notes_3d");
         //UNIX new Level("/home/netbook/Working_files/Skullgirls_extracted/levels", "class_notes_3d");
-        CentralDataObject.level.setModel(new DefaultTreeModel(new Level("C:\\levels\\temp\\levels","class_notes_3d")));
+        //CentralDataObject.level.setModel(new DefaultTreeModel(new Level("C:\\levels\\temp\\levels","class_notes_3d")));
 
         //ddsPanel.changeImage("/home/netbook/Working_files/Skullgirls_extracted/levels/textures/class_notes_3d.dds");
         CentralDataObject.ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
