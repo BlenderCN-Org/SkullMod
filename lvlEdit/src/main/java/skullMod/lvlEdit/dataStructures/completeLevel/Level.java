@@ -225,7 +225,7 @@ public class Level extends NodeAdapter {
             saveDirectory = "." + File.separator;
         }
 
-        //Guaranteed file seperator at the end of saveDirectory
+        //Guaranteed file seperator at the end of saveDirectory so it doesn't have to be added
 
         //Save level
         try{
@@ -251,6 +251,7 @@ public class Level extends NodeAdapter {
                 outputStream.write((LVL_File.musicInterruptIdentifier + " 0\n").getBytes("ASCII"));
             }
 
+            outputStream.write(("\n\n").getBytes("ASCII"));
 
             outputStream.write((LVL_File.shadowDistanceIdentifier + ": " + stageSettings.shadowDistance.getContent().toString() + "\n").getBytes("ASCII"));
 
@@ -264,7 +265,6 @@ public class Level extends NodeAdapter {
                 if(light != null){ outputStream.write((LVL_File.lightIdentifier + ": Pt " + light.toStringData() + "\n").getBytes("ASCII")); }
             }
 
-
             outputStream.write(("\n\n").getBytes("ASCII"));
 
             outputStream.write((LVL_File.stageRelPath2DIdentifier + " " + stageSettings.rel2dFileName.getContent() + "\n").getBytes("ASCII"));
@@ -276,8 +276,19 @@ public class Level extends NodeAdapter {
             System.out.println("IOEXCEPTION");
         }
 
+        //Save sgi file
+        try{
+            DataStreamOut lvlStream = new DataStreamOut(saveDirectory + lvlName + File.separator + "background" + sgiExtension);
 
-        //Save sgi files
+            DataOutputStream outputStream = lvlStream.s;
+
+
+
+            lvlStream.close();
+        }catch(IOException ioe){
+            System.out.println("IOEXCEPTION");
+        }
+
         //Save sgm files
         //Save sga files
 

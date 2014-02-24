@@ -56,7 +56,7 @@ public class SGI_Element implements Serializable {
         dso.writeBytes(unknown);
 
         //FIXME change unknown once known
-
+        //FIXME missing rest of write implementation
 
 
     }
