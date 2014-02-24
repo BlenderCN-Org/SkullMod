@@ -235,16 +235,22 @@ public class Level extends NodeAdapter {
 
             //TODO The : is added where they were in the original file, not tested if they are required, are they?
             outputStream.write((LVL_File.stageSizeIdentifier + ": " + stageSettings.stageSize.getContent().getX() + " " + stageSettings.stageSize.getContent().getY() + "\n").getBytes("ASCII"));
-            outputStream.write((LVL_File.bottomClearanceIdentifier + ": " + stageSettings.bottomClearance.getContent().toString()+"\n").getBytes("ASCII"));
-            outputStream.write((LVL_File.start1Identifier + ": " + stageSettings.startPlayer1.getContent().toString()+"\n").getBytes("ASCII"));
-            outputStream.write((LVL_File.start2Identifier + ": " + stageSettings.startPlayer2.getContent().toString()+"\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.bottomClearanceIdentifier + ": " + stageSettings.bottomClearance.getContent().toString() + "\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.start1Identifier + ": " + stageSettings.startPlayer1.getContent().toString() + "\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.start2Identifier + ": " + stageSettings.startPlayer2.getContent().toString() + "\n").getBytes("ASCII"));
 
             outputStream.write(("\n\n").getBytes("ASCII"));
 
             outputStream.write((LVL_File.musicIntroIdentifier + " " + music.musicIntro.getContent() + "\n").getBytes("ASCII"));
             outputStream.write((LVL_File.musicLoopIdentifier + " " + music.musicLoop.getContent() + "\n").getBytes("ASCII"));
             outputStream.write((LVL_File.musicOutroIdentifier + " " + music.musicOutro.getContent() + "\n").getBytes("ASCII"));
-            outputStream.write((LVL_File.musicInterruptIdentifier + " " + music.musicOutro.getContent() + "\n").getBytes("ASCII"));
+
+            if(music.interruptIntro.getContent()){
+                outputStream.write((LVL_File.musicInterruptIdentifier + " 1\n").getBytes("ASCII"));
+            }else{
+                outputStream.write((LVL_File.musicInterruptIdentifier + " 0\n").getBytes("ASCII"));
+            }
+
 
             outputStream.write((LVL_File.shadowDistanceIdentifier + ": " + stageSettings.shadowDistance.getContent().toString() + "\n").getBytes("ASCII"));
 

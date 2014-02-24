@@ -98,12 +98,14 @@ public class DDS_Panel extends JPanel{
         g.setColor(modelColor);
 
 
+        if(models != null){
+            for(InfoRectangle rectangle : models){
 
-        for(InfoRectangle rectangle : models){
-
-            g.drawRect(rectangle.getPoint1().getX()-1, rectangle.getPoint1().getY()-1, rectangle.getWidth()+2, rectangle.getHeight()+2);
-            g.drawString(rectangle.getName(),rectangle.getPoint1().getX(), rectangle.getPoint1().getY() + fontHeight);
+                g.drawRect(rectangle.getPoint1().getX()-1, rectangle.getPoint1().getY()-1, rectangle.getWidth()+2, rectangle.getHeight()+2);
+                g.drawString(rectangle.getName(),rectangle.getPoint1().getX(), rectangle.getPoint1().getY() + fontHeight);
+            }
         }
+
         if(triangles != null){
             for(UV_Triangle triangle : triangles){
                 int width = image.getWidth();

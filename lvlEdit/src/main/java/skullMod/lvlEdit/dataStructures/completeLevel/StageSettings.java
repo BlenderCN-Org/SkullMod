@@ -27,11 +27,12 @@ public class StageSettings extends NodeAdapter{
 
     public LeafContentNode<String> rel2dFileName;
 
-    //Thanks Mike
+    //Thanks MikeZ
     private static final int stageSizeDefaultX = 3750, stageSizeDefaultY = 2000;
+    public static final int defaultShadowDistance = -400;
 
     public StageSettings(TreeNode parent){
-        this(parent,stageSizeDefaultX, stageSizeDefaultY,64,1675,2075,66f,3f,20000f,0.001f,0f,200f,150,"temp/levels/2D/default2DFile");
+        this(parent,stageSizeDefaultX, stageSizeDefaultY,64,1675,2075,66f,3f,20000f,0.001f,0f,200f,defaultShadowDistance,"temp/levels/2D/default2DFile");
     }
 
     public StageSettings(TreeNode parent, LVL_File lvl){

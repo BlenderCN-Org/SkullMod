@@ -1,5 +1,7 @@
 package skullMod.lvlEdit.dataStructures.LVL;
 
+import skullMod.lvlEdit.dataStructures.completeLevel.StageSettings;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -35,10 +37,11 @@ public class LVL_File implements Serializable{
     public static final boolean shadowDirectionUp = true;
     public static final boolean shadowDirectionDown = false;
 
+    //public Boolean shadowDirection; //Should not be used according to docs
+    //Modernize files if they are saved no more shadowDirections
+
     //TODO May be null (use object instead!)
-    public Boolean shadowDirection; //Should not be used according to docs
-    //TODO May be null (use object instead!)
-    public Integer shadowDistance = -150; //Use this instead FIXME hardcoded start value
+    public Integer shadowDistance = StageSettings.defaultShadowDistance; //Use this instead FIXME hardcoded start value
     //
 
     public List<LVL_Light> lights; //For Amb, Pt and Dir lights
@@ -85,10 +88,10 @@ public class LVL_File implements Serializable{
                     //Valid values U and D
                     switch(fields[1]){
                         case "D":
-                            shadowDirection = shadowDirectionDown;
+                            shadowDistance = StageSettings.defaultShadowDistance;
                             break;
                         case "U":
-                            shadowDirection = shadowDirectionUp;
+                            shadowDistance = -1 * StageSettings.defaultShadowDistance;
                             break;
                         default:
                             throw new IllegalArgumentException("ERROR");

@@ -9,6 +9,7 @@ import skullMod.lvlEdit.dataStructures.completeLevel.Level;
 import skullMod.lvlEdit.dataStructures.openGL.OpenGL_Frame;
 import skullMod.lvlEdit.gui.animationPane.InfoRectangle;
 import skullMod.lvlEdit.gui.animationPane.PixelCoordinate;
+import skullMod.lvlEdit.gui.menuListeners.AboutListener;
 import skullMod.lvlEdit.gui.menuListeners.LoadLevelListener;
 import skullMod.lvlEdit.gui.menuListeners.NewLevelListener;
 import skullMod.lvlEdit.gui.menuListeners.SaveFileListener;
@@ -72,13 +73,16 @@ public class MainWindow extends JFrame {
 
         /**Menubar*/
         menuBar = new JMenuBar();
-        /*Menues*/
+        /*Menues, it is important to make them heavyweight so they display infront of the opengl canvas*/
         fileMenu = new JMenu("File");
         fileMenu.setMnemonic('f');
+        fileMenu.getPopupMenu().setLightWeightPopupEnabled(false);
         toolsMenu = new JMenu("Tools");
         toolsMenu.setMnemonic('t');
+        toolsMenu.getPopupMenu().setLightWeightPopupEnabled(false);
         aboutMenu = new JMenu("About");
         aboutMenu.setMnemonic('a');
+        aboutMenu.getPopupMenu().setLightWeightPopupEnabled(false);
         /*MenuItems - File*/
         newLevelMenuItem = new JMenuItem("New level");
         loadMenuItem = new JMenuItem("Load");
@@ -127,6 +131,9 @@ public class MainWindow extends JFrame {
                 MainWindow.this.dispose();
             }
         });
+
+
+        aboutMenuItem.addActionListener(new AboutListener(this));
 
         this.setJMenuBar(menuBar);
 
