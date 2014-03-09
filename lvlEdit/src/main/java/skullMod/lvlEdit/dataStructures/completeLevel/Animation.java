@@ -35,6 +35,8 @@ public class Animation extends NodeAdapter{
     public int getChildCount() {
         return 2;
     }
+
+
     public Enumeration children() {
         ArrayList<TreeNode> list = new ArrayList<>(getChildCount());
         list.add(animationName);
@@ -45,4 +47,6 @@ public class Animation extends NodeAdapter{
     public String toString(){
         return animationName.getContent();
     }
+
+
 }

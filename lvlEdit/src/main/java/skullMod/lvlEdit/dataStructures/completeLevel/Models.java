@@ -52,4 +52,20 @@ public class Models extends NodeAdapter {
     public Enumeration children() {
         return Collections.enumeration(models);
     }
+
+    public void removeModel(Model selectedModel){
+        models.remove(selectedModel);
+    }
+
+    public void removeAnimation(Animation selectedAnimation) {
+        for(Model model : models){
+            for(Animation animation : model.animations.getAnimations()){
+                if(animation.equals(selectedAnimation)){
+                    model.animations.removeAnimation(selectedAnimation);
+                }
+
+            }
+
+        }
+    }
 }

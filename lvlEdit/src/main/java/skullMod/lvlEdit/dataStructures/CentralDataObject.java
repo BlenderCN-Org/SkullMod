@@ -1,6 +1,7 @@
 package skullMod.lvlEdit.dataStructures;
 
 import skullMod.lvlEdit.dataStructures.completeLevel.Level;
+import skullMod.lvlEdit.dataStructures.completeLevel.SkullmodJTree;
 import skullMod.lvlEdit.gui.AnimationPanel;
 import skullMod.lvlEdit.gui.DDS_Panel;
 
@@ -24,5 +25,5 @@ public final class CentralDataObject {
     public static JScrollPane animationPanel = new JScrollPane(new AnimationPanel());
     public static GLCanvas scenePanel;
 
-    public static final JTree level = new JTree(new Level());
+    public static final JTree level = new SkullmodJTree(new Level());
 }

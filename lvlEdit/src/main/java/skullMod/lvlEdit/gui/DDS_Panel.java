@@ -42,21 +42,31 @@ public class DDS_Panel extends JPanel{
     }
 
     //TODO param is actually path?
-    public void changeImage(String fileName){
-        if(fileName != null){
-            File file = new File(fileName);
-            try{
-                image = ImageIO.read(file);
-                this.fileName = fileName;
-                this.repaint();
-            }catch(FileNotFoundException fnfe){
-                System.out.println("File not found exception");
-            }catch(IOException ioe){
-                System.out.println("Error reading file");
+    //This is quite simple, make a new thread that loads the image, when the image is loaded run the repaint on the EDT thread again
+    public void changeImage(final String fileName){
+        Runnable changeImage = new Runnable() {
+            public void run() {
+                if(fileName != null){
+                    File file = new File(fileName);
+                    try{
+                        image = ImageIO.read(file);
+                        DDS_Panel.this.fileName = fileName;
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                DDS_Panel.this.repaint();
+                            }
+                        });
+
+                    }catch(FileNotFoundException fnfe){
+                        System.out.println("File not found exception");
+                    }catch(IOException ioe){
+                        System.out.println("Error reading file");
+                    }
+
+                }
             }
-
-        }
-
+        };
+        new Thread(changeImage).start();
     }
 
     public BufferedImage getImage(){ return image; }

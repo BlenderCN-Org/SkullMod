@@ -135,7 +135,7 @@ public class LVL_File implements Serializable{
                     break;
                 case cameraTiltOptionsIdentifier:
                     if(fields.length != 4){ throw new IllegalArgumentException("ERROR"); }
-                    cameraTiltOptions = new CameraTilt(Float.parseFloat(fields[1]), Integer.parseInt(fields[2]), Integer.parseInt(fields[3]));
+                    cameraTiltOptions = new CameraTilt(Float.parseFloat(fields[1]), Float.parseFloat(fields[2]), Float.parseFloat(fields[3]));
                     break;
                 case cameraSetupIdentifier:
                     if(fields.length != 2 && fields.length != 4){ throw new IllegalArgumentException("ERROR"); }

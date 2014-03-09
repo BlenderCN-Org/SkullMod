@@ -34,7 +34,15 @@ public class Animations extends NodeAdapter{
         return Collections.enumeration(animations);
     }
 
+    public Animation[] getAnimations(){
+        return animations.toArray(new Animation[animations.size()]);
+    }
+
     public String toString(){
         return "Animations";
+    }
+
+    public void removeAnimation(Animation selectedAnimation) {
+        animations.remove(selectedAnimation);
     }
 }

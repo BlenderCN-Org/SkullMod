@@ -19,6 +19,8 @@ public class Application {
         System.setProperty("sun.java2d.noddraw", Boolean.TRUE.toString());
         System.setProperty("sun.java2d.opengl=True", Boolean.TRUE.toString());
 
+        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+
         //Start properly from event dispatcher thread
         SwingUtilities.invokeLater(new Runnable(){
             public void run(){

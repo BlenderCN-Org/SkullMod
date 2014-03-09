@@ -36,6 +36,7 @@ public class Level extends NodeAdapter {
 
     private String saveDirectory;
 
+
     public static final String lvlExtension = ".lvl";
     public static final String ddsExtension = ".dds";
     public static final String sgiExtension = ".sgi.msb";
@@ -176,6 +177,10 @@ public class Level extends NodeAdapter {
             throw new IllegalAccessError("Lock this object before using it");
         }
     }
+
+
+    public String getLvlName(){ return lvlName; }
+    public String getSaveDirectory(){ return saveDirectory; }
 
     //This bypasses the get methods because the EDT thread never writes
     //Also the content can be old or currently be written because

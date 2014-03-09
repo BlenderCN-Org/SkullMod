@@ -8,7 +8,13 @@ public abstract class NodeAdapter implements TreeNode{
     public NodeAdapter(TreeNode parent){ this.parent = parent; }
     public TreeNode getParent() { return parent; }
     public boolean getAllowsChildren() { return true; }
-    public boolean isLeaf() { return false; }
+    public boolean isLeaf() {
+        if( getChildCount() == 0 ){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     public TreeNode getChildAt(int childIndex) {
         Enumeration<TreeNode> nodes = children();

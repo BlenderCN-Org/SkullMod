@@ -13,11 +13,12 @@ import javax.swing.tree.TreeNode;
 import java.util.*;
 
 public class Model extends NodeAdapter{
-    private final Animations animations;
+    public final Animations animations;
 
 
     private LeafContentNode<String> modelName;
     private LeafContentNode<String> fileName;
+    private LeafContentNode<String> textureName;
 
     private LeafContentNode<Mat4> transformationMatrix;
     //TODO unknown 2 bytes see SGI_Element
@@ -31,6 +32,7 @@ public class Model extends NodeAdapter{
         //TODO add other requirements
         this.modelName = new LeafContentNode<>(this, "Name", "defaultElement");
         this.fileName = new LeafContentNode<>(this, "File", "defaultName");
+        this.textureName = new LeafContentNode<>(this, "Texture name", "defaultTexture");
 
         float[] tempMatrix = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
         this.transformationMatrix = new LeafContentNode<>(this, "Transformation matrix", new Mat4(tempMatrix));
@@ -44,6 +46,7 @@ public class Model extends NodeAdapter{
 
         this.modelName = new LeafContentNode<>(this, "Name", modelMetadata.elementName);
         this.fileName = new LeafContentNode<>(this, "File",modelMetadata.modelFileName);
+        this.textureName = new LeafContentNode<>(this, "Texture name", model.textureName);
 
         this.transformationMatrix = new LeafContentNode<>(this, "Transformation matrix", modelMetadata.transformationMatrix);
         this.animations = new Animations(this, modelMetadata.animations, animations);
@@ -54,7 +57,7 @@ public class Model extends NodeAdapter{
 
 
     public int getChildCount() {
-        return 5;
+        return 6;
     }
 
     public Enumeration children() {
@@ -62,6 +65,7 @@ public class Model extends NodeAdapter{
         list.add(animations);
         list.add(modelName);
         list.add(fileName);
+        list.add(textureName);
         list.add(modelData);
         list.add(transformationMatrix);
         return Collections.enumeration(list);
@@ -70,4 +74,6 @@ public class Model extends NodeAdapter{
     public String toString(){
         return modelName.getContent();
     }
+
+    public String getTextureFileName(){ return textureName.getContent(); }
 }

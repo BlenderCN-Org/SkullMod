@@ -2,6 +2,7 @@ package skullMod.lvlEdit.gui.menuListeners;
 
 import skullMod.lvlEdit.dataStructures.CentralDataObject;
 import skullMod.lvlEdit.dataStructures.completeLevel.Level;
+import skullMod.lvlEdit.dataStructures.completeLevel.SkullmodJTree;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -42,7 +43,7 @@ public class LoadLevelListener implements ActionListener{
             String fileName = selectedFile.getName().replaceFirst("[.][^.]+$", ""); //Remove anything after the first '.'
 
             //FIXME Error checking (IllegalArgumentExcpetion etc.), updating opengl data (fov etc.)!
-            CentralDataObject.level.setModel(new DefaultTreeModel(new Level(lastValidDirectory, fileName)));
+            CentralDataObject.level.setModel(new SkullmodJTree.SkullmodTreeModel(new Level(lastValidDirectory, fileName)));
         }
     }
 }

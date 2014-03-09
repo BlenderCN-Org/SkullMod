@@ -58,7 +58,7 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
         xDeltaDrag = 0;
         yDeltaDrag = 0;
 
-        System.out.println("DT: " + dt);
+        //TODO System.out.println("DT: " + dt);
 
         if (w) {
             walkForward(moveSpeed * dt);
@@ -193,8 +193,6 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
         // Set the viewport to be the entire window
         gl3.glViewport(0, 0, windowWidth, windowHeight);
 
-
-
         Mat4 temp = new Mat4(projMatrix);
         Mini_GLUT.recalculateProjectionMatrix(width, height, 66f, 3.0f, 2000.0f, temp);
         projMatrix = temp.get();
@@ -204,7 +202,7 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
         float[] array = {1,0,0,0,   0,1,0,0,    0,0,1,0,    0,0,0,1};
         viewMatrix = array;
         updateCamera();
-        System.out.println(cameraX + " " + cameraY + " " + cameraZ + " PITCH " + cameraPitch + " YAW " + cameraYaw);
+        //TODO System.out.println(cameraX + " " + cameraY + " " + cameraZ + " PITCH " + cameraPitch + " YAW " + cameraYaw);
 
 
         GL3 gl3 = drawable.getGL().getGL3();

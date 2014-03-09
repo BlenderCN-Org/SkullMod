@@ -162,7 +162,7 @@ public class MainWindow extends JFrame {
          * Layout
          */
         //Create a split pane with the two scroll panes in it.
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new SelectorPanel(), contentPane);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new SelectorPanel(this), contentPane);
         splitPane.setOneTouchExpandable(true);
 
 
@@ -190,9 +190,9 @@ public class MainWindow extends JFrame {
         //CentralDataObject.level.setModel(new DefaultTreeModel(new Level("C:\\levels\\temp\\levels","class_notes_3d")));
 
         //ddsPanel.changeImage("/home/netbook/Working_files/Skullgirls_extracted/levels/textures/class_notes_3d.dds");
-        CentralDataObject.ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
+        //CentralDataObject.ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\class_notes_3d.dds");
         //ddsPanel.changeImage("C:\\levels\\temp\\levels\\textures\\innsmouth_day_fgnpc_02.dds");
-
+        /*
         int width = CentralDataObject.ddsPanel.getImage().getWidth();
         int height = CentralDataObject.ddsPanel.getImage().getHeight();
 
@@ -231,6 +231,7 @@ public class MainWindow extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+        */
     }
 
     public Dimension getPreferredSize(){

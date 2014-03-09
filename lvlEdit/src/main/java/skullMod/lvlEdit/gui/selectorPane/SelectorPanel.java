@@ -4,10 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SelectorPanel extends JPanel {
-    public SelectorPanel(){
+    public SelectorPanel(JFrame frame){
         this.setLayout(new BorderLayout());
 
-        CenterSelectorPanel centerPanel = new CenterSelectorPanel();
+        CenterSelectorPanel centerPanel = new CenterSelectorPanel(frame);
 
         this.add(centerPanel, BorderLayout.CENTER);
     }
