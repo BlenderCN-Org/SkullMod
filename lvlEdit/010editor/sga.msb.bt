@@ -34,17 +34,69 @@ typedef struct{
     } time[nOfTime] <optimize=false>;   
 } UV_TRACK <read=UV_TRACK_Read>;
 
-string UV_TRACK_Read(UV_TRACK &v){ return "PLACEHOLDER"; }
+string UV_TRACK_Read(UV_TRACK &v){ return "UV TRACK"; }
 
 struct FILE{
     Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
-    char unknown1[20];
-    float unknownFloat;
-    Pascal64String type;
-    UV_TRACK track;
+    uint32 unknownNumber;
+    uint64 nOfElements;
+    uint64 nOfUVTracks;    
+
+    float animationLengthInSeconds;
+    struct UNKNOWN_ELEMENTS{
+        
+        
+        struct UNKNOWN_ELEMENT{
+            Pascal64String name;
+            uint64 length; 
+            struct UNKNOWN_DATA{
+                float a;
+                float b;
+                float c;
+            }unknown_data[length];
+
+            uint64 length2;
+            struct UNKNOWN_DATA2{
+                float a1;
+                float b1;
+                float c1;
+                float d1;
+            }unknown_data2[length2] ; 
+
+            uint64 length3;
+            struct UNKNOWN_DATA3{
+                float a2;
+                float b2;
+                float c2;
+            }unknown_data3[length3];        
+        }unknown_element <read=UNKNOWN_ELEMENT_read, optimize=false>;   
+    }unknown_elements[nOfElements] <read=UNKNOWN_ELEMENTS_read, optimize=false>;
+    
+    struct UV_TRACKS{
+        Pascal64String type;
+        UV_TRACK track;
+    }uv_tracks[nOfUVTracks] <optimize=false,read=UV_TRACKS_read>;
+    
 } file <read=FILE_read>;
 
 
+
+string UV_TRACKS_read(UV_TRACKS &e){
+    return "UV track";
+}
+
+string UNKNOWN_ELEMENTS_read(UNKNOWN_ELEMENTS &e){
+    return e.unknown_element.name.chars;
+}
+
+string UNKNOWN_ELEMENT_read(UNKNOWN_ELEMENT &e){
+    return "PLACEHOLDER4";
+}
+
+
+string UV_Track_read(UV_TRACK &e){
+    return "PLACEHOLDER2";
+}
 
 //http://www.intrepid-web.net/010-editor/
 char[] get_filename(char full_path[], char delimiter[])

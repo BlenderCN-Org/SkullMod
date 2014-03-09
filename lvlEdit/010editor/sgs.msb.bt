@@ -18,9 +18,19 @@ string Pascal64String_Read(Pascal64String &v){ return v.chars; }
 
 struct FILE{
     Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
-    uint64 nOfUnknown1;
-    uint64 nOfUnknown2;
+    uint64 nOfBones;
+    
+    struct BONE{
+        Pascal64String name;
+        float unknown; 
+        float someMatrix[16];
+               
+    }bone[nOfBones] <read=BONE_read,optimize=false>;
 } file <read=FILE_read>;
+
+string BONE_read(BONE &e){
+    return e.name.chars;
+}
 
 //http://www.intrepid-web.net/010-editor/
 char[] get_filename(char full_path[], char delimiter[])
