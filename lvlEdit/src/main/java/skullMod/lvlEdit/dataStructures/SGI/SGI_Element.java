@@ -50,8 +50,8 @@ public class SGI_Element implements Serializable {
     }
 
     public void writeToStream(DataStreamOut dso) throws IOException{
-        Utility.writeLongPascalString(dso, elementName);
-        Utility.writeLongPascalString(dso, modelFileName);
+        Utility.writeLongPascalString(dso.s, elementName);
+        Utility.writeLongPascalString(dso.s, modelFileName);
         transformationMatrix.writeToStream(dso.s);
         dso.writeBytes(unknown);
 

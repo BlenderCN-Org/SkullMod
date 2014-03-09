@@ -30,7 +30,7 @@ public class SGI_File implements Serializable{
     }
 
     public void writeToStream(DataStreamOut dso) throws IOException{
-        Utility.writeLongPascalString(dso, fileFormatRevision);
+        Utility.writeLongPascalString(dso.s, fileFormatRevision);
         dso.s.writeLong(elements.length);
         for(SGI_Element element : elements){
             element.writeToStream(dso);

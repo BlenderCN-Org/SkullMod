@@ -1,15 +1,11 @@
 package skullMod.lvlEdit.gui.selectorPane;
 
 import skullMod.lvlEdit.dataStructures.CentralDataObject;
-import skullMod.lvlEdit.dataStructures.completeLevel.Animation;
-import skullMod.lvlEdit.dataStructures.completeLevel.Level;
-import skullMod.lvlEdit.dataStructures.completeLevel.Model;
-import skullMod.lvlEdit.dataStructures.completeLevel.SkullmodJTree;
-import skullMod.lvlEdit.dataStructures.inputDialogs.Dimension2DDialog;
-import skullMod.lvlEdit.dataStructures.inputDialogs.FloatInput;
-import skullMod.lvlEdit.dataStructures.inputDialogs.IntegerInput;
-import skullMod.lvlEdit.dataStructures.inputDialogs.StringInput;
+import skullMod.lvlEdit.dataStructures.SGM.Vertex;
+import skullMod.lvlEdit.dataStructures.completeLevel.*;
+import skullMod.lvlEdit.dataStructures.inputDialogs.*;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.LeafContentNode;
+import skullMod.lvlEdit.gui.DDS_Panel;
 import skullMod.lvlEdit.utility.Dimension2D;
 
 import javax.swing.*;
@@ -38,8 +34,8 @@ public class RightClickListener extends MouseAdapter {
 
         if(SwingUtilities.isLeftMouseButton(e)){
             int row = tree.getRowForLocation(e.getX(), e.getY());
-            System.out.println("ROW:" +row);
-            //int row = tree.getClosestRowForLocation(e.getX(), e.getY());
+
+
             if(row == -1){
                 tree.setSelectionRow(-1);
             }else{
@@ -53,6 +49,17 @@ public class RightClickListener extends MouseAdapter {
 
                     Level l = (Level) tree.getModel().getRoot();
                     CentralDataObject.ddsPanel.changeImage(l.getSaveDirectory() + File.separator + "textures" + File.separator + m.getTextureFileName() + Level.ddsExtension);
+
+                    VertexData vData = m.modelData.getContent();
+                    short[] ibo = vData.iboData;
+                    Vertex[] vbo = vData.vertexData;
+                    int nOfTriangles = ibo.length/3;
+
+                    DDS_Panel.UV_Triangle[] triangleData = new DDS_Panel.UV_Triangle[nOfTriangles];
+                    for(int i = 0;i < nOfTriangles;i++){
+                        triangleData[i] = new DDS_Panel.UV_Triangle(vbo[ibo[i*3]].uv,vbo[ibo[i*3 +1]].uv,vbo[ibo[i*3 +2]].uv);
+                    }
+                    CentralDataObject.ddsPanel.setUV_Triangles(triangleData);
                 }
             }
         }
@@ -69,8 +76,6 @@ public class RightClickListener extends MouseAdapter {
 
                 PopupMenu popupMenu = new PopupMenu(node);
                 popupMenu.show(e.getComponent(), e.getX(), e.getY());
-
-
             }
 
         }
@@ -86,6 +91,14 @@ public class RightClickListener extends MouseAdapter {
 
             EditActionListener editActionListener = new EditActionListener(node);
             DeleteActionListener deleteActionListener = new DeleteActionListener(node);
+            EditLightingListener editLightingListener = new EditLightingListener(node);
+
+            if(editLightingListener.isEditable){
+                edit = new JMenuItem("Edit lights");
+                edit.addActionListener(editLightingListener);
+                add(edit);
+                isMenuAvailable = true;
+            }
 
             if(editActionListener.isDataEditable){
                 edit = new JMenuItem("Edit value");
@@ -101,6 +114,27 @@ public class RightClickListener extends MouseAdapter {
             }
         }
 
+    }
+
+    private class EditLightingListener implements ActionListener{
+        private final TreeNode clickedNode;
+        public final boolean isEditable;
+
+        public EditLightingListener(TreeNode node){
+            this.clickedNode = node;
+
+            if(node instanceof Lighting){
+                isEditable = true;
+            }else{
+                isEditable = false;
+            }
+
+        }
+        public void actionPerformed(ActionEvent e) {
+            LightingDialog dialog = new LightingDialog(parent);
+            dialog.display();
+
+        }
     }
 
     private class DeleteActionListener implements ActionListener{

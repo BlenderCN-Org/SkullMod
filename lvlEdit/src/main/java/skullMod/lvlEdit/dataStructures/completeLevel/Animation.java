@@ -11,10 +11,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 
 public class Animation extends NodeAdapter{
-    private LeafContentNode<String> animationName;
-    private LeafContentNode<String> animationFileName;
-
-
+    public LeafContentNode<String> animationName;
+    public LeafContentNode<String> animationFileName;
 
     public Animation(TreeNode parent) {
         super(parent);
@@ -28,7 +26,7 @@ public class Animation extends NodeAdapter{
         this.animationName = new LeafContentNode<>(this, "Name", animationName);
         this.animationFileName = new LeafContentNode<>(this, "Filename", animationFileName);
 
-        //TODO add animation data
+
     }
 
 

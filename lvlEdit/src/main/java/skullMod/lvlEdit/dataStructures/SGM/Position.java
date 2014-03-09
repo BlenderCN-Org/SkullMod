@@ -12,4 +12,10 @@ public class Position {
         yPos = dis.readFloat();
         zPos = dis.readFloat();
     }
+
+    public Position(){
+        this.xPos = 0;
+        this.yPos = 0;
+        this.zPos = 0;
+    }
 }

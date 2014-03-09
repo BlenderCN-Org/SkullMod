@@ -1,8 +1,8 @@
 package skullMod.lvlEdit.dataStructures.inputDialogs;
 
 import javax.swing.*;
-
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public abstract class ComplexInputDialog extends JDialog{
     private final JButton okButton = new JButton("OK");
@@ -20,6 +20,7 @@ public abstract class ComplexInputDialog extends JDialog{
         content.add(new JLabel(text));
 
         setupGUI(content);
+        okButton.addActionListener(new OKListener());
         content.add(okButton);
     }
     public void display(){
@@ -32,4 +33,11 @@ public abstract class ComplexInputDialog extends JDialog{
     }
     public abstract void setupGUI(JPanel contentPane);
     public JButton getOKButton(){ return okButton; }   //For adding listeners
+
+    private class OKListener implements ActionListener    {
+
+        public void actionPerformed(ActionEvent e) {
+           ComplexInputDialog.this.setVisible(false);
+        }
+    }
 }

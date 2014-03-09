@@ -63,8 +63,6 @@ public class LVL_File implements Serializable{
         for(String line : lvlContent){
             String[] fields = line.split(" ");
 
-
-
             switch(fields[0]){
                 case stageSizeIdentifier:
                     if(fields.length != 3){ throw new IllegalArgumentException("ERROR"); }
@@ -144,7 +142,7 @@ public class LVL_File implements Serializable{
                     if(fields.length == 2){
                         cameraSetup = new CameraSetup(Float.parseFloat(fields[1]),0,0);
                     }else{
-                        cameraSetup = new CameraSetup(Float.parseFloat(fields[1]),Integer.parseInt(fields[2]),Integer.parseInt(fields[3]));
+                        cameraSetup = new CameraSetup(Float.parseFloat(fields[1]),Float.parseFloat(fields[2]),Float.parseFloat(fields[3]));
                     }
 
                     break;

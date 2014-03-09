@@ -7,6 +7,7 @@ import skullMod.lvlEdit.dataStructures.DataStreamOut;
 import javax.swing.*;
 import java.awt.*;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 
@@ -96,8 +97,8 @@ public class Utility {
     }
 
 
-    public static void writeLongPascalString(DataStreamOut dso, String input) throws IOException{
-        if(dso == null){ throw new IllegalArgumentException("Given stream is null"); }
+    public static void writeLongPascalString(DataOutputStream dos, String input) throws IOException{
+        if(dos == null){ throw new IllegalArgumentException("Given stream is null"); }
         if(input == null){throw new IllegalArgumentException("Given input is null"); }
         if(input.length() == 0){ throw new IllegalArgumentException("Given input has a length of zero"); }
 
@@ -105,8 +106,8 @@ public class Utility {
 
         long stringLength = input.length();
 
-        dso.s.writeLong(stringLength);
-        dso.s.write(input.getBytes(Charsets.US_ASCII));
+        dos.writeLong(stringLength);
+        dos.write(input.getBytes(Charsets.US_ASCII));
     }
 
     public static String[] readLongPascalStringArray(DataInputStream dis, String[] array) throws IOException{

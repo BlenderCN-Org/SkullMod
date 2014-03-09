@@ -3,41 +3,54 @@ package skullMod.lvlEdit.dataStructures.SGA;
 import skullMod.lvlEdit.utility.Utility;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.LinkedList;
 
 public class SGA_File implements Serializable{
-    //TODO too simple, parse complex files like candles
+    public static final String SGA_KNOWN_VERISON = "3.0";
 
     public String fileFormatRevision;
-    public byte[] unknown; //20 bytes
-    public float animationLength;
-    public String animationType;
+    public float unknown; //FIXME missing
+    public float animationLength; //In seconds
 
-    public long nOfEntriesBlock1;
-    public float[] unknownBlock1; //length = nOfEntriesBlock1 * 2 (floats)
-
-    public long nOfEntriesBlock2;
-    public float[] unknownBlock2; //length = nOfEntriesBlock2 * 1 (floats?)
-
-    public long nOfOffsets; //UV
-    public float[] uvOffsets; //UVs for animation (length = nOfOffsets (or frames) * 2 (floats, u and v)
-
+    public LinkedList<UnknownElement> unknownElements = new LinkedList<>();
+    public LinkedList<UV_Track> uvTracks = new LinkedList<>();
     public SGA_File(DataInputStream dis) throws IOException {
-        //TODO verify
-
         fileFormatRevision = Utility.readLongPascalString(dis);
-        unknown = Utility.readByteArray(dis, new byte[20]);
-        animationLength = dis.readFloat();
-        animationType = Utility.readLongPascalString(dis);
+        if(fileFormatRevision.equals(SGA_KNOWN_VERISON)){
+            unknown = dis.readFloat();
+            long nOfElements = dis.readLong();
+            long nOfUVTracks = dis.readLong();
+            animationLength = dis.readFloat();
 
-        nOfEntriesBlock1 = dis.readLong();
-        unknownBlock1 = Utility.readFloatArray(dis, new float[2* (int)nOfEntriesBlock1]);
+            for(int i=0;i < nOfElements;i++){
+                unknownElements.add(new UnknownElement(dis));
+            }
 
-        nOfEntriesBlock2 = dis.readLong();
-        unknownBlock2 = Utility.readFloatArray(dis, new float[(int)nOfEntriesBlock2]);
 
-        nOfOffsets = dis.readLong();
-        uvOffsets = Utility.readFloatArray(dis, new float[(int) nOfOffsets * 2]);
+            for(int i=0;i < nOfUVTracks;i++){
+                uvTracks.add(new UV_Track(dis));
+            }
+        }else{
+            throw new IllegalArgumentException("Given SGA file contains unknown version number");
+        }
+    }
+
+    public void writeToStream(DataOutputStream dos) throws IOException{
+        Utility.writeLongPascalString(dos, SGA_KNOWN_VERISON);
+
+        dos.writeFloat(unknown);
+        dos.writeLong(unknownElements.size());
+        dos.writeLong(uvTracks.size());
+        dos.writeFloat(animationLength);
+
+        for(UnknownElement element : unknownElements){
+            element.writeToStream(dos);
+        }
+        for(UV_Track uvTrack : uvTracks){
+            uvTrack.writeToStream(dos);
+        }
     }
 }

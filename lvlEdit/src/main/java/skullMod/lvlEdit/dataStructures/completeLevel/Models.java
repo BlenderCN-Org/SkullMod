@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Models extends NodeAdapter {
-    private final LinkedList<Model> models;
+    public final LinkedList<Model> models;
 
     public Models(TreeNode parent, Model[] models) {
         super(parent);

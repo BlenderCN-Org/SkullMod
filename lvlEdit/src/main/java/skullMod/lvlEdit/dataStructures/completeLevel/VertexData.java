@@ -4,29 +4,45 @@ import skullMod.lvlEdit.dataStructures.SGM.Triangle;
 import skullMod.lvlEdit.dataStructures.SGM.Vertex;
 
 public class VertexData{
+    public final int DEFAULT_STRIDE = 36;
+    public final int BONE_STRIDE = 44;
+
+    public int stride;
+
+    boolean hasBones;
+    public Vertex[] vertexData;
+    public int bytesPerEntry;
+    public short[] iboData;
+
     /**
      * Default triangle
      * TODO change to modern vertex data
      */
     public VertexData(){
-        this.vertexData = new float[]{ 0,0,0, 0,1,0, 0,1,1};
+        this.vertexData = new Vertex[1];
+        vertexData[0] = new Vertex();
         this.iboData = new short[]{0, 1, 2};
+        this.bytesPerEntry = 3*4;
+        this.hasBones = false;
+
+        stride = DEFAULT_STRIDE;
     }
 
     public VertexData(Vertex[] vertices, Triangle[] triangles, boolean hasBones){
         this.hasBones = hasBones;
-
-        int nOfVertices = vertices.length;
-
-        vertexData = new float[nOfVertices*3];
-
-        int currentVertex = 0;
-        for(Vertex vertex : vertices){
-            vertexData[currentVertex * 3] = vertex.position.xPos;
-            vertexData[currentVertex * 3 + 1] = vertex.position.yPos;
-            vertexData[currentVertex * 3 + 2] = vertex.position.zPos;
-            currentVertex++;
+        if(hasBones){
+            stride = BONE_STRIDE;
+        }else{
+            stride = DEFAULT_STRIDE;
         }
+
+
+
+
+        //vertexData = new float[nOfVertices*3];
+        vertexData = vertices;
+
+
 
         int nOfTriangles = triangles.length * 3;
         iboData = new short[nOfTriangles];
@@ -40,9 +56,6 @@ public class VertexData{
         }
     }
 
-    boolean hasBones;
-    float[] vertexData;
-    short[] iboData;
     public String toString(){
         return "Vertices: " + (vertexData.length/3)  + " Triangles: " + (iboData.length/3);
     }

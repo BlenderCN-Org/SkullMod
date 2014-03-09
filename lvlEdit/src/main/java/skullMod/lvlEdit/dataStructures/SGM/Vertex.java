@@ -22,6 +22,13 @@ public class Vertex implements Serializable{
     //Misc attributes to determine if the blend indices and weights are relevant
     public boolean boneInfo;
 
+    public Vertex(){
+        this.position = new Position();
+        this.normals = new Normals();
+        this.uv = new UV();
+        this.c = new Color();
+    }
+
     public Vertex(DataInputStream dis, long attributeLengthPerVertex, String dataFormatString) throws IOException {
         if(attributeLengthPerVertex == 36){ boneInfo = false;}
         if(attributeLengthPerVertex == 44){ boneInfo = true; }

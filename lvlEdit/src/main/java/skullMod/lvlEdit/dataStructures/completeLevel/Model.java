@@ -16,14 +16,14 @@ public class Model extends NodeAdapter{
     public final Animations animations;
 
 
-    private LeafContentNode<String> modelName;
-    private LeafContentNode<String> fileName;
-    private LeafContentNode<String> textureName;
+    public LeafContentNode<String> modelName;
+    public LeafContentNode<String> fileName;
+    public LeafContentNode<String> textureName;
 
-    private LeafContentNode<Mat4> transformationMatrix;
+    public LeafContentNode<Mat4> transformationMatrix;
     //TODO unknown 2 bytes see SGI_Element
 
-    private LeafContentNode<VertexData> modelData;
+    public LeafContentNode<VertexData> modelData;
 
 
     public Model(TreeNode parent){

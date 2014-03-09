@@ -16,9 +16,9 @@ public class DDS_Panel extends JPanel{
     private final Color modelColor = new Color(255,0,0,128);
     private final Color animationColor = new Color(255,255,0,128);
 
-    private final Color darkGrayColor = new Color(100,100,100);
-    private final Color lightGrayColor = new Color(150,150,150);
 
+    public static final Color darkBackground = new Color(100,100,100);
+    public static final Color lightBackground = new Color(150,150,150);
 
     private int drawOffset = 50; //Offset for all draw operations
 
@@ -77,6 +77,7 @@ public class DDS_Panel extends JPanel{
     }
 
     public void setUV_Triangles(UV_Triangle[] triangles){
+        System.out.println("Number of triangles" + triangles.length);
         this.triangles = triangles;
         repaint();
     }
@@ -99,8 +100,11 @@ public class DDS_Panel extends JPanel{
 
         drawOrigin(g);
 
-        if(image != null){ g.drawImage(image, 0, 0, null); }else{
-            System.out.println("No image to draw");
+        if(image != null){
+            drawCheckerGrid(g,this.getSize(), drawOffset,16,image);
+            g.drawImage(image, 0, 0, null);
+        }else{
+
         }
 
         int fontHeight = g.getFont().getSize(); //FIXME there has to be a better way to determine font height in px
@@ -116,7 +120,7 @@ public class DDS_Panel extends JPanel{
             }
         }
 
-        if(triangles != null){
+        if(triangles != null && image != null){
             for(UV_Triangle triangle : triangles){
                 int width = image.getWidth();
                 int height = image.getHeight();
@@ -124,7 +128,6 @@ public class DDS_Panel extends JPanel{
                 g.drawLine((int) (triangle.uv1.u*width), (int) (height - triangle.uv1.v*height),     (int) (triangle.uv2.u*width), (int) (height - triangle.uv2.v*height));
                 g.drawLine((int) (triangle.uv2.u*width), (int) (height - triangle.uv2.v*height),     (int) (triangle.uv3.u*width), (int) (height - triangle.uv3.v*height));
                 g.drawLine((int) (triangle.uv3.u*width), (int) (height - triangle.uv3.v*height),     (int) (triangle.uv1.u*width), (int) (height - triangle.uv1.v*height));
-
             }
         }
 
@@ -139,25 +142,34 @@ public class DDS_Panel extends JPanel{
         }
     }
 
-    private void drawChecker(Graphics g, int xOffset, int yOffset, int size, Dimension imageSize) {
-        Dimension jPanel = this.getSize();
+    public static void drawCheckerGrid(Graphics g, Dimension d, int translation, int checkerSize, BufferedImage image){
+        int fieldsToTheRight = 0, fieldsBelow = 0;
+        //int fieldsToTheLeft = (int) Math.ceil((double)translation/checkerSize);
+        //int fieldsAbove = (int) Math.ceil((double) translation/checkerSize);
 
-        g.setColor(lightGrayColor);
-
-        int imageWidth = (int) imageSize.getWidth();
-        int imageHeight = (int) imageSize.getHeight();
-
-        final int nOfRows = (int) Math.ceil(((imageHeight - yOffset) / (double) size) / 2.0);
-        System.out.println(nOfRows);
-
-        for(int i = 0;i < nOfRows/2;i++){
-            g.fillRect(0,i*2*size,size,size);
+        if(image != null){
+            fieldsToTheRight = image.getWidth()/checkerSize;
+            fieldsBelow = image.getHeight()/checkerSize;
+        }else{
+            fieldsToTheRight = (int) Math.ceil((d.getWidth()-translation)/checkerSize); //Check ceil
+            fieldsBelow = (int) Math.ceil((d.getHeight()-translation)/checkerSize);
         }
 
+        //Step 1, draw everything RIGHT and BELOW the origin
+        g.setColor(darkBackground);
+        g.fillRect(0,0, fieldsToTheRight*checkerSize, fieldsBelow*checkerSize);
+        g.setColor(lightBackground);
+        for(int y = 0;y < fieldsBelow;y++){
+            for(int x = 0;x < fieldsToTheRight;x++){
 
-
-
+                if( (x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1)){
+                    g.fillRect(x*checkerSize, y*checkerSize, checkerSize, checkerSize);
+                }
+            }
+        }
     }
+
+
 
     //Draw the outline of the given rectangle (this means everything that is INSIDE the outline is visible
     public void drawOutlineOfRectangle(Graphics g, InfoRectangle rectangle){

@@ -11,6 +11,12 @@ public class Color {
     public byte b;
     public byte a;
 
+    public Color(){
+        this.r = 100;
+        this.g = 100;
+        this.b = 100;
+    }
+
     public Color(DataInputStream dis) throws IOException {
         r = dis.readByte();
         g = dis.readByte();

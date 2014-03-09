@@ -11,6 +11,7 @@ import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
 import skullMod.lvlEdit.dataStructures.openGL.OpenGL_Listener;
 import skullMod.lvlEdit.utility.AutoReentrantLock;
+import skullMod.lvlEdit.utility.Utility;
 
 import javax.swing.tree.TreeNode;
 import java.io.DataOutputStream;
@@ -274,7 +275,7 @@ public class Level extends NodeAdapter {
 
             outputStream.write((LVL_File.stageRelPath2DIdentifier + " " + stageSettings.rel2dFileName.getContent() + "\n").getBytes("ASCII"));
             outputStream.write((LVL_File.cameraTiltOptionsIdentifier + " " + stageSettings.tiltRate.getContent() + " " + stageSettings.tiltHeight1.getContent() + " " + stageSettings.tiltHeight2.getContent() + "\n").getBytes("ASCII"));
-            outputStream.write((LVL_File.cameraSetupIdentifier + " " + stageSettings.fieldOfView.getContent() + " " + stageSettings.zNear.getContent() + " " + stageSettings.zFar.getContent() + "\n").getBytes("ASCII"));
+            outputStream.write((LVL_File.cameraSetupIdentifier + " " + stageSettings.fieldOfView.getContent().intValue() + " " + stageSettings.zNear.getContent().intValue() + " " + stageSettings.zFar.getContent().intValue() + "\n").getBytes("ASCII"));
 
             lvlStream.close();
         }catch(IOException ioe){
@@ -287,7 +288,25 @@ public class Level extends NodeAdapter {
 
             DataOutputStream outputStream = lvlStream.s;
 
+            Utility.writeLongPascalString(outputStream, "2.0");
+            outputStream.writeLong(models.getChildCount());
 
+            for(Model model : models.models){
+                Utility.writeLongPascalString(outputStream, model.modelName.getContent());
+                Utility.writeLongPascalString(outputStream, model.fileName.getContent());
+
+                model.transformationMatrix.getContent().writeToStream(outputStream);
+
+                outputStream.writeByte(1);
+                outputStream.writeByte(0);
+
+                outputStream.writeLong(model.animations.getChildCount());
+
+                for(Animation animation : model.animations.getAnimations()){
+                    Utility.writeLongPascalString(outputStream, animation.animationName.getContent());
+                    Utility.writeLongPascalString(outputStream, animation.animationFileName.getContent());
+                }
+            }
 
             lvlStream.close();
         }catch(IOException ioe){
