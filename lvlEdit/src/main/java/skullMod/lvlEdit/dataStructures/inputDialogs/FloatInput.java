@@ -6,8 +6,8 @@ import javax.swing.*;
 public class FloatInput extends SimpleInputDialog{
     public boolean isValid;
 
-    public FloatInput(JFrame parent, String title, String text){
-        super(parent, title, text);
+    public FloatInput(JFrame parent, String title, String text, String oldValue){
+        super(parent, title, text, oldValue);
 
         String t = this.result;
 

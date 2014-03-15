@@ -1,10 +1,12 @@
 package skullMod.lvlEdit.dataStructures.inputDialogs;
 
+import skullMod.lvlEdit.dataStructures.completeLevel.Lighting;
+
 import javax.swing.*;
 
 public class LightingDialog extends ComplexInputDialog{
-    public LightingDialog(JFrame parent) {
-        super(parent, "Lighting", "Edit lighting");
+    public LightingDialog(JFrame parent, Lighting oldValues) {
+        super(parent, "Lighting", "Edit lighting", oldValues);
     }
 
     public void setupGUI(JPanel contentPane) {

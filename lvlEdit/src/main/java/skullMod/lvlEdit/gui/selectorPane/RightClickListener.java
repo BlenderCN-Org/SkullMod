@@ -123,6 +123,7 @@ public class RightClickListener extends MouseAdapter {
         public EditLightingListener(TreeNode node){
             this.clickedNode = node;
 
+
             if(node instanceof Lighting){
                 isEditable = true;
             }else{
@@ -131,7 +132,7 @@ public class RightClickListener extends MouseAdapter {
 
         }
         public void actionPerformed(ActionEvent e) {
-            LightingDialog dialog = new LightingDialog(parent);
+            LightingDialog dialog = new LightingDialog(parent, (Lighting) clickedNode);
             dialog.display();
 
         }
@@ -192,7 +193,7 @@ public class RightClickListener extends MouseAdapter {
                 if(nodeContent instanceof Dimension2D){
                     Dimension2D oldValue = (Dimension2D) nodeContent;
 
-                    Dimension2DDialog input = new Dimension2DDialog(parent, "Test","More text");
+                    Dimension2DDialog input = new Dimension2DDialog(parent, "Test","More text", oldValue);
                     if(input.isValid()){
                         //nodeType.setContent(new Dimension2D<Integer>(,input.getXCoordinate(), input.getYCoordinate()));
                     }
@@ -209,7 +210,7 @@ public class RightClickListener extends MouseAdapter {
                 if(nodeContent instanceof Float){
                     Float oldValue = (Float) nodeContent;
 
-                    FloatInput input = new FloatInput(parent, "Input float", "Input float");
+                    FloatInput input = new FloatInput(parent, "Input float", "Input float", oldValue.toString());
                     System.out.println("DONE");
                     if(input.isValid){
                         nodeType.setContent(input.getFloat()) ;
@@ -220,7 +221,7 @@ public class RightClickListener extends MouseAdapter {
                 if(nodeContent instanceof Integer){
                     Integer oldValue = (Integer) nodeContent;
 
-                    IntegerInput input = new IntegerInput(parent, "Input integer","Input Integer");
+                    IntegerInput input = new IntegerInput(parent, "Input integer","Input Integer", oldValue.toString());
                     if(input.isValid){
 
                         nodeType.setContent(input.getInt());
@@ -230,7 +231,7 @@ public class RightClickListener extends MouseAdapter {
                 if(nodeContent instanceof String){
                     String oldValue = (String) nodeContent;
 
-                    StringInput input = new StringInput(parent, "Input String", "Input String");
+                    StringInput input = new StringInput(parent, "Input String", "Input String",oldValue);
                     if(input.isValid){
                         nodeType.setContent(input.getString());
                     }

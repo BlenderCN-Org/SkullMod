@@ -5,8 +5,8 @@ import javax.swing.JFrame;
 public class StringInput extends SimpleInputDialog{
 
     public boolean isValid = false;
-    public StringInput(JFrame parent, String title, String text) {
-        super(parent, title, text);
+    public StringInput(JFrame parent, String title, String text, String oldValue) {
+        super(parent, title, text, oldValue);
 
         String t = this.result;
 
