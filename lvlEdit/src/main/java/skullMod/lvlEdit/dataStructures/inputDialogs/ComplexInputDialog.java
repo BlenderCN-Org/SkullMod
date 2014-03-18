@@ -1,5 +1,7 @@
 package skullMod.lvlEdit.dataStructures.inputDialogs;
 
+import skullMod.lvlEdit.utility.SwingUtility;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -34,10 +36,14 @@ public abstract class ComplexInputDialog<T> extends JDialog{
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
+        SwingUtility.setAlignmentTopLeft(buttonPanel);
 
         //Panel for child data, no layout is set
         JPanel middlePane = new JPanel();
+        middlePane.setLayout(new BoxLayout(middlePane, BoxLayout.Y_AXIS));
         setupGUI(middlePane);
+        SwingUtility.topLeftAlignAllComponents(middlePane);
+
 
         content.add(middlePane, BorderLayout.CENTER);
         content.add(buttonPanel, BorderLayout.SOUTH);
@@ -66,4 +72,6 @@ public abstract class ComplexInputDialog<T> extends JDialog{
            if(cancel){ ComplexInputDialog.this.isCanceled = true; }
         }
     }
+
+
 }

@@ -11,7 +11,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 
-public class Utility {
+public final class Utility {
 
     //FIXME remove JAVA_VERSION from every utility, only use dynamic methods, currently it's compile time
 
