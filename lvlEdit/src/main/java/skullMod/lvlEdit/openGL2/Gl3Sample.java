@@ -338,8 +338,8 @@ import skullMod.lvlEdit.openGL.Mini_GLUT;
             v = gl.glCreateShader(GL3.GL_VERTEX_SHADER);
             f = gl.glCreateShader(GL3.GL_FRAGMENT_SHADER);
 
-            vs = Mini_GLUT.loadFileAsString("C:\\shaders\\color.vert");
-            fs = Mini_GLUT.loadFileAsString("C:\\shaders\\color.frag");
+            vs = Mini_GLUT.loadFileAsString("shaders\\simpleShader.vert",true);
+            fs = Mini_GLUT.loadFileAsString("shaders\\simpleShader.frag",true);
 
             //vs = Mini_GLUT.loadFileAsString("/home/netbook/Working_files/testEnvironment/color.vert");
             //fs = Mini_GLUT.loadFileAsString("/home/netbook/Working_files/testEnvironment/color.frag");

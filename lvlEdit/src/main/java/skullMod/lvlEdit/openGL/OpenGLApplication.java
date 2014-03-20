@@ -24,7 +24,7 @@ public class OpenGLApplication implements GLEventListener{
     public Object3D object3D;
 
     public OpenGLApplication(){
-        //TODO this is not flexible for now
+        //TODO this is not flexible for now, make it fleeexible
         fieldOfView = defaultFieldOfView;
         zNear = defaultZNear;
         zFar = defaultZFar;
@@ -36,13 +36,13 @@ public class OpenGLApplication implements GLEventListener{
         System.out.println("INIT");
         GL3 gl3 = glAutoDrawable.getGL().getGL3();
         gl3.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
-        gl3.glEnable(GL3.GL_DEPTH_TEST); //TODO is this required?
+        gl3.glEnable(GL3.GL_DEPTH_TEST); //TODO is this required?, probably
 
 
 
         //Load shader
-        String vertexShaderSource = Mini_GLUT.loadFileAsString("C:\\shaders\\color.vert");
-        String fragmentShaderSource = Mini_GLUT.loadFileAsString("C:\\shaders\\color.frag");
+        String vertexShaderSource = Mini_GLUT.loadFileAsString("shaders\\simpleShader.vert",true);
+        String fragmentShaderSource = Mini_GLUT.loadFileAsString("shaders\\simpleShader.frag",true);
 
         shaderProgram = new SimpleShaderProgram("TEST", vertexShaderSource, fragmentShaderSource, glAutoDrawable.getGL());
 
@@ -126,8 +126,6 @@ public class OpenGLApplication implements GLEventListener{
         MiniGLUT2.multMatrix(viewMatrix, aux);
 
     }
-
-
     public void renderScene(GL3 gl3){
         gl3.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
 
