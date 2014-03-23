@@ -103,16 +103,19 @@ public class DrawPanel extends JPanel{
             for(int x = 0;x < fieldsToTheRight;x++){
 
                 if( (x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1)){
+                    System.out.println("X: " + x + " Y: " + y);
                     int offsetX = x*checkerSize;
                     int offsetY = y*checkerSize;
 
                     int blockWidth = checkerSize;
                     int blockHeight = checkerSize;
+                    //TODO Only accept checkerSize sized width/height files
+                    /**
                     if(image != null){
-                        blockWidth = Math.min(offsetX + checkerSize, image.getWidth());
-                        blockHeight = Math.min(offsetY + checkerSize, image.getHeight());
+                        //blockWidth = Math.min(offsetX + checkerSize, image.getWidth());
+                        //blockHeight = Math.min(offsetY + checkerSize, image.getHeight());
                     }
-
+                    */
 
                     g.fillRect(x*checkerSize, y*checkerSize, blockWidth, blockHeight);
                 }

@@ -25,6 +25,5 @@ public class Application {
                 new MainWindow();
             }
         });
-        new MainWindow();
     }
 }

@@ -8,7 +8,8 @@ import java.awt.event.ActionListener;
 /** Small launcher */
 public class Launcher extends JFrame{
     public final static String APPLICATION = "SkullMod";
-    public final static String VERSION = "0.1";
+    public final static String VERSION = "1.0";
+    public final static String DATE = "2014-03-23";
 
     /** Applcations that can be laucnhed */
     private enum Applications{
@@ -25,7 +26,7 @@ public class Launcher extends JFrame{
 
     /** Create a launcher */
     public Launcher(){
-        super(APPLICATION  + " Launcher " + VERSION);
+        super(APPLICATION  + " Launcher " + VERSION + "-" + DATE);
 
         /**Set look of the application to mimic the OS GUI*/
         try{
@@ -47,6 +48,9 @@ public class Launcher extends JFrame{
         sprConvButton = new JButton("sprConv");
         sprConvButton.setPreferredSize(new Dimension(100,25));
 
+        JPanel textPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        setAlignmentTopLeft(textPanel);
+
         JPanel gfsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         setAlignmentTopLeft(gfsPanel);
 
@@ -54,6 +58,8 @@ public class Launcher extends JFrame{
         setAlignmentTopLeft(lvlPanel);
         JPanel sprPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         setAlignmentTopLeft(sprPanel);
+
+        textPanel.add(new JLabel("Tools for the game Skullgirls on PC"));
 
         gfsPanel.add(gfsEditButton);
         gfsPanel.add(new JLabel("Pack/Unpack .gfs files"));
@@ -65,19 +71,21 @@ public class Launcher extends JFrame{
         sprPanel.add(new JLabel("Convert sprites (.spr.msb <-> .png)"));
 
 
-
         ButtonListener listener = new ButtonListener();
 
         gfsEditButton.addActionListener(listener);
         lvlEditButton.addActionListener(listener);
         sprConvButton.addActionListener(listener);
 
+        this.add(textPanel);
         this.add(gfsPanel);
         this.add(lvlPanel);
         this.add(sprPanel);
 
         this.pack();
         this.setVisible(true);
+
+        this.setResizable(false);
     }
 
     /** Execute application and dispose of Launcher */

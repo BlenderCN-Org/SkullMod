@@ -53,6 +53,8 @@ public class MainWindow extends JFrame {
             JOptionPane.showMessageDialog(null, "Your Java version(" + System.getProperty("java.version") + ") is too low.\nJava 7 is required for this application to work properly!\nSome features might not work or crash.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
 
+        JOptionPane.showMessageDialog(null, "This is not done yet.\nExpect crashes,\nfiles not saving correctly,\nthings that don't work yet (like saving all level files)\n or your computer exploding (unlikely)", "Info", JOptionPane.INFORMATION_MESSAGE);
+
         /**Set icon*/
         try {
             InputStream io = Thread.currentThread().getContextClassLoader().getResourceAsStream("appIcon.png");
