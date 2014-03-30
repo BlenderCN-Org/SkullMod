@@ -1,6 +1,7 @@
 package skullMod.lvlEdit.dataStructures.SGM;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -53,5 +54,30 @@ public class Vertex implements Serializable{
         //Data vertex attribute data for skinning is probably in sgs?
         //Just consume the 8 unknown bytes
         if(boneInfo){ dis.read(new byte[8]); }
+    }
+
+    public void writeToStream(DataOutputStream outputStream) throws IOException{
+        //Write data according to: float p[3],n[3],uv[2]; uchar4 c;
+        outputStream.writeFloat(position.xPos);
+        outputStream.writeFloat(position.yPos);
+        outputStream.writeFloat(position.zPos);
+
+        outputStream.writeFloat(normals.normalX);
+        outputStream.writeFloat(normals.normalY);
+        outputStream.writeFloat(normals.normalZ);
+
+        outputStream.writeFloat(uv.u);
+        outputStream.writeFloat(uv.v);
+
+        //FIXME is rgba correct? (could be abgr or something else)
+        outputStream.writeByte(c.r);
+        outputStream.writeByte(c.g);
+        outputStream.writeByte(c.b);
+        outputStream.writeByte(c.a);
+        if(boneInfo){
+            //TODO add bone info data
+            //blendIndices.blendIndices;
+            //FIXME might produce error
+        }
     }
 }

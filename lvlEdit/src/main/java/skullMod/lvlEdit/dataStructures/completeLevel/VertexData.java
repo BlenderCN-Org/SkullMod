@@ -4,8 +4,11 @@ import skullMod.lvlEdit.dataStructures.SGM.Triangle;
 import skullMod.lvlEdit.dataStructures.SGM.Vertex;
 
 public class VertexData{
-    public final int DEFAULT_STRIDE = 36;
-    public final int BONE_STRIDE = 44;
+    public static final int DEFAULT_STRIDE = 36;
+    public static final int BONE_STRIDE = 44;
+
+    public static final String BONE_FORMAT = "float p[3],n[3],uv[2]; uchar4 c; uchar4 j[4],jw[4];";
+    public static final String DEFAULT_FORMAT = "float p[3],n[3],uv[2]; uchar4 c;";
 
     public int stride;
 

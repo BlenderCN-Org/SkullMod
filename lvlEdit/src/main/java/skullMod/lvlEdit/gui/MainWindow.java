@@ -250,8 +250,6 @@ public class MainWindow extends JFrame {
         return new Dimension(suggestedWidth, suggestedHeight);
     }
 
-
-
     private class ExitApplicationListener implements ActionListener{
         public void actionPerformed(ActionEvent e){
             if(e.getSource() == exitMenuItem){
@@ -259,6 +257,7 @@ public class MainWindow extends JFrame {
             }
         }
     }
+
     /*
     private class ReadSGI_Listener implements ActionListener{
         private String lastPath = ".";

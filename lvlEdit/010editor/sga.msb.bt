@@ -43,11 +43,8 @@ struct FILE{
     uint64 nOfUVTracks;    
 
     float animationLengthInSeconds;
-    struct UNKNOWN_ELEMENTS{
-        
-        
-        struct UNKNOWN_ELEMENT{
-            Pascal64String name;
+    struct BONE{
+            Pascal64String boneName;
             uint64 length; 
             struct UNKNOWN_DATA{
                 float a;
@@ -68,9 +65,8 @@ struct FILE{
                 float a2;
                 float b2;
                 float c2;
-            }unknown_data3[length3];        
-        }unknown_element <read=UNKNOWN_ELEMENT_read, optimize=false>;   
-    }unknown_elements[nOfElements] <read=UNKNOWN_ELEMENTS_read, optimize=false>;
+            }unknown_data3[length3];         
+    }bone[nOfElements] <read=BONE_read, optimize=false>;
     
     struct UV_TRACKS{
         Pascal64String type;
@@ -85,12 +81,8 @@ string UV_TRACKS_read(UV_TRACKS &e){
     return "UV track";
 }
 
-string UNKNOWN_ELEMENTS_read(UNKNOWN_ELEMENTS &e){
-    return e.unknown_element.name.chars;
-}
-
-string UNKNOWN_ELEMENT_read(UNKNOWN_ELEMENT &e){
-    return "PLACEHOLDER4";
+string BONE_read(BONE &e){
+    return e.boneName.chars;
 }
 
 

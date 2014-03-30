@@ -51,7 +51,7 @@ public class OpenFileListener implements ActionListener {
         }catch(IllegalArgumentException iae){
             JOptionPane.showMessageDialog(parent, iae.getCause().getMessage());
         } catch (IOException e1) {
-            e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e1.printStackTrace();
         }
     }
 

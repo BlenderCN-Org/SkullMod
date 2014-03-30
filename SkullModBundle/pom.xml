@@ -4,32 +4,30 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>skullMod.sprConv</groupId>
-    <artifactId>sprConv</artifactId>
+    <groupId>skullModLauncher</groupId>
+    <artifactId>skullModLauncher</artifactId>
     <version>1.0</version>
 
-    <repositories>
-        <repository>
-            <id>maven.nikr.net</id>
-            <name>maven.nikr.net</name>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <url>http://maven.nikr.net/</url>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
+            <groupId>skullMod.sprConv</groupId>
+            <artifactId>sprConv</artifactId>
+            <version>1.0</version>
         </dependency>
+
         <dependency>
-            <groupId>net.nikr</groupId>
-            <artifactId>dds</artifactId>
-            <version>1.0.0</version>
+            <groupId>gfsEdit</groupId>
+            <artifactId>gfsEdit</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>lvlEdit</groupId>
+            <artifactId>lvlEdit</artifactId>
+            <version>0.1</version>
         </dependency>
     </dependencies>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -51,12 +49,11 @@
                         <archive>
                             <manifest>
                                 <addClasspath>true</addClasspath>
-                                <mainClass>skullMod.sprConv.Application</mainClass>
+                                <mainClass>skullMod.launcher.Launcer</mainClass>
                             </manifest>
                         </archive>
                     </configuration>
                 </plugin>
-
             </plugins>
         </pluginManagement>
     </build>

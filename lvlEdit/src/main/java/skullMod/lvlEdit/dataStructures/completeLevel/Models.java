@@ -36,7 +36,7 @@ public class Models extends NodeAdapter {
         this.models = new LinkedList<>();
 
         for(SGI_Element modelMetadata : sgiData.elements){
-            this.models.add(new Model(this, modelMetadata, models.get(modelMetadata.elementName), animations.get(modelMetadata.elementName)));
+            this.models.add(new Model(this, modelMetadata, models.get(modelMetadata.elementName)));
         }
     }
 
@@ -57,15 +57,4 @@ public class Models extends NodeAdapter {
         models.remove(selectedModel);
     }
 
-    public void removeAnimation(Animation selectedAnimation) {
-        for(Model model : models){
-            for(Animation animation : model.animations.getAnimations()){
-                if(animation.equals(selectedAnimation)){
-                    model.animations.removeAnimation(selectedAnimation);
-                }
-
-            }
-
-        }
-    }
 }

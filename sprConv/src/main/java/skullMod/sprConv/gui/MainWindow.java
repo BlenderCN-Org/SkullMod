@@ -38,6 +38,8 @@ public class MainWindow extends JFrame{
         /*Menues*/
         JMenu fileMenu = new JMenu("File");
         JMenu helpMenu = new JMenu("Help");
+        JMenu toolsMenu = new JMenu("Tools");
+
 
         /*MenuItems - File*/
         JMenuItem newFileMenuItem = new JMenuItem("New file");
@@ -52,11 +54,17 @@ public class MainWindow extends JFrame{
         exitMenuItem.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){ System.exit(0); }
         });
+        /*MenuItems - tools*/
+        JMenuItem convertMenuItem = new JMenuItem("Convert spr to png");
+        JMenuItem splitImageMenuItem = new JMenuItem("Split channels");
+        convertMenuItem.addActionListener(new OpenFileListener(this));
+        splitImageMenuItem.addActionListener(new SplitImageListener(this));
+
         /*MenuItems - help*/
         JMenuItem helpMenuItem = new JMenuItem("Help");
-        helpMenuItem.setEnabled(false);
         JMenuItem aboutMenuItem = new JMenuItem("About");
-        aboutMenuItem.setEnabled(false);
+        helpMenuItem.addActionListener(new HelpListener(this));
+        aboutMenuItem.addActionListener(new AboutListener(this));
 
         //Build menu
         fileMenu.add(newFileMenuItem);
@@ -69,15 +77,12 @@ public class MainWindow extends JFrame{
         helpMenu.add(helpMenuItem);
         helpMenu.add(aboutMenuItem);
 
+        toolsMenu.add(convertMenuItem);
+        toolsMenu.add(splitImageMenuItem);
+
         menuBar.add(fileMenu);
+        menuBar.add(toolsMenu);
         menuBar.add(helpMenu);
-
-
-        JMenu debugMenu = new JMenu("Debug menu");
-        JMenuItem convertMenuItem = new JMenuItem("Convert spr to png");
-        convertMenuItem.addActionListener(new OpenFileListener(this));
-        debugMenu.add(convertMenuItem);
-        menuBar.add(debugMenu);
 
         //Create panels
         DrawPanel panelRight = new DrawPanel();

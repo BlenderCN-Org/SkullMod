@@ -22,8 +22,10 @@ struct FILE{
     
     struct BONE{
         Pascal64String name;
-        float unknown; 
-        float someMatrix[16];
+        
+        uint32 parentBone; //Root bone has 0xFFFFFFFF
+        
+        float boneBaseMatrix[16];
                
     }bone[nOfBones] <read=BONE_read,optimize=false>;
 } file <read=FILE_read>;

@@ -14,8 +14,6 @@ import java.io.IOException;
 
 public class DDS_Panel extends JPanel{
     private final Color modelColor = new Color(255,0,0,128);
-    private final Color animationColor = new Color(255,255,0,128);
-
 
     public static final Color darkBackground = new Color(100,100,100);
     public static final Color lightBackground = new Color(150,150,150);
@@ -25,7 +23,6 @@ public class DDS_Panel extends JPanel{
     private String fileName;
     private BufferedImage image;
     private InfoRectangle[] models;
-    private Animation[] animations;
     private UV_Triangle[] triangles;
 
     public DDS_Panel(){
@@ -46,7 +43,8 @@ public class DDS_Panel extends JPanel{
     public void changeImage(final String fileName){
         Runnable changeImage = new Runnable() {
             public void run() {
-                if(fileName != null){
+                if(fileName != null && (!fileName.equals(DDS_Panel.this.fileName))){
+                    System.out.println("LOAD");
                     File file = new File(fileName);
                     try{
                         image = ImageIO.read(file);
@@ -80,11 +78,6 @@ public class DDS_Panel extends JPanel{
         System.out.println("Number of triangles" + triangles.length);
         this.triangles = triangles;
         repaint();
-    }
-
-    //FIXME remove after testing
-    public void setAnimations(Animation[] animations){
-        this.animations = animations;
     }
 
     //FIXME size of box with content? (-1 and +1 pixel on the outer parts)
@@ -124,20 +117,34 @@ public class DDS_Panel extends JPanel{
             for(UV_Triangle triangle : triangles){
                 int width = image.getWidth();
                 int height = image.getHeight();
+                /*
+                int x1_u = (int) (triangle.uv1.u*width);
+                int x1_v = (int) (height - triangle.uv1.v*height);
+
+                int x2_u = (int) (triangle.uv2.u*width);
+                int x2_v = (int) (height - triangle.uv2.v*height);
+
+                int x3_u = (int) (triangle.uv3.u*width);
+                int x3_v = (int) (height - triangle.uv3.v*height);
+
+                //TODO make this an option (disabled by default for now)
+                if(x1_u >= width || x2_u >= width || x3_u >= width){
+                    //Force all triangles affected to shift left
+
+                    x1_u -= width;
+                    x2_u -= width;
+                    x3_u -= width;
+
+                    x1_u %= width;
+                    x2_u %= width;
+                    x3_u %= width;
+                }
+                */
+
 
                 g.drawLine((int) (triangle.uv1.u*width), (int) (height - triangle.uv1.v*height),     (int) (triangle.uv2.u*width), (int) (height - triangle.uv2.v*height));
                 g.drawLine((int) (triangle.uv2.u*width), (int) (height - triangle.uv2.v*height),     (int) (triangle.uv3.u*width), (int) (height - triangle.uv3.v*height));
                 g.drawLine((int) (triangle.uv3.u*width), (int) (height - triangle.uv3.v*height),     (int) (triangle.uv1.u*width), (int) (height - triangle.uv1.v*height));
-            }
-        }
-
-        g.setColor(animationColor);
-        if(animations != null){
-            for(Animation animation : animations){
-                for(InfoRectangle rectangle : animation.getFramesArray()){
-                    drawOutlineOfRectangle(g, rectangle);
-                    g.drawString(rectangle.getName(), rectangle.getPoint1().getX(), rectangle.getPoint1().getY() + fontHeight);
-                }
             }
         }
     }

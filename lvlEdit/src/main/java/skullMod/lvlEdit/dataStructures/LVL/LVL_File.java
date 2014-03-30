@@ -29,6 +29,9 @@ public class LVL_File implements Serializable{
     public final static String musicInterruptIdentifier = "Music_InterruptIntro";
     public final static String musicOutroIdentifier = "Music_Outro";
 
+    public final static String replaceIdentifier = "Replace";
+    public final static String forceReplaceIdentifier = "ForceReplace";
+
     public LVL_StageSize stageSize;
     public int bottomClearance;
     public int start1, start2;
@@ -169,11 +172,15 @@ public class LVL_File implements Serializable{
                     if(fields.length != 2){ throw new IllegalArgumentException("ERROR"); }
                     musicOutro = fields[1];
                     break;
+                case replaceIdentifier:
+                    //FIXME currently ignored
+                    break;
+                case forceReplaceIdentifier:
+                    //FIXME currently ignored
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown configuration: " + fields[0]);
             }
-
-
         }
 
         //TODO validate: all must have fields

@@ -4,13 +4,11 @@ import skullMod.sprConv.gui.MainWindow;
 
 import javax.swing.*;
 
-
 /**
  * sprConv
- *
  * Written by 0xFAIL
  *
- * Requires Java 7 (for DataFlavor consistency)
+ * Requires Java 7
  */
 public class Application {
     public static void main(String[] args){

@@ -8,6 +8,8 @@ import skullMod.lvlEdit.dataStructures.SGI.SGI_Animation;
 import skullMod.lvlEdit.dataStructures.SGI.SGI_Element;
 import skullMod.lvlEdit.dataStructures.SGI.SGI_File;
 import skullMod.lvlEdit.dataStructures.SGM.SGM_File;
+import skullMod.lvlEdit.dataStructures.SGM.Vertex;
+import skullMod.lvlEdit.dataStructures.SGS.Bone;
 import skullMod.lvlEdit.dataStructures.jTreeNodes.NodeAdapter;
 import skullMod.lvlEdit.dataStructures.openGL.OpenGL_Listener;
 import skullMod.lvlEdit.utility.AutoReentrantLock;
@@ -30,8 +32,9 @@ public class Level extends NodeAdapter {
 
     private StageSettings stageSettings;
     private Music music;
-    private Lighting lighting; //Done
+    private Lighting lighting;
     private Models models;
+    private Animations animations;
 
     private String lvlName;
 
@@ -144,6 +147,15 @@ public class Level extends NodeAdapter {
         music = new Music(this);
         lighting = new Lighting(this);
         models = new Models(this);
+        animations = new Animations(this);
+    }
+
+    public Animations getAnimations(){
+        if(lock.isHeldByCurrentThread()){
+            return animations;
+        }else{
+            throw new IllegalAccessError("Lock this object before using it");
+        }
     }
 
     public StageSettings getStageSettings(){
@@ -196,6 +208,8 @@ public class Level extends NodeAdapter {
                 return lighting;
             case 3:
                 return models;
+            case 4:
+                return animations;
             default:
                 throw new IllegalArgumentException("Unknown child index");
         }
@@ -208,6 +222,7 @@ public class Level extends NodeAdapter {
         if(node == music){ return 1; }
         if(node == lighting){ return 2; }
         if(node == models){ return 3; }
+        if(node == animations){ return 4; }
 
         return -1;
     }
@@ -218,6 +233,7 @@ public class Level extends NodeAdapter {
         list.add(music);
         list.add(lighting);
         list.add(models);
+        list.add(animations);
         return Collections.enumeration(list);
     }
 
@@ -300,9 +316,10 @@ public class Level extends NodeAdapter {
                 outputStream.writeByte(1);
                 outputStream.writeByte(0);
 
-                outputStream.writeLong(model.animations.getChildCount());
+                //FIXME (animations)
+                outputStream.writeLong(animations.getChildCount());
 
-                for(Animation animation : model.animations.getAnimations()){
+                for(Animation animation : animations.getAnimations()){
                     Utility.writeLongPascalString(outputStream, animation.animationName.getContent());
                     Utility.writeLongPascalString(outputStream, animation.animationFileName.getContent());
                 }
@@ -314,6 +331,66 @@ public class Level extends NodeAdapter {
         }
 
         //Save sgm files
+        try{
+            for(Model model : models.models){
+                //TODO is the filename from sgi or sgm?
+                DataStreamOut modelStream = new DataStreamOut(saveDirectory + lvlName + File.separator + model.fileName.getContent() + sgmExtension);
+                DataOutputStream outputStream = modelStream.s;
+                Utility.writeLongPascalString(outputStream, "2.0");
+                Utility.writeLongPascalString(outputStream, model.textureName.getContent());
+
+                //TODO 13 unknown bytes (3x4 matrix and something else probably)
+
+
+                //Data format
+                if(model.modelData.getContent().hasBones){
+                    Utility.writeLongPascalString(outputStream, VertexData.BONE_FORMAT);
+                    outputStream.writeLong(VertexData.BONE_STRIDE);
+                }else{
+                    Utility.writeLongPascalString(outputStream,VertexData.DEFAULT_FORMAT);
+                    outputStream.writeLong(VertexData.DEFAULT_STRIDE);
+                }
+
+                outputStream.writeLong(model.modelData.getContent().vertexData.length);
+                outputStream.writeLong(model.modelData.getContent().iboData.length/3);
+                //FIXME all bones are eaten (there is no data structure for bones)
+                outputStream.writeLong(0);
+
+                for(Vertex v : model.modelData.getContent().vertexData){
+                    v.writeToStream(outputStream);
+                }
+
+                for(short index : model.modelData.getContent().iboData){
+                    outputStream.writeShort(index);
+                }
+
+                //TODO 6 unknown floats
+
+                //TODO Bone names and bone data
+
+                modelStream.close();
+
+
+                //If it had bones write sgs file
+                if(model.modelData.getContent().hasBones){
+                    Bone[] bones = model.bones.getContent().toArray(new Bone[0]);
+
+                    DataStreamOut boneStream = new DataStreamOut(saveDirectory + lvlName + File.separator + model.fileName.getContent() + sgsExtension);
+                    outputStream = boneStream.s;
+
+                    Utility.writeLongPascalString(outputStream, "2.0");
+                    outputStream.writeLong(bones.length);
+
+                    for(Bone bone : bones){
+                        bone.writeToStream(outputStream);
+                    }
+
+                    boneStream.close();
+                }
+            }
+        }catch(IOException ioe){
+            System.out.println("IOEXCEPTION");
+        }
         //Save sga files
 
 

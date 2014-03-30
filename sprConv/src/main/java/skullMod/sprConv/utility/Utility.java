@@ -16,7 +16,6 @@ public class Utility {
         return Double.parseDouble (version.substring (0, 3));
     }
 
-
     /**
      * Big endian
      *
@@ -33,8 +32,6 @@ public class Utility {
 
         return IOUtils.toString(data, "ASCII");
     }
-
-
 
     public static void writeLongPascalString(DataOutputStream dso, String input) throws IOException{
         if(dso == null){ throw new IllegalArgumentException("Given stream is null"); }

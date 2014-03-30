@@ -5,14 +5,11 @@ Add license
 -Create pre stream version (executable for windows and the normal source)
 
 Add replace and force replace to lvl parser and writer
-Fix writing to all currently written files
 Add animations (if they are not joint based) to preview (frame numbers with frame numbers)
 Reset camera if image is smaller than current position, also move preview window to model
 Get reading sga files right
 Add restrictions on SimpleInputDialog
 Create fitting complex dialogs
-
-Guess a bit of sgs
 
 Add light management (no preview)
 
