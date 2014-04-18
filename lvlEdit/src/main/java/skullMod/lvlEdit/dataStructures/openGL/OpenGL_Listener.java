@@ -150,9 +150,11 @@ public class OpenGL_Listener extends MouseAdapter implements GLEventListener, Ke
         GL3 gl3 = drawable.getGL().getGL3();
         gl3.glEnable(GL_DEPTH_TEST);
         gl3.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        //
 
-        axisShader = new SimpleShaderProgram("axis", Mini_GLUT.loadFileAsString("shaders/vertexColor.vs",true),Mini_GLUT.loadFileAsString("shaders/vertexColor.fs",true), gl3);
-        skullGirlsShader = new SimpleShaderProgram("defaultNoBones", Mini_GLUT.loadFileAsString("shaders/skullgirlsShader.vs",true), Mini_GLUT.loadFileAsString("shaders/skullgirlsShader.fs",true),gl3);
+        axisShader = new SimpleShaderProgram("axis", Mini_GLUT.loadFileAsString("/shaders/vertexColor.vs",true),Mini_GLUT.loadFileAsString("/shaders/vertexColor.fs",true), gl3);
+        //skullGirlsShader = new SimpleShaderProgram("defaultNoBones", Mini_GLUT.loadFileAsString("/shaders/skullgirlsShader.vs",true), Mini_GLUT.loadFileAsString("/shaders/skullgirlsShader.fs",true),gl3);
+        skullGirlsShader = axisShader;
 
         //AXIS shader and data
         int axisShaderVertexLoc = gl3.glGetAttribLocation(axisShader.shaderProgramID, "vertexPosition");

@@ -1,6 +1,6 @@
 package skullMod.lvlEdit.openGL;
 
-import com.sun.istack.internal.Nullable;
+import org.apache.commons.io.IOUtils;
 import skullMod.lvlEdit.dataStructures.Mat4;
 
 import javax.imageio.ImageIO;
@@ -169,10 +169,19 @@ public final class Mini_GLUT {
         if(fileName == null){ throw new IllegalArgumentException("Given file name is null"); }
         if(internalResource){
             try{
-                    fileName = Thread.currentThread().getContextClassLoader().getResource(fileName).getPath();
+                InputStream fileStream = Object.class.getResourceAsStream(fileName);
+                String fileContent = IOUtils.toString(fileStream, "UTF-8");
+                fileStream.close();
+                return fileContent;
+                //TODO For historic purposes fileName = Thread.currentThread().getContextClassLoader().getResource(fileName).getPath();
             }catch(NullPointerException npe){
-                throw new IllegalArgumentException("Given internal file \"" + fileName + "\" wasn't found");
+                throw new IllegalArgumentException("NPE with internal file \"" + fileName + "\". \nException is: " + npe.getMessage());
+            }catch(FileNotFoundException fnfe){
+                throw new IllegalArgumentException("Given internal file \n" + fileName + "\" wasn't found. \nException is:" + fnfe.getMessage());
+            }catch(IOException ioe){
+                throw new IllegalArgumentException("IOException: " + ioe.getMessage());
             }
+
         }
 
         if(! new File(fileName).exists()){ throw new IllegalArgumentException("Given file \"" + fileName + "\" doesn't exist"); }
@@ -314,7 +323,7 @@ public final class Mini_GLUT {
         gl3.glViewport( 0, 0, width, height );
     }
 
-    public static Mat4 recalculateProjectionMatrix(int width, int height, float fieldOfView, float zNear, float zFar,  @Nullable Mat4 projectionMatrix){
+    public static Mat4 recalculateProjectionMatrix(int width, int height, float fieldOfView, float zNear, float zFar, Mat4 projectionMatrix){
         if(projectionMatrix == null){ projectionMatrix = new Mat4(); }
 
         //Disallow 0 width or height (1x1 is the minimal size of a viewport)

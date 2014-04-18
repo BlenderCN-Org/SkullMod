@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * Notes:
+ * How to do stuff correctly:
+ * Logging errors: Do JOptionPanes everywhere
  */
 public class MainWindow extends JFrame {
     public static final String APPLICATION  = "LVL edit";
@@ -60,14 +63,14 @@ public class MainWindow extends JFrame {
             InputStream io = Thread.currentThread().getContextClassLoader().getResourceAsStream("appIcon.png");
             this.setIconImage(ImageIO.read(io));
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this,"Couldn't load application icon","Error",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,"Couldn't load application icon, please report this.","Error",JOptionPane.ERROR_MESSAGE);
         }
 
         /**Set look of the application to mimic the OS GUI*/
         try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-            System.err.println("Setting look and feel failed"); //This should happen silently
+            JOptionPane.showMessageDialog(this, "Setting look and feel failed, please report this");
         }
 
         /**Menubar*/
@@ -90,8 +93,6 @@ public class MainWindow extends JFrame {
         importMenuItem = new JMenuItem("Import");
         exportMenuItem = new JMenuItem("Export");
         exitMenuItem = new JMenuItem("Exit");
-
-
 
         fileMenu.add(newLevelMenuItem);
         fileMenu.addSeparator();
@@ -147,7 +148,7 @@ public class MainWindow extends JFrame {
 
         CentralDataObject.scenePanel = OpenGL_Frame.getNewPanel(this);
 
-        //Make a scrollpane around ddsPanel
+
         final int SCROLL_SPEED = 8; // TODO make this an option
         JScrollPane ddsScrollPanel = new JScrollPane(CentralDataObject.ddsPanel);
         ddsScrollPanel.getHorizontalScrollBar().setUnitIncrement(SCROLL_SPEED);

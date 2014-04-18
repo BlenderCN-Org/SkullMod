@@ -1,8 +1,8 @@
 lvlEdit
 =====================
-Add license
+Cleanup this mess
 
--Create pre stream version (executable for windows and the normal source)
+Add license
 
 Add replace and force replace to lvl parser and writer
 Add animations (if they are not joint based) to preview (frame numbers with frame numbers)

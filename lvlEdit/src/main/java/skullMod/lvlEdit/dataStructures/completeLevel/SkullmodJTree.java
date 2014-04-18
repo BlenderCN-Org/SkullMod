@@ -25,6 +25,13 @@ public class SkullmodJTree extends JTree{
             } catch (Exception ignored) {}
 
         }
+
+        public void removeAnimation(Animation animation){
+            try(AutoCloseable lock = ((Level) this.getRoot()).lock.autoLock()){
+                //((Animation) this.getRoot()).get FIXME not done yet
+
+            }catch (Exception ignored){}
+        }
     }
 
 
