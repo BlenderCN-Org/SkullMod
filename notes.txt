@@ -1,0 +1,16 @@
+Using:
+
+32-bit:
+
+Original authors:
+
+python-3.4.1.msi
+qt-opensource-windows-x86-msvc2013_opengl-5.3.1.exe
+PyQt5-5.3.1-gpl-Py3.4-Qt5.3.1-x32.exe
+
+
+http://www.lfd.uci.edu/~gohlke/pythonlibs/
+(contains up to date binaries)
+
+PyOpenGL‑3.1.0.win32‑py3.4.exe
+cx_Freeze-4.3.3.win32-py3.4.exe
