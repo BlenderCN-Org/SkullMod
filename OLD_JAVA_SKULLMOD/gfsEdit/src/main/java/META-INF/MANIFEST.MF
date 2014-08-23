@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: commons-io-2.4.jar
-Main-Class: skullMod.gfsEdit.Application
-
