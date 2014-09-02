@@ -1,0 +1,5 @@
+# http://www.lfd.uci.edu/~gohlke/pythonlibs/ for an up to date version
+cx_Freeze>=4.3.3
+setuptools>=5.4.1
+colorama>=0.3.1
+# bitstring>=3.1.3
