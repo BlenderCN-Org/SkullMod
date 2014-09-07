@@ -2,7 +2,7 @@ import os
 import pathlib
 import struct
 
-from writer import collada_export
+from SkullModPy.writer import collada_export
 
 from SkullModPy.common.CommonConstants import BIG_ENDIAN
 from SkullModPy.common.Reader import Reader
@@ -13,7 +13,6 @@ class GFS(Reader):
     FILE_IDENTIFIER = "Reverge Package File"
     FILE_EXTENSION = "gfs"
     FILE_VERSION = "1.1"
-    """ Reader for GFS """
 
     def __init__(self, file_path):
         super().__init__(open(file_path, "rb"), os.path.getsize(file_path), BIG_ENDIAN)
@@ -26,9 +25,17 @@ class GFS(Reader):
         """
         # Basic metadata
         data_offset = self.read_int()
-        file_identifier = self.read_pascal_string()
-        if not file_identifier == GFS.FILE_IDENTIFIER:
-            raise ValueError("Given file is not a GFS file")
+        if data_offset < 48:  # Header must be at this long to be valid
+            raise ValueError("Given file header is too short")
+        file_identifier_length = self.read_int(8)
+        # The file identifier is checked manually (instead of using read_pascal_string()) to be extra careful
+        if file_identifier_length != len(self.FILE_IDENTIFIER):
+            raise ValueError("Given file is not a GFS file (Identifier length error)")
+        file_identifier = str(self.file.read(len(self.FILE_IDENTIFIER)), 'ascii')
+        print(file_identifier)
+        print(GFS.FILE_IDENTIFIER)
+        if file_identifier != GFS.FILE_IDENTIFIER:
+            raise ValueError("Given file is not a GFS file (Identifier string error)")
         file_version = self.read_pascal_string()
         if not file_version == GFS.FILE_VERSION:
             raise ValueError("Given file has the wrong version")
@@ -47,7 +54,7 @@ class GFS(Reader):
             reference_path = self.read_pascal_string()
             reference_length = self.read_int(8)
             reference_alignment = self.read_int()
-
+            # The alignment is already included
             running_offset += (reference_alignment - (running_offset % reference_alignment)) % reference_alignment
 
             references.append([running_offset, reference_length, reference_path])

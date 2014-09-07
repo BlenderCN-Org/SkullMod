@@ -125,11 +125,12 @@ class Reader():
                 return struct.unpack(endianness + integer_type, self.file.read(length_in_bytes))[0]
             else:
                 return struct.unpack(endianness + integer_type, source_bytes)[0]
+
     # Untested
     def read_int_array(self, elements, int_length_in_bytes=4, is_signed=False, endianness=None):
         return array('i', (self.read_int(int_length_in_bytes, is_signed, endianness) for _ in elements))
 
-    # TODO currently MSB+little endian+unsigned only, make it lsb/big endian/signed too
+    # TODO currently MSB+little endian+unsigned only, make it lsb/big endian/signed too, test it with more values
     def bits_to_int(self, source_bytes, bit_offset, bit_length):
         if bit_length > 8:
             raise ValueError("Bit length must be less or equal 8")

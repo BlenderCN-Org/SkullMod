@@ -1,5 +1,7 @@
 def parse(lines, descriptions):
     """
+    Used to parse ascii files containing a number of different lines
+
     Possible description params:
     i ... integer
     f ... float

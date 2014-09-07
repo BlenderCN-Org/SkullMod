@@ -11,6 +11,9 @@ FILE_IDENTIFIER = b'DDS '
 FILE_EXTENSION = "dds"
 
 
+def dxt1_block(data_in):
+    print('dxt1')
+
 def dxt5_block(data_in):
     def parse_rgb565(packed):
         r = (packed >> 11) & 0x1F

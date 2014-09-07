@@ -1,7 +1,7 @@
 import sys
 from cx_Freeze import setup, Executable
 
-build_exe_options = {"packages": ["os"], "include_msvcr": True}
+build_exe_options = {"include_msvcr": True, "icon": "appIcon.ico", "optimize": 2}
 
 base = None
 if sys.platform == "win32":
@@ -11,7 +11,7 @@ setup(
     name='SkullModPy',
     version='0.0.1',
     packages=['SkullModPy'],
-    url='',
+    url='http://www.0xfail.net',
     license='MIT',
     classifiers=[
         # How mature is this project? Common values are
@@ -24,9 +24,9 @@ setup(
         'Programming Language :: Python :: 3.4'
     ],
     author='0xFAIL',
-    author_email='',
+    author_email='the0xFAIL@gmail.com',
     description='Modding tool for Skullgirls',
 
     options={"build_exe": build_exe_options},
-    executables=[Executable("SkullModPy\Application.py", base=base)]
+    executables=[Executable("SkullModPy\SkullMod.py", base=base)]
 )

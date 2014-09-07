@@ -1,19 +1,19 @@
 import zlib
 import struct
 
-
 # MIT License http://code.activestate.com/recipes/577443-write-a-png-image-in-native-python/
-# TODO should work with combined rgba data as well (1 int containing rgba instead of 4)
-def write_png(buf, width, height):
+def write_png(pixel_data, width, height):
     """
-
-    :param buf: Buffer with RGBA bytes
-    :param width: Imagewidth
-    :param height: Imageheight
-    :return: Finished png file
+    :param pixel_data: An array of Pixel objects
+    :param width: image width
+    :param height: image height
+    :return: Finished png file as bytes
     """
-    width_byte_4 = width * 4
-    raw_data = b"".join(b'\x00' + buf[span:span + width_byte_4] for span in range((height - 1) * width * 4, -1, - width_byte_4))
+    raw_data = b''
+    for y in range(0,height):
+        raw_data += b'\x00'
+        for x in range(0,width):
+            raw_data += pixel_data[y*width + x].get_rgba8()
 
     # Write png chunk
     def png_pack(png_tag, data):

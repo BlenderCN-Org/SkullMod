@@ -1,7 +1,8 @@
 import os
 import struct
 import shutil
-import app_info
+from SkullModPy import app_info
+
 from SkullModPy.common.util import tag
 
 

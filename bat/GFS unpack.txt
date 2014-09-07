@@ -1,0 +1,29 @@
+@echo off
+setlocal enabledelayedexpansion
+
+echo GFS unpack
+echo.
+
+set argCount=0
+set fileParams=-files
+REM A 'call' is required for the parameter to be evaluated correctly
+FOR %%p IN (%*) DO (
+    set /A argCount+=1
+    call :concat %%p
+)
+
+echo Number of files to process: %argCount%
+echo.
+
+if %argCount% == 0 (
+    echo No files given, drag and drop the .gfs files on this file
+    echo.
+) else (
+    SkullMod -do unpack -gfs %fileParams%
+    echo.
+)
+
+pause
+
+:concat
+set fileParams=%fileParams% %1
