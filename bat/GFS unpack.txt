@@ -19,6 +19,8 @@ if %argCount% == 0 (
     echo No files given, drag and drop the .gfs files on this file
     echo.
 ) else (
+    REM change directory to local directory of bat file to start SkullMod
+    pushd "%~dp0"
     SkullMod -do unpack -gfs %fileParams%
     echo.
 )

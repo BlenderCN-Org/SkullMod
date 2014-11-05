@@ -13,6 +13,7 @@ class Pixel:
         self.iteration_index = -1
 
     def __iter__(self):
+        self.iteration_index = -1
         return self
 
     def __next__(self):

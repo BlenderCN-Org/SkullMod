@@ -4,7 +4,6 @@ import struct
 
 from SkullModPy.common.CommonConstants import *
 
-
 class Reader():
     """
     Base class for any reader

@@ -1,8 +1,9 @@
 import zlib
 import struct
+from SkullModPy.DDS.Color import Pixel
 
 # MIT License http://code.activestate.com/recipes/577443-write-a-png-image-in-native-python/
-def write_png(pixel_data, width, height):
+def write_png(pixel_data: list, width: int, height: int):
     """
     :param pixel_data: An array of Pixel objects
     :param width: image width
@@ -10,9 +11,9 @@ def write_png(pixel_data, width, height):
     :return: Finished png file as bytes
     """
     raw_data = b''
-    for y in range(0,height):
+    for y in range(0, height):
         raw_data += b'\x00'
-        for x in range(0,width):
+        for x in range(0, width):
             raw_data += pixel_data[y*width + x].get_rgba8()
 
     # Write png chunk

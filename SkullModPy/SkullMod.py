@@ -4,16 +4,12 @@ import argparse
 import colorama
 from colorama import Fore, Back
 from SkullModPy import app_info
-from SkullModPy.DDS import Color
-from SkullModPy.common import ImageWriter
 from SkullModPy.files import *
-
-import png
 
 if __name__ == "__main__":
     colorama.init()
 
-    print(Fore.RED + Back.WHITE + " ██ █ █ █  █ █  █  █   █  ██  ██ ")
+    print(Fore.RED + " ██ █ █ █  █ █  █  █   █  ██  ██ ")
     print("█   ██  █  █ █  █  ██ ██ █  █ █ █")
     print(" █  █   █  █ █  █  █ █ █ █  █ █ █")
     print("  █ ██  █  █ █  █  █   █ █  █ █ █")
@@ -30,9 +26,6 @@ if __name__ == "__main__":
     parser.add_argument('-spr', action='store_true', help="Export/import sprite")
     parser.add_argument('-files', nargs='+', metavar="f", help="Files to work on", required=True)
 
-    with open('C:\\test\\test.png', 'wb') as f:
-        f.write(ImageWriter.write_png([Color.Pixel(i*3, i*3+1, i*3+2) for i in range(0, 9,)], 3, 3))
-
     """
     # Check for availability of NVidia Texture Tools
     # Copy the content of the 'bin' directory of NVTT into a directory called NVTT in the .exe or .py directory
@@ -43,7 +36,6 @@ if __name__ == "__main__":
         sys.exit(1)
     """
 
-    """
     # Don't print an error message if there are no arguments
     if len(sys.argv) == 1:
         parser.print_help()
@@ -73,26 +65,29 @@ if __name__ == "__main__":
                 try:
                     gfs_file = GFS(file)
                     gfs_file.export_files(gfs_file.get_metadata())
-                    print('it went through')
+                    print('Done')
                 except Exception as e:
-                    print("Error: " + str(e))
+                    print("Please report this error: " + str(e))
                     sys.exit(1)
             else:
                 if os.path.basename(file) == 'character-art-pt.gfs' and args['gfs_pack_align']:
                     print('Skipping file: ' + os.path.basename(file))
-                    print(Fore.RED + 'USE THE -gfs_pack_align OPTION FOR THIS FILE' + Fore.RESET)
+                    print("""Fore.RED +""" 'USE THE -gfs_pack_align OPTION FOR THIS FILE' """+ Fore.RESET""")
                     continue
-                print('gfs pack')
+                print('Not implemented yet')
 
         if args['lvl']:
             if args['do'] == 'unpack':
                 print('lvl unpack')
+                print('Not implemented yet')
             else:
                 print('lvl pack')
+                print('Not implemented yet')
 
         if args['spr']:
             if args['do'] == 'unpack':
                 print('spr unpack')
+                print('Not implemented yet')
             else:
                 print('spr pack')
-    """
+                print('Not implemented yet')

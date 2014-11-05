@@ -32,8 +32,6 @@ class GFS(Reader):
         if file_identifier_length != len(self.FILE_IDENTIFIER):
             raise ValueError("Given file is not a GFS file (Identifier length error)")
         file_identifier = str(self.file.read(len(self.FILE_IDENTIFIER)), 'ascii')
-        print(file_identifier)
-        print(GFS.FILE_IDENTIFIER)
         if file_identifier != GFS.FILE_IDENTIFIER:
             raise ValueError("Given file is not a GFS file (Identifier string error)")
         file_version = self.read_pascal_string()
