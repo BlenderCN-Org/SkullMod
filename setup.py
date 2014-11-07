@@ -1,6 +1,5 @@
-import sys
 from distutils.core import setup
-import py2exe
+import py2exe  # Required
 
 # Setup with py2exe
 setup(

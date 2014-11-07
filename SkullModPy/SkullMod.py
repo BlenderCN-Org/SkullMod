@@ -63,18 +63,25 @@ if __name__ == "__main__":
         if args['gfs']:
             if args['do'] == 'unpack':
                 try:
-                    gfs_file = GFS(file)
+                    gfs_file = GFSReader(file)
                     gfs_file.export_files(gfs_file.get_metadata())
                     print('Done')
                 except Exception as e:
                     print("Please report this error: " + str(e))
                     sys.exit(1)
-            else:
-                if os.path.basename(file) == 'character-art-pt.gfs' and args['gfs_pack_align']:
+            elif args['do'] == 'pack':
+                """
+                if os.path.basename(file) == 'character-art-pt' and args['gfs_pack_align']:
                     print('Skipping file: ' + os.path.basename(file))
-                    print("""Fore.RED +""" 'USE THE -gfs_pack_align OPTION FOR THIS FILE' """+ Fore.RESET""")
+                    print(Fore.RED + 'USE THE -gfs_pack_align OPTION FOR THIS FILE' + Fore.RESET)
                     continue
-                print('Not implemented yet')
+                """
+                try:
+                    gfs_file = GFSWriter(file, args['gfs_pack_align'])
+                    gfs_file.write_content(gfs_file.get_metadata())
+                except Exception as e:
+                    print("Please report this error: " + str(e))
+                    sys.exit(1)
 
         if args['lvl']:
             if args['do'] == 'unpack':

@@ -1,5 +1,6 @@
 import os
 import pathlib
+from pprint import pprint
 import struct
 
 from SkullModPy.writer import collada_export
@@ -9,7 +10,7 @@ from SkullModPy.common.Reader import Reader
 from SkullModPy.common import SimpleParse
 
 
-class GFS(Reader):
+class GFSReader(Reader):
     FILE_IDENTIFIER = "Reverge Package File"
     FILE_EXTENSION = "gfs"
     FILE_VERSION = "1.1"
@@ -32,10 +33,10 @@ class GFS(Reader):
         if file_identifier_length != len(self.FILE_IDENTIFIER):
             raise ValueError("Given file is not a GFS file (Identifier length error)")
         file_identifier = str(self.file.read(len(self.FILE_IDENTIFIER)), 'ascii')
-        if file_identifier != GFS.FILE_IDENTIFIER:
+        if file_identifier != GFSReader.FILE_IDENTIFIER:
             raise ValueError("Given file is not a GFS file (Identifier string error)")
         file_version = self.read_pascal_string()
-        if not file_version == GFS.FILE_VERSION:
+        if not file_version == GFSReader.FILE_VERSION:
             raise ValueError("Given file has the wrong version")
         n_of_files = self.read_int(8)
 
@@ -68,6 +69,93 @@ class GFS(Reader):
         return self.read_string(self.read_int(8))
 
 
+class GFSWriter:
+    """
+    The writer is lazy:
+    A file can have all its entries aligned (4096) or none (1)
+    The file format would allow for .gfs files with aligned and unaligned
+    entries, but this isn't used in the game
+    """
+
+    def __init__(self, dir_path, is_aligned):
+        self.dir_path = os.path.abspath(dir_path)
+        self.is_aligned = is_aligned
+
+    def get_metadata(self):
+        """
+        Overwrites existing files
+        """
+        # Check if all prerequisits are met
+        if not os.path.exists(self.dir_path) or not os.path.isdir(self.dir_path):
+            raise NotADirectoryError("Doesn't exist or not a directory")
+        # Generate file list for the directory
+        file_list = []
+        for root, subdirs, files in os.walk(self.dir_path):
+            # Get basepath length explicitly
+            base_path_length = len(self.dir_path)+1  # +1 because of the path delimiter
+            # Go through all files in this directory
+            # Save their relative positions and size
+            for file in files:
+                if root == self.dir_path:
+                    file_list.append(file)
+                    file_list.append(os.path.getsize(os.path.join(root, file)))
+                else:
+                    # Add to file list and replace all backwards slashes with forward slashes
+                    file_list.append((root[base_path_length:len(root)] + '/' + file).replace('\\', '/'))
+                    file_list.append(os.path.getsize(os.path.join(root, file)))
+        return file_list
+
+    def write_content(self, metadata):
+        # TODO nOfFiles variable
+        # TODO correct errorhandling
+        # TODO handle exception ==> gfs filename that has to be aligned
+        # TODO let user input enter when no params given so there is a chance to see the window
+        if os.path.isdir(self.dir_path + '.gfs'):
+            raise FileExistsError('There is a directory with the same name as a .gfs file')
+        if os.path.exists(self.dir_path + '.gfs'):
+            print(os.path.basename(self.dir_path+'.gfs') + " will be overwritten")
+        # Save alignment
+        alignment = 4096 if self.is_aligned else 1
+        # Calculate the offset for the data portion (independent of the alignment)
+        header_length = 51  # Base size (contains offset/file string/version/nOfFiles)
+        for i in range(0, len(metadata)//2):  # // ... int divison
+            header_length += 8+len(metadata[i*2])+8+4  # long strLength+fileName+long fileSize+uint alignment
+        # Calculate each position for the files (requires alignment)
+        file_offsets = []
+        running_offset = header_length
+        for i in range(0, len(metadata)//2):
+            running_offset += running_offset % alignment
+            file_offsets.append(running_offset)
+            running_offset += metadata[i*2+1]
+        # Write header
+        with open(self.dir_path + '.gfs', 'wb') as f:
+            # Q ... uint64     L ... uint32
+            f.write(struct.pack(BIG_ENDIAN + 'L', header_length))
+            GFSWriter.write_pascal_string(f, 'Reverge Package File')
+            GFSWriter.write_pascal_string(f, '1.1')
+            f.write(struct.pack(BIG_ENDIAN + 'Q', len(metadata)//2))
+            for i in range(0, len(metadata)//2):
+                GFSWriter.write_pascal_string(f, metadata[i*2])
+                f.write(struct.pack(BIG_ENDIAN + 'Q', file_offsets[i]))
+                f.write(struct.pack(BIG_ENDIAN + 'L', alignment))
+            f.write(b'\x00'*(f.tell() % alignment))  # Align header if needed
+            for i in range(0, len(metadata)//2):
+                # Open file, read chunks, write chunks into this file
+                with open(os.path.join(self.dir_path, metadata[i*2].replace("/", "\\")), 'rb') as data_file:
+                    bytes_read = data_file.read(4096)
+                    while bytes_read:
+                        f.write(bytes_read)
+                        bytes_read = data_file.read(4096)
+                f.write(b'\x00'*(f.tell() % alignment))  # Write alignment
+                # Write file
+
+    @staticmethod
+    def write_pascal_string(f, string):
+        ascii_string = string.encode('ascii')
+        f.write(struct.pack(BIG_ENDIAN + 'Q', len(ascii_string)))
+        f.write(ascii_string)
+
+
 class LVL():
     """ Load an entire level and convert it to its objects """
     def __init__(self, file_path):
@@ -80,7 +168,7 @@ class LVL():
             self.content = f.readlines()
 
         # Note for Pointlight: Last two params are "Radius in pixels(at default screen res of 1280x720)" and nevercull
-        #                     4 pointlights are used for effects
+        #                     4 point lights are used for effects
         # Default values: (thanks MikeZ)
         # stageSizeDefaultX = 3750
         # stageSizeDefaultY = 2000

@@ -1,8 +1,10 @@
 @echo off
-setlocal EnableDelayedExpansion
+setlocal enabledelayedexpansion
 
+TITLE SkullMod - GFS pack aligned
 echo GFS pack aligned
 echo.
+
 
 set argCount=0
 set fileParams=-files
@@ -12,16 +14,23 @@ FOR %%p IN (%*) DO (
     call :concat %%p
 )
 
-if %argCount% == 1 (
-    SkullMod -do pack -gfs -gfs_align %fileParams%
+echo Number of directories to process: %argCount%
+echo.
+
+if %argCount% == 0 (
+    echo No directories given, drag and drop what you want to pack
     echo.
 ) else (
-    echo Drag and drop a single directory here
-    echo For details look in the README.txt
-    echo. 
+    REM change directory to local directory of bat file to start SkullMod
+    pushd "%~dp0"
+    SkullMod.exe -do pack -gfs -gfs_pack_align %fileParams%
+    echo.
 )
 
 pause
+goto :eof
 
 :concat
 set fileParams=%fileParams% %1
+
+:eof
