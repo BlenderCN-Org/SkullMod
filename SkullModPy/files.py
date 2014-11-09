@@ -1,6 +1,5 @@
 import os
 import pathlib
-from pprint import pprint
 import struct
 
 from SkullModPy.writer import collada_export
@@ -106,25 +105,24 @@ class GFSWriter:
         return file_list
 
     def write_content(self, metadata):
-        # TODO nOfFiles variable
-        # TODO correct errorhandling
-        # TODO handle exception ==> gfs filename that has to be aligned
-        # TODO let user input enter when no params given so there is a chance to see the window
         if os.path.isdir(self.dir_path + '.gfs'):
             raise FileExistsError('There is a directory with the same name as a .gfs file')
         if os.path.exists(self.dir_path + '.gfs'):
             print(os.path.basename(self.dir_path+'.gfs') + " will be overwritten")
+        # Calculate number of files
+        n_of_files = len(metadata)//2
         # Save alignment
         alignment = 4096 if self.is_aligned else 1
         # Calculate the offset for the data portion (independent of the alignment)
         header_length = 51  # Base size (contains offset/file string/version/nOfFiles)
-        for i in range(0, len(metadata)//2):  # // ... int divison
+        for i in range(0, n_of_files):
             header_length += 8+len(metadata[i*2])+8+4  # long strLength+fileName+long fileSize+uint alignment
         # Calculate each position for the files (requires alignment)
         file_offsets = []
         running_offset = header_length
-        for i in range(0, len(metadata)//2):
-            running_offset += running_offset % alignment
+        for i in range(0, n_of_files):
+            if alignment != 1:
+                running_offset += alignment - (running_offset % alignment)
             file_offsets.append(running_offset)
             running_offset += metadata[i*2+1]
         # Write header
@@ -133,21 +131,24 @@ class GFSWriter:
             f.write(struct.pack(BIG_ENDIAN + 'L', header_length))
             GFSWriter.write_pascal_string(f, 'Reverge Package File')
             GFSWriter.write_pascal_string(f, '1.1')
-            f.write(struct.pack(BIG_ENDIAN + 'Q', len(metadata)//2))
-            for i in range(0, len(metadata)//2):
+            f.write(struct.pack(BIG_ENDIAN + 'Q', n_of_files))
+            for i in range(0, n_of_files):
                 GFSWriter.write_pascal_string(f, metadata[i*2])
-                f.write(struct.pack(BIG_ENDIAN + 'Q', file_offsets[i]))
+                f.write(struct.pack(BIG_ENDIAN + 'Q', metadata[i*2+1]))
                 f.write(struct.pack(BIG_ENDIAN + 'L', alignment))
-            f.write(b'\x00'*(f.tell() % alignment))  # Align header if needed
-            for i in range(0, len(metadata)//2):
+            if f.tell() % alignment != 0:  # Only align if alignment is needed
+                f.write(b'\x00' * (alignment - (f.tell() % alignment)))  # Align header if needed
+            for i in range(0, n_of_files):
                 # Open file, read chunks, write chunks into this file
                 with open(os.path.join(self.dir_path, metadata[i*2].replace("/", "\\")), 'rb') as data_file:
                     bytes_read = data_file.read(4096)
                     while bytes_read:
                         f.write(bytes_read)
                         bytes_read = data_file.read(4096)
-                f.write(b'\x00'*(f.tell() % alignment))  # Write alignment
-                # Write file
+                if f.tell() % alignment != 0:  # Only align if alignment is needed
+                    f.write(b'\x00' * (alignment - (f.tell() % alignment)))  # Write alignment
+
+
 
     @staticmethod
     def write_pascal_string(f, string):

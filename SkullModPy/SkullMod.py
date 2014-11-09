@@ -1,5 +1,6 @@
 import sys
 import argparse
+import traceback
 
 import colorama
 from colorama import Fore, Back
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     parser.add_argument('-gfs_pack_align', action='store_true', default=False, help="GFS Alignment", required=False)
     parser.add_argument('-lvl', action='store_true', help="Export/import level")
     parser.add_argument('-spr', action='store_true', help="Export/import sprite")
-    parser.add_argument('-files', nargs='+', metavar="f", help="Files to work on", required=True)
+    parser.add_argument('-files', nargs='+', metavar="f", help="Files or directories to work on", required=True)
 
     """
     # Check for availability of NVidia Texture Tools
@@ -36,9 +37,10 @@ if __name__ == "__main__":
         sys.exit(1)
     """
 
-    # Don't print an error message if there are no arguments
+    # Don't print an error message if there are no arguments, display help instead
     if len(sys.argv) == 1:
         parser.print_help()
+        os.system("pause")  # Windows only
         sys.exit(0)
 
     args = vars(parser.parse_args())
@@ -56,45 +58,50 @@ if __name__ == "__main__":
         parser.print_help()
         print("\nError: gfs_pack_align without gfs and pack")
         sys.exit(1)
+    # Simple command line error handling: Display exception and wait for any keypress
+    # Using Windows only pause
+    try:
+        # Iterate through files
+        for file in args['files']:
+            print("Processing: " + os.path.basename(file))
+            if args['gfs']:
+                if args['do'] == 'unpack':
+                    try:
+                        gfs_file = GFSReader(file)
+                        gfs_file.export_files(gfs_file.get_metadata())
+                        print('Done')
+                    except Exception as e:
+                        print("Please report this error: " + str(e))
+                        sys.exit(1)
+                elif args['do'] == 'pack':
 
-    # Iterate through files
-    for file in args['files']:
-        print("Processing: " + os.path.basename(file))
-        if args['gfs']:
-            if args['do'] == 'unpack':
-                try:
-                    gfs_file = GFSReader(file)
-                    gfs_file.export_files(gfs_file.get_metadata())
-                    print('Done')
-                except Exception as e:
-                    print("Please report this error: " + str(e))
-                    sys.exit(1)
-            elif args['do'] == 'pack':
-                """
-                if os.path.basename(file) == 'character-art-pt' and args['gfs_pack_align']:
-                    print('Skipping file: ' + os.path.basename(file))
-                    print(Fore.RED + 'USE THE -gfs_pack_align OPTION FOR THIS FILE' + Fore.RESET)
-                    continue
-                """
-                try:
+                    if os.path.basename(file) == 'characters-art-pt' and not args['gfs_pack_align']:
+                        print('Skipping file: ' + os.path.basename(file))
+                        print(Fore.RED + 'USE THE -gfs_pack_align OPTION')
+                        print('OR USE "GFS pack aligned.bat" FOR THIS FILE' + Fore.RESET + '\n')
+                        continue
                     gfs_file = GFSWriter(file, args['gfs_pack_align'])
                     gfs_file.write_content(gfs_file.get_metadata())
-                except Exception as e:
-                    print("Please report this error: " + str(e))
-                    sys.exit(1)
+                    print("Done")
 
-        if args['lvl']:
-            if args['do'] == 'unpack':
-                print('lvl unpack')
-                print('Not implemented yet')
-            else:
-                print('lvl pack')
-                print('Not implemented yet')
+            if args['lvl']:
+                if args['do'] == 'unpack':
+                    print('lvl unpack')
+                    print('Not implemented yet')
+                else:
+                    print('lvl pack')
+                    print('Not implemented yet')
 
-        if args['spr']:
-            if args['do'] == 'unpack':
-                print('spr unpack')
-                print('Not implemented yet')
-            else:
-                print('spr pack')
-                print('Not implemented yet')
+            if args['spr']:
+                if args['do'] == 'unpack':
+                    print('spr unpack')
+                    print('Not implemented yet')
+                else:
+                    print('spr pack')
+                    print('Not implemented yet')
+    except Exception as err:  # Exception class used on purpose
+        print("An error occured")
+        exc_info = sys.exc_info()
+        traceback.print_exception(*exc_info)
+        del exc_info
+        # traceback.print_tb(err.__traceback__)
