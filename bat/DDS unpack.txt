@@ -1,10 +1,10 @@
 @echo off
 setlocal enabledelayedexpansion
 
-TITLE SkullMod - SPR unpack
-echo SPR unpack
+TITLE SkullMod - DDS unpack
+echo DDS unpack
 echo.
- 
+
 
 set argCount=0
 set fileParams=-files
@@ -18,12 +18,12 @@ echo Number of files to process: %argCount%
 echo.
 
 if %argCount% == 0 (
-    echo No files given, drag and drop the .spr.msb files on this file
+    echo No files given, drag and drop the .dds files on this file
     echo.
 ) else (
     REM change directory to local directory of bat file to start SkullMod
-    pushd "%~dp0" 
-    SkullMod.exe -do unpack -spr %fileParams%
+    pushd "%~dp0"
+    SkullMod.exe -do unpack -dds %fileParams%
     echo.
 )
 

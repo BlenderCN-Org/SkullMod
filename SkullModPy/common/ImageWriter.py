@@ -2,6 +2,7 @@ import zlib
 import struct
 from SkullModPy.DDS.Color import Pixel
 
+
 # MIT License http://code.activestate.com/recipes/577443-write-a-png-image-in-native-python/
 def write_png(pixel_data: list, width: int, height: int):
     """
