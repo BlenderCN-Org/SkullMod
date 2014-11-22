@@ -1,8 +1,12 @@
+import os
 import sys
 import argparse
 
 from SkullModPy import app_info
-from SkullModPy.files import *
+from SkullModPy.formats.dds import DDSReader
+from SkullModPy.formats.gfs import GFSReader, GFSWriter
+from SkullModPy.formats.pcx import PCXReader
+from SkullModPy.formats.spr import SPR
 
 if __name__ == "__main__":
     try:
@@ -29,18 +33,11 @@ if __name__ == "__main__":
     parser.add_argument('-gfs_pack_align', action='store_true', default=False, help="GFS 4k alignment flag", required=False)
     parser.add_argument('-lvl', action='store_true', help="Export/Import level")
     parser.add_argument('-spr', action='store_true', help="Export/Import sprite")
+    #parser.add_argument('-spr_charselect', action='store_true', help="Export charselect with palette")
+    #parser.add_argument('-spr_charselect_p', action='store', help="Palettenumber for charselect")
     parser.add_argument('-dds', action='store_true', help="Export dds to png (no import)")
+    parser.add_argument('-pcx', action='store_true', help="Export pcx to png (no import)")
     parser.add_argument('-files', nargs='+', metavar="f", help="Files or directories to work with", required=True)
-
-    """
-    # Check for availability of NVidia Texture Tools
-    # Copy the content of the 'bin' directory of NVTT into a directory called NVTT in the .exe or .py directory
-    script_path = os.path.dirname(os.path.realpath(sys.argv[0]))
-    nvtt_path = os.path.join(script_path, 'NVTT')
-    if not (os.path.exists(nvtt_path) and os.path.isdir(nvtt_path)):
-        print('\nError: NVidia Texture Tools are missing (no NVTT directory)')
-        sys.exit(1)
-    """
 
     # Don't print an error message if there are no arguments, display help instead
     if len(sys.argv) == 1:
@@ -50,7 +47,7 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    if args['lvl'] + args['spr'] + args['gfs'] + args['dds'] != 1:  # Check if only one mode was selected
+    if args['lvl'] + args['spr'] + args['gfs'] + args['dds'] + args['pcx'] != 1:  # Check if only one mode was selected
         print("\nError: Select only one filetype to process (lvl/spr/gfs/dds")
         parser.print_help()
         sys.exit(1)
@@ -110,3 +107,12 @@ if __name__ == "__main__":
                 print("Done")
             else:
                 print("Packing DDS is not implemented, use the NVidia Texture Tools")
+        if args['pcx']:
+            if args['do'] == 'unpack':
+                    pcx = PCXReader(file)
+                    pcx.check_destination()
+                    pcx.write_png(pcx.read_data(pcx.read_metadata())[0])
+                    print("Done")
+            else:
+                print('pcx pack')
+                print("Not implemented use GIMP, Photoshop or other tools that can export pcx images")
