@@ -1,10 +1,11 @@
 import os
 import struct
+import math
 from SkullModPy.common.CommonConstants import BIG_ENDIAN
 from SkullModPy.common.Reader import Reader
 from SkullModPy.formats.dds import DDSReader
 from SkullModPy.formats.png import PNGWriter
-
+from SkullModPy.common.helper import rgb565_split, abgr8, split_abgr8
 
 class SPR(Reader):
     FILE_EXTENSION = "spr.msb"
@@ -34,9 +35,11 @@ class SPR(Reader):
             self.unknw = spr.read_int(4)
             self.last_frame = spr.read_int(4)
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, charselect=False, charselect_palette=None):
         super().__init__(open(file_path, "rb"), os.path.getsize(file_path), BIG_ENDIAN)
         self.file_path = os.path.abspath(file_path)
+        self.charselect = charselect
+        self.charselect_palette = charselect_palette
 
     def read_spr(self):
         if self.read_pascal_string() != SPR.FILE_VERSION:
@@ -81,8 +84,32 @@ class SPR(Reader):
         dds_path = base_dir + '.dds'
         if not os.path.exists(dds_path) or not os.path.isfile(dds_path):
             raise ValueError("dds file is missing or a directory where dds file should be")
-        dds = DDSReader(base_dir + '.dds')
+        dds = DDSReader(base_dir + '.dds', self.charselect)
         png_data = dds.get_png_data()[0]
+
+        # Apply palette
+        if self.charselect:
+            for y in range(len(png_data)):
+                for x in range(len(png_data[0])):
+                    colors = rgb565_split(png_data[y][x])
+                    r = colors['r']
+                    g = colors['g']
+                    b = colors['b']
+                    color = self.charselect_palette[g][int(b/2)] # TODO round?
+                    png_data[y][x] = color
+                    # Apply outline
+                    # r ... outline blending intensity (blend not if 255, blend completly if 0)
+                    # b/2? ... x-coordinate in the palette
+                    # g ... y-coordinate in the palette
+                    if r != 31:
+                        split_color = split_abgr8(color)
+
+                        new_color = abgr8(int(split_color['r'] * (r/31.0)), # TODO round?
+                                          int(split_color['g'] * (r/31.0)),
+                                          int(split_color['b'] * (r/31.0)),
+                                          255)
+                        png_data[y][x] = new_color
+
         # Create directories
         if not os.path.exists(base_dir):
             os.makedirs(base_dir)  # Base directory
@@ -98,7 +125,7 @@ class SPR(Reader):
                 frame_width = bounds[0]
                 frame_height = bounds[1]
                 # Make image data
-                frame_image_data = [[0] * frame_width for _i in range(frame_height)]
+                frame_image_data = [[0] * frame_width for _ in range(frame_height)]
 
                 for entry in range(frame.block_offset, frame.block_offset + frame.n_of_blocks, 1):
                     self.move_rect(frame_image_data, png_data, entries[entry].tile_u, entries[entry].tile_v,

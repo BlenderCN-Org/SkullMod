@@ -33,8 +33,8 @@ if __name__ == "__main__":
     parser.add_argument('-gfs_pack_align', action='store_true', default=False, help="GFS 4k alignment flag", required=False)
     parser.add_argument('-lvl', action='store_true', help="Export/Import level")
     parser.add_argument('-spr', action='store_true', help="Export/Import sprite")
-    #parser.add_argument('-spr_charselect', action='store_true', help="Export charselect with palette")
-    #parser.add_argument('-spr_charselect_p', action='store', help="Palettenumber for charselect")
+    parser.add_argument('-spr_charselect', action='store_true', help="Export charselect with palette")
+    parser.add_argument('-spr_charselect_p', nargs=1, metavar='f', action='store', help="Palette file for charselect")
     parser.add_argument('-dds', action='store_true', help="Export dds to png (no import)")
     parser.add_argument('-pcx', action='store_true', help="Export pcx to png (no import)")
     parser.add_argument('-files', nargs='+', metavar="f", help="Files or directories to work with", required=True)
@@ -47,7 +47,8 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    if args['lvl'] + args['spr'] + args['gfs'] + args['dds'] + args['pcx'] != 1:  # Check if only one mode was selected
+    # Check if only one mode was selected
+    if args['lvl'] + args['spr'] + args['gfs'] + args['dds'] + args['pcx'] + args['spr_charselect'] != 1:
         print("\nError: Select only one filetype to process (lvl/spr/gfs/dds")
         parser.print_help()
         sys.exit(1)
@@ -59,6 +60,10 @@ if __name__ == "__main__":
     if args['gfs'] is False and args['gfs_pack_align'] is True:  # Check dependency of gfs_pack_align
         parser.print_help()
         print("\nError: gfs_pack_align without gfs and pack")
+        sys.exit(1)
+    if args['spr_charselect'] is True and args['spr_charselect_p'] is None:
+        parser.print_help()
+        print("\nError: spr_charselelect_p is not defined")
         sys.exit(1)
 
     # Iterate through files
@@ -116,3 +121,14 @@ if __name__ == "__main__":
             else:
                 print('pcx pack')
                 print("Not implemented use GIMP, Photoshop or other tools that can export pcx images")
+        if args['spr_charselect']:
+            if args['do'] == 'unpack':
+                palette_path = os.path.join(os.path.dirname(file), str(args['spr_charselect_p'][0]))
+                palette = DDSReader(palette_path)
+                palette = palette.get_png_data()[0]
+                spr = SPR(file, charselect=True, charselect_palette=palette)
+                spr.read_spr()
+                print("Done")
+            else:
+                print('spr_charselect unpack')
+                print("Not yet implemented")

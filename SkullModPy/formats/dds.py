@@ -54,9 +54,10 @@ class DDSReader(Reader):
     DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x8000
     DDSCAPS2_VOLUME = 0x200000
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, charselect=False):
         super().__init__(open(file_path, "rb"), os.path.getsize(file_path), LITTLE_ENDIAN)
         self.file_path = os.path.abspath(file_path)
+        self.charselect = charselect
 
     def check_destination(self):
         png_path = os.path.splitext(self.file_path)[0] + '.png'
@@ -85,8 +86,8 @@ class DDSReader(Reader):
         dds_has_depth = True if dds_flags & DDSReader.DDS_DEPTH_FLAG else False
 
         if dds_flags & ~(DDSReader.DDS_CAPS_FLAG | DDSReader.DDS_HEIGHT_FLAG | DDSReader.DDS_WIDTH_FLAG |
-                             DDSReader.DDS_PITCH_FLAG | DDSReader.DDS_PIXELFORMAT_FLAG |
-                             DDSReader.DDS_MIPMAPCOUNT_FLAG | DDSReader.DDS_DEPTH_FLAG) != 0:
+                         DDSReader.DDS_PITCH_FLAG | DDSReader.DDS_PIXELFORMAT_FLAG |
+                         DDSReader.DDS_MIPMAPCOUNT_FLAG | DDSReader.DDS_DEPTH_FLAG) != 0:
             print("Info: An unknown bit is set in dds_flags, this is common")
 
         # TODO check all flags for validity of dds_flags (and other combinations as well) and the vars below as well
@@ -320,7 +321,12 @@ class DDSReader(Reader):
             for y in range(dds_height):
                 for x in range(dds_width):
                     color = self.read_int(2)
-                    image_data[y][x] = rgb565_to_abgr8(rgb565((color & ddsf_r_bitmask) >> 11,
+                    if self.charselect is True:
+                        image_data[y][x] = rgb565((color & ddsf_r_bitmask) >> 11,
+                                                              (color & ddsf_g_bitmask) >> 5,
+                                                              (color & ddsf_b_bitmask))
+                    else:
+                        image_data[y][x] = rgb565_to_abgr8(rgb565((color & ddsf_r_bitmask) >> 11,
                                                               (color & ddsf_g_bitmask) >> 5,
                                                               (color & ddsf_b_bitmask)))
         else:
