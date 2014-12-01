@@ -1,39 +1,65 @@
 import os
 import struct
-import math
 from SkullModPy.common.CommonConstants import BIG_ENDIAN
 from SkullModPy.common.Reader import Reader
 from SkullModPy.formats.dds import DDSReader
 from SkullModPy.formats.png import PNGWriter
 from SkullModPy.common.helper import rgb565_split, abgr8, split_abgr8
 
+
+class SPREntry:
+    def __init__(self, x=0, y=0, u=0, v=0):
+        self.tile_x = x
+        self.tile_y = y
+        self.tile_u = u
+        self.tile_v = v
+
+    @classmethod
+    def from_file(cls, file):
+        cls(file.read_int(1), file.read_int(1), file.read_int(1), file.read_int(1))
+
+    def write(self, file):
+        file.write(struct.pack('4B', self.tile_x, self.tile_y, self.tile_u, self.tile_v))
+
+
+class SPRFrame:
+    def __init__(self, block_offset, n_of_blocks, unkwn1, center_x, center_y):
+        self.block_offset = block_offset
+        self.n_of_blocks = n_of_blocks
+        self.unkwn1 = unkwn1
+        self.center_x = center_x
+        self.center_y = center_y
+
+    @classmethod
+    def from_file(cls, spr):
+        cls(spr.read_int(4), spr.read_int(4), spr.read_int(4),
+            struct.unpack('>f', spr.file.read(4))[0],struct.unpack('>f', spr.file.read(4))[0])
+
+    def write(self, file):
+        file.write(struct.pack('3I2f', self.block_offset, self.n_of_blocks, self.unkwn1, self.center_x, self.center_y))
+
+
+class SPRAnimation:
+    def __init__(self, animation_name, frame_offset, n_of_frames, unknw, last_frame):
+        self.animation_name = animation_name
+        self.frame_offset = frame_offset
+        self.n_of_frames = n_of_frames
+        self.unknw = unknw
+        self.last_frame = last_frame
+
+    @classmethod
+    def from_file(cls, spr):
+        cls(spr.read_pascal_string(), spr.read_int(4), spr.read_int(4), spr.read_int(4), spr.read_int(4))
+
+    def write(self, file):
+        file.write(struct.pack('Qs', len(self.animation_name), self.animation_name))
+        file.write(struct.pack('4I', self.frame_offset, self.n_of_frames, self.unknw, self.last_frame))
+
+
 class SPR(Reader):
     FILE_EXTENSION = "spr.msb"
     FILE_VERSION = "2.0"
     DATA_FORMAT_STRING = "unigned char tile_x, tile_y, tile_u, tile_v;"
-
-    class SPREntry:
-        def __init__(self, spr):
-            self.tile_x = spr.read_int(1)
-            self.tile_y = spr.read_int(1)
-            self.tile_u = spr.read_int(1)
-            self.tile_v = spr.read_int(1)
-
-    class SPRFrame:
-        def __init__(self, spr):
-            self.block_offset = spr.read_int(4)
-            self.n_of_blocks = spr.read_int(4)
-            self.unkwn1 = spr.read_int(4)
-            self.center_x = struct.unpack('>f', spr.file.read(4))[0]
-            self.center_y = struct.unpack('>f', spr.file.read(4))[0]
-
-    class SPRAnimations:
-        def __init__(self, spr):
-            self.animation_name = spr.read_pascal_string()
-            self.frame_offset = spr.read_int(4)
-            self.n_of_frames = spr.read_int(4)
-            self.unknw = spr.read_int(4)
-            self.last_frame = spr.read_int(4)
 
     def __init__(self, file_path, charselect=False, charselect_palette=None):
         super().__init__(open(file_path, "rb"), os.path.getsize(file_path), BIG_ENDIAN)
@@ -62,11 +88,11 @@ class SPR(Reader):
         frames = []
         animations = []
         for _ in range(n_of_entries):
-            entries.append(self.SPREntry(self))
+            entries.append(SPREntry.from_file(self))
         for _ in range(n_of_frames):
-            frames.append(self.SPRFrame(self))
+            frames.append(SPRFrame.from_file(self))
         for _ in range(n_of_animations):
-            animations.append(self.SPRAnimations(self))
+            animations.append(SPRAnimation.from_file(self))
 
         # Check if requirements are met to write data out
         # Requirements are: No files that are named like the folders we want to write
@@ -196,9 +222,56 @@ class SPR(Reader):
             """
         return self.read_string(self.read_int(8))
 
+
 class SPRWriter:
     def __init__(self, directory_path):
         self.directory_path = directory_path
 
     def check_files(self):
-        print("checking")
+        # Check if output can be written
+        pass
+
+    def write_spr(self):
+        spr_file_path = ""
+        sprite_name = ""
+
+        n_of_sprites = 0
+        n_of_frames = 0
+        n_of_entries = 0
+
+        entries = []
+        frames = []
+        animations = []
+
+        # Check for animation name
+        # Check for animation types
+        # Check for frames
+        # Read meta files
+        # Get number of animations
+        # Get number of frames
+        # Write out spr
+        with open(spr_file_path, 'wb') as spr:
+            self.write_pascal_string(spr, '2.0')
+            self.write_pascal_string(spr, sprite_name)
+            spr.write(struct.pack('I', 0))  # Always 4 bytes 0x00
+            self.write_pascal_string(spr, 'unigned char tile_x, tile_y,  tile_u, tile_v;')
+            spr.write(struct.pack(BIG_ENDIAN + 'Q', 4))  # Bytes per entry, always 4 (tile_x + _y + _u + _v)
+            spr.write(struct.pack(BIG_ENDIAN + 'Q', n_of_entries))
+            spr.write(struct.pack(BIG_ENDIAN + 'Q', n_of_frames))
+            spr.write(struct.pack(BIG_ENDIAN + 'Q', n_of_sprites))
+            spr.write(struct.pack(BIG_ENDIAN + 'Q', 16))  # Blockwidth
+            spr.write(struct.pack(BIG_ENDIAN + 'Q', 16))  # Blockheight
+            # write ENTRIES
+            for entry in entries:
+                entry.write(spr)
+            # write FRAMES
+            for frame in frames:
+                frame.write(spr)
+            # write SPRITE_NAMES
+            for animation in animations:
+                animation.write(spr)
+    @staticmethod
+    def write_pascal_string(f, string):
+        ascii_string = string.encode('ascii')
+        f.write(struct.pack(BIG_ENDIAN + 'Q', len(ascii_string)))
+        f.write(ascii_string)
