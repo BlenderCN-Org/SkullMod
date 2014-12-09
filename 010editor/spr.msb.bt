@@ -1,0 +1,114 @@
+BigEndian();
+
+typedef struct{
+    uint64 count <hidden=true,fgcolor=cLtGray,bgcolor=cWhite>;
+    char chars[count] <hidden=true>;
+} Pascal64String <read=Pascal64String_Read>;
+
+string Pascal64String_Read(Pascal64String &v){ return v.chars; }
+
+struct FILE{
+	Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
+	Pascal64String spriteName <fgcolor=cGreen>;
+	int unknownHeaderPart;
+	Pascal64String dataFormatString <fgcolor=cRed>;
+	
+	uint64 bytesPerEntry <bgcolor=cGray, fgcolor=cLtYellow>;
+	uint64 nOfEntries    <bgcolor=cGray, fgcolor=cLtRed>;
+	uint64 nOfFrames     <bgcolor=cGray, fgcolor=cLtGreen>;
+	uint64 nOfSprites    <bgcolor=cGray, fgcolor=cLtGreen>; //These are defined at the end of the file	
+	uint64 BlockWidth <bgcolor=cGray, fgcolor=cLtYellow>;
+	uint64 BlockHeight <bgcolor=cGray, fgcolor=cLtRed>;
+	struct ENTRIES{
+		struct ENTRY{
+			byte tile_x <format=decimal, bgcolor=cLtGray, fgcolor=cYellow>;
+			byte tile_y <format=decimal, bgcolor=cLtGray,fgcolor=cGreen>;
+			byte tile_u <format=decimal, bgcolor=cLtGray,fgcolor=cBlue>;
+			byte tile_v <format=decimal, bgcolor=cLtGray,fgcolor=cRed>;
+		} entry[nOfEntries] <optimize=false, read=ENTRY_read>;
+	} entries<optimize=false, read=ENTRIES_read>;
+
+	struct FRAMES{
+		struct FRAME{
+			uint32 blockOffset;
+			uint32 blockLength;
+			uint32 unknown1;
+			float unknown2;
+			float unknown3;
+		} frame[nOfFrames] <optimize=false, read=FRAME_read>;
+	} frames <optimize=false, read=FRAMES_read>;
+
+	struct FILE_NAMES{
+		struct FILE_NAME{
+			Pascal64String name;
+			uint32 frameOffset;
+			uint32 nOfFrames;
+			uint32 unknown1;
+			uint32 unknown2;
+		} fileName[nOfSprites] <read=FILE_NAME_read, optimize=false>;	
+	} fileNames <read=FILE_NAMES_read>;
+}file <read=FILE_read>;
+
+
+
+//http://www.intrepid-web.net/010-editor/
+char[] get_filename(char full_path[], char delimiter[])
+{
+    
+    int     i;
+    int     length, deli_len, del_index;
+    char    file_name[];
+
+    deli_len = Strlen(delimiter);
+
+    length = Strlen(full_path);
+    file_name = full_path;
+    i=0;
+    while(Strstr(file_name, delimiter) > -1)
+    {
+        del_index = Strstr(file_name, delimiter);
+        file_name = SubStr(file_name, del_index+deli_len, -1);
+    }
+    
+    return file_name;
+}
+
+
+
+string FILE_read(FILE &f){
+    return get_filename(GetFileName(),"\\");
+}
+
+string ENTRY_read(ENTRY &e){
+    string tile_x_out;
+    string tile_y_out;
+    string tile_u_out;
+    string tile_v_out;
+
+    SPrintf(tile_x_out, "%d", (int) e.tile_x);
+    SPrintf(tile_y_out, "%d", (int) e.tile_y);
+    SPrintf(tile_u_out, "%d", (int) e.tile_u);
+    SPrintf(tile_v_out, "%d", (int) e.tile_v);
+
+    return "TileX: " + tile_x_out + " TileY: " + tile_y_out + " TileU: " + tile_u_out + " TileV: " + tile_v_out;
+}
+
+string ENTRIES_read(ENTRIES &e){
+	return "";
+}
+
+string FRAMES_read(FRAMES &f){
+	return "";
+}
+
+string FRAME_read(FRAME &f){
+	return "";
+}
+
+string FILE_NAME_read(FILE_NAME &fn){
+	return "";
+}
+
+string FILE_NAMES_read(FILE_NAMES &fn){
+	return "";
+}

@@ -1,0 +1,61 @@
+//--------------------------------------
+// Skullgirls level, shape? file
+// 
+// File: Skullgirls Shape? file (.sgs.msb)
+// Author: 0xFAIL
+// Revision: 0.1
+// Purpose: Non nefarious :-) just for a level editor
+// Comment: Array optimisation is broken? has to be disabled when using Pascal64String arrays
+//--------------------------------------
+BigEndian();
+
+typedef struct{
+    uint64 count <hidden=true,fgcolor=cLtGray,bgcolor=cWhite>;
+    char chars[count] <hidden=true>;
+} Pascal64String <read=Pascal64String_Read>;
+
+string Pascal64String_Read(Pascal64String &v){ return v.chars; }
+
+struct FILE{
+    Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
+    uint64 nOfBones;
+    
+    struct BONE{
+        Pascal64String name;
+        
+        uint32 parentBone; //Root bone has 0xFFFFFFFF
+        
+        float boneBaseMatrix[16];
+               
+    }bone[nOfBones] <read=BONE_read,optimize=false>;
+} file <read=FILE_read>;
+
+string BONE_read(BONE &e){
+    return e.name.chars;
+}
+
+//http://www.intrepid-web.net/010-editor/
+char[] get_filename(char full_path[], char delimiter[])
+{
+    
+    int     i;
+    int     length, deli_len, del_index;
+    char    file_name[];
+
+    deli_len = Strlen(delimiter);
+
+    length = Strlen(full_path);
+    file_name = full_path;
+    i=0;
+    while(Strstr(file_name, delimiter) > -1)
+    {
+        del_index = Strstr(file_name, delimiter);
+        file_name = SubStr(file_name, del_index+deli_len, -1);
+    }
+    
+    return file_name;
+}
+
+string FILE_read(FILE &f){
+    return get_filename(GetFileName(),"\\");
+}

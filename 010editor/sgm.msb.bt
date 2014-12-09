@@ -1,0 +1,78 @@
+//--------------------------------------
+// Skullgirls level, model file
+//
+// File: Skullgirls Model files (.sgm.msb)
+// Author: 0xFAIL
+// Revision: 0.8
+// Purpose: Non nefarious :-) just for a level editor
+// Comment: Array optimisation is broken? has to be disabled when using Pascal64String arrays
+// Note: uchar4 is a vec4 part?
+//--------------------------------------
+BigEndian();
+
+typedef struct{
+    uint64 count <hidden=true,fgcolor=cLtGray,bgcolor=cWhite>;
+    char chars[count] <hidden=true, optimize=false>;
+} Pascal64String <read=Pascal64String_Read>;
+
+string Pascal64String_Read(Pascal64String &v){ return v.chars; }
+
+struct FILE{
+    Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
+    Pascal64String textureName <bgcolor=cGreen>;
+    float unknown1[13] <fgcolor=cLtGray>;
+    Pascal64String dataFormat <bgcolor=cYellow>;
+    uint64 dataFormatLengthPerPolygon <fgcolor=cYellow>;
+    uint64 nOfPolygons;
+    uint64 nOfTriangles <fgcolor=cLtRed>;
+    uint64 nOfBones <fgcolor=cLtRed>;
+    struct POLYGON{
+        uchar data[dataFormatLengthPerPolygon] <fgcolor=cGray>;
+    }polygon[nOfPolygons];
+    struct TRIANGLE{
+        short firstPolygonIndex <fgcolor=cLtRed>;
+        short secondPolygonIndex <fgcolor=cLtGreen>;
+        short thirdPolygonIndex <fgcolor=cLtBlue>;
+    }triangle[nOfTriangles];
+    struct maybeModelDataOrBoundingBoxForSorting{
+        float xPos <bgcolor=cLtGray,fgcolor=cLtRed>;
+        float yPos <bgcolor=cLtGray,fgcolor=cLtGreen>;
+        float zPos <bgcolor=cLtGray,fgcolor=cLtBlue>;
+
+        float xRot <bgcolor=cLtGray,fgcolor=cLtRed>;
+        float yRot <bgcolor=cLtGray,fgcolor=cLtGreen>;
+        float zRot <bgcolor=cLtGray,fgcolor=cLtBlue>;
+    }model_data;
+    struct BONE_NAMES{
+        Pascal64String boneName[nOfBones] <bgcolor=cYellow,optimize=false>;
+    }bone_name;
+    struct BONE_PROPERTIES{
+        float unknown3[16] <fgcolor=cGray>;
+    }bone_properties[nOfBones];
+}file <read=FILE_read>;
+
+//http://www.intrepid-web.net/010-editor/
+char[] get_filename(char full_path[], char delimiter[])
+{
+    
+    int     i;
+    int     length, deli_len, del_index;
+    char    file_name[];
+
+    deli_len = Strlen(delimiter);
+
+    length = Strlen(full_path);
+    file_name = full_path;
+    i=0;
+    while(Strstr(file_name, delimiter) > -1)
+    {
+        del_index = Strstr(file_name, delimiter);
+        file_name = SubStr(file_name, del_index+deli_len, -1);
+    }
+    
+    return file_name;
+}
+
+string FILE_read(FILE &f){
+    return get_filename(GetFileName(),"\\");
+}
