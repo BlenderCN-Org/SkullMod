@@ -6,7 +6,7 @@ from . import export_lvl, import_lvl
 bl_info = {
     "name": "SkullGirls .lvl plugin",
     "author": "0xFAIL",
-    "version": (0, 0, 1),
+    "version": (0, 1, 0),
     "blender": (2, 72, 0),
     "category": "Import-Export",
     "location": "File > Import/Export",
@@ -46,19 +46,20 @@ class ImportLVL(bpy.types.Operator, ImportHelper):
             import_lvl.load(self, context, path)
         return {'FINISHED'}
 
-class ExportLVL(bpy.types.Operator, ExportHelper):
-    """Export current scene to as a lvl file"""
-    bl_idname = "export_mesh.skglvl"
-    bl_label = "Export lvl"
 
-    filename_ext = ".lvl"
-    filter_glob = StringProperty(default="*.lvl", options={'HIDDEN'})
+class ExportLVL(bpy.types.Operator, ExportHelper):
+    """Export current scene as a sgi file"""
+    bl_idname = "export_mesh.skglvl"
+    bl_label = "Export sgi"
+
+    filename_ext = ".sgi"
+    filter_glob = StringProperty(default="*.sgi", options={'HIDDEN'})
 
     def execute(self, context):
         filepath = self.filepath
         filepath = bpy.path.ensure_ext(filepath, self.filename_ext)
 
-        return export_lvl.save(self, context)
+        return export_lvl.save(self, context, filepath)
 
 
 def menu_func_import(self, context):
@@ -66,7 +67,7 @@ def menu_func_import(self, context):
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportLVL.bl_idname, text="SkullGirls stage (.lvl)")
+    self.layout.operator(ExportLVL.bl_idname, text="SkullGirls stage info (.sgi)")
 
 
 def register():

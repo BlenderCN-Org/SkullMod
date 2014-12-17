@@ -3,26 +3,20 @@ import pathlib
 from .Reader import *  # struct + os
 from .SimpleParse import *
 
-
-# NOTE: BLENDER IS USING A RIGHT HAND COORDINATE SYSTEM
-#       DIRECTX IS USING A LEFT HAND COORDINATE SYSTEM BY DEFAULT
-
 import bpy
 import mathutils
+import bmesh
 
 
 def load_lvl(file_path):
     scene = bpy.context.scene
-    print("Trying to load " + str(file_path))
 
     file_path = os.path.abspath(file_path)
-
     texture_directory = os.path.join(os.path.dirname(file_path), 'textures')
-
     file_basename = os.path.splitext(os.path.basename(file_path))[0]
 
     if not pathlib.Path(os.path.join(os.path.dirname(file_path), file_basename, 'background.sgi.msb')).exists():
-        raise FileNotFoundError("Missing background.sgi.msb in same folder")
+        raise FileNotFoundError("Missing background.sgi.msb in subfolder (don't use background.lvl)")
 
     with open(file_path, "r", 1, 'ascii') as f:
         content = f.readlines()
@@ -94,11 +88,12 @@ def load_lvl(file_path):
             g = struct.unpack('>B', vertex[33:34])[0]
             b = struct.unpack('>B', vertex[34:35])[0]
             a = struct.unpack('>B', vertex[35:36])[0]
-            vertex_colors.append([r, g, b, a])
+            vertex_colors.append([r/255.0, g/255.0, b/255.0, a/255.0])
 
         n_of_vertices += len(vertex_list)
         print("Writing new object")
         mesh = bpy.data.meshes.new(element['shape_name'])
+        # Edges are calculated by blender (see source for from_pydata)
         mesh.from_pydata(vertex_list, [], current_sgm['index_buffer'])
 
         # TODO what was this for again?
@@ -108,26 +103,50 @@ def load_lvl(file_path):
         mesh.update()
         mesh.validate()
 
-        # TODO check if mesh.update and validate can be removed above
+        new_object = bpy.data.objects.new(element['element_name'], mesh)
 
-        #mesh.uv_textures.new('uv')
-
-
-        #mesh.update()
-        #mesh.validate()
-
-        new_object = bpy.data.objects.new(element['shape_name'], mesh)
-        # new_object.location = current_sgm['pos_xyz'] # TODO this is probably not needed now
-        # This should set position, rotation and scale
+        # This sets position, rotation and scale
         new_object.matrix_world = mathutils.Matrix(element['mat4'])
 
-        new_object.data.materials.append(get_material(texture_directory, current_sgm['texture_name']))
+        current_material = get_material(texture_directory, current_sgm['texture_name'])
+        new_object.data.materials.append(current_material)
+
+        # bmesh (uvs and vertex color)
+        bmesh_mesh = bmesh.new()
+        bmesh_mesh.from_mesh(mesh)
+
+        uv_layer = bmesh_mesh.loops.layers.uv.new("uv")
+        tex_layer = bmesh_mesh.faces.layers.tex.new("texture")
+        vertex_color_layer = bmesh_mesh.loops.layers.color.new("rgb")  # http://www.macouno.com/2013/07/24/setting-vertex-colors/
+        vertex_alpha_layer = bmesh_mesh.loops.layers.color.new("a")
+
+        for i, f in enumerate(bmesh_mesh.faces):
+            # There is only one texture slot for this material ==> [0], see get_material
+            # Set image for this vertex (TODO is this necessary?)
+            f[tex_layer].image = current_material.texture_slots[0].texture.image
+            for j, l in enumerate(f.loops):
+                # Set uv
+                luv = l[uv_layer].uv
+                index_of_current_vertex = current_sgm['index_buffer'][i][j]
+
+                luv[0] = uv_coords[index_of_current_vertex][0]
+                luv[1] = uv_coords[index_of_current_vertex][1]
+                # Set vertex colors and alpha
+                current_vc = vertex_colors[index_of_current_vertex]
+                l[vertex_color_layer] = [current_vc[0], current_vc[1], current_vc[2]]
+                l[vertex_alpha_layer] = [current_vc[3], current_vc[3], current_vc[3]]
+        bmesh_mesh.to_mesh(mesh)
+        mesh.update()
+        mesh.validate()
 
         scene.objects.link(new_object)
+        # TODO What is this needed for
         new_object.select = True
-
+        # TODO what is this needed for
         if scene.objects.active is None or scene.objects.active.mode == 'OBJECT':
             scene.objects.active = new_object
+        if element['is_visible'] == 0:
+            new_object.hide = True
 
     print("Stage has " + str(len(sgi_data)) + " objects")
     print("Stage has " + str(n_of_vertices) + " vertices")
@@ -138,7 +157,7 @@ def get_material(path, name):
     # If yes: Return the old one, else make new
     try:
         return bpy.data.materials[name]
-    except KeyError: # Not found
+    except KeyError:  # Not found # TODO error handling?
         pass
     # Load image
     texture_path = os.path.join(path, name+'.dds')
@@ -159,6 +178,15 @@ def get_material(path, name):
     # Make material
     mat = bpy.data.materials.new(name)
 
+    # Use transparency (if the texture has any)
+    # TODO add conditional if there is no alpha in the texture
+    # Is this still required?
+    mat.use_transparency = True
+    # Enable transparency in rendering
+    mat.use_face_texture = True
+    mat.use_face_texture_alpha = True
+    # No lighting applied
+    mat.use_shadeless = True
     # Set diffuse (full)
     mat.diffuse_shader = 'LAMBERT'
     mat.diffuse_intensity = 1.0
@@ -167,11 +195,10 @@ def get_material(path, name):
     # Set ambient TODO what does this do
     mat.ambient = 1
     #Add texture slot for color texture
-    #color_slot = mat.texture_slots.add()
-    #color_slot.texture = texture
-    # Set uv coordinates for THIS texture
-    # TODO add it above
-    #color_slot.texture_coords = 'UV'
+    color_slot = mat.texture_slots.add()
+    color_slot.texture = texture
+    # TODO Is this general (like searching for an input named like that) or already a specific reference?
+    color_slot.texture_coords = 'UV'
 
     return mat
 
@@ -274,8 +301,10 @@ class SGI(Reader):
         for _ in range(0, number_of_elements):
             element = {'element_name': self.read_pascal_string(),
                        'shape_name': self.read_pascal_string(),
-                       'mat4': self.read_mat4()}
-            self.skip_bytes(2)  # TODO unknown
+                       'mat4': self.read_mat4(),
+                       'is_visible': self.read_int(1)}
+
+            self.skip_bytes(1)  # TODO unknown
 
             number_of_animations = self.read_int(8)
             animations = []
@@ -294,17 +323,9 @@ class SGI(Reader):
         return self.read_string(self.read_int(8))
 
     def read_mat4(self):
-        # Column major, just like OpenGL (Blender), yay
-        """return [[self.read_float() for _ in range(0, 4)],
-            [self.read_float() for _ in range(4, 8)],
-            [self.read_float() for _ in range(8, 12)],
-            [self.read_float() for _ in range(12, 16)]]"""
-        mat = [self.read_float() for _ in range(0,16)]
-
-
-        #Row major is the way to go?
+        mat = [self.read_float() for _ in range(0, 16)]
+        #Column major, apparently
         return [[mat[0], mat[4], mat[8],  mat[12]],
                 [mat[1], mat[5], mat[9],  mat[13]],
                 [mat[2], mat[6], mat[10], mat[14]],
                 [mat[3], mat[7], mat[11], mat[15]]]
-

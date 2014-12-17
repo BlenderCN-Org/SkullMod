@@ -13,7 +13,7 @@ class Reader():
     # plan: read float / read boolean / read arrays of x
     # plan: read string (set encoding/null terminated/pascal ==> always contains a maximum of bytes read and raise
     # later:
-    # helper: set_bit in a given byte (a single one) / endianness swapper for all built in types
+    # helper: set_bit in a given byte (a single one) / endianess swapper for all built in types
     # match_bitmask
     """
 
