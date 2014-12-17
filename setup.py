@@ -1,5 +1,5 @@
 from distutils.core import setup
-import py2exe  # Required
+import py2exe  # Required, see options
 
 # Setup with py2exe
 setup(
