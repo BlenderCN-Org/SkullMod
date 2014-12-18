@@ -1,3 +1,5 @@
+SkullMod
+========
 The MIT License (MIT)
 
 Copyright (c) 2014 0xFAIL

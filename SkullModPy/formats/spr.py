@@ -270,6 +270,7 @@ class SPRWriter:
             # write SPRITE_NAMES
             for animation in animations:
                 animation.write(spr)
+
     @staticmethod
     def write_pascal_string(f, string):
         ascii_string = string.encode('ascii')
