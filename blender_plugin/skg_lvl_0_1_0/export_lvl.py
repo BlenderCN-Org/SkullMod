@@ -15,7 +15,7 @@ def save(operator, context, filename=""):
 
     for o in bpy.data.objects:
         if o.type != 'MESH':
-            continue  # Skip it if it's not an object
+            continue  # Skip it if it's not a mesh
         print("Exporting object: " + o.name)
         models[o.name] = {}  # Each model is a dict
         # Python note: http://stackoverflow.com/questions/2465921/how-to-copy-a-dictionary-and-only-edit-the-copy
@@ -63,41 +63,76 @@ def save(operator, context, filename=""):
         model['index_buffer'] = []
 
         # TODO it's the job of the artist to triangulate the models, sorry, but raise exceptions anyway
-        # TODO for now we are using the default uv texture
+        # TODO currently not using the vertex paint data
         uv_layer = bmesh_mesh.loops.layers.uv.active
         print("Object has " + str(len(bmesh_mesh.faces)) + " faces")
           # Go through each face (and subsequently each vertex)
         for i, face in enumerate(bmesh_mesh.faces):
             triangle_indices = []
-            triangle = face.loops # See comment above
+            triangle = face.loops  # See comment above
 
             for l_i in range(3):
                 triangle_vertex = triangle[l_i]
-                uv_data = triangle_vertex[uv_layer].uv
-                u = uv_data[0]
-                v = uv_data[1]
                 x = triangle[l_i].vert.co[0]
                 y = triangle[l_i].vert.co[1]
                 z = triangle[l_i].vert.co[2]
+                uv_data = triangle_vertex[uv_layer].uv
+                u = uv_data[0]
+                v = uv_data[1]
                 nx = triangle[l_i].vert.normal[0]
                 ny = triangle[l_i].vert.normal[1]
                 nz = triangle[l_i].vert.normal[2]
-                # Compare if its exact data is already used in vertex_data
+                # -1 ==> no vertex found
                 found_vertex = -1
-                for k, vertex_data in model['vertex_data'].items():
-                    pass # TODO work
+                # Compare if its exact data is already used in vertex_data
+                for vertex_index in range(len(model['vertex_data']['position'])):
+                    pos = model['vertex_data']['position'][vertex_index]
+                    uvs = model['vertex_data']['uv'][vertex_index]
+                    normals = model['vertex_data']['normals'][vertex_index]
+                    # TODO add vertex paint stuff
+                    # Two ifs for readability # TODO nah
+                    if pos[0] != x or pos[1] != y or pos[2] != z or uvs[0] != u or uvs[1] != v:
+                        continue
+                    if normals[0] != nx or normals[1] != ny or normals[2] != nz:
+                        continue
+                    # If we got this far we found a matching vertex
+                    found_vertex = vertex_index
+                    break  # End for loop
+
+                if found_vertex == -1:  # We have to create a new vertex in the list
+                    model['vertex_data']['position'].append([x, y, z])
+                    model['vertex_data']['uv'].append([u, v])
+                    model['vertex_data']['normals'].append([nx, ny, nz])
+                    # TODO read the correct vertex_color data
+                    model['vertex_data']['vertex_color'].append([255, 255, 255, 255])
+                    found_vertex = len(model['vertex_data']['position']) - 1
+
+                # Add index to triangle_indices (the current triangle
                 triangle_indices.append(found_vertex)
-                # If not ==> add it to vertex_data
-                # Either way ==> Add index to triangle_indices
+
+                # Either way ==>
             # Add triangle to index_buffer
+            model['index_buffer'].append(triangle_indices)
 
+        # Write bounding box data
+        # Get x/y/z and min/max of the vertices
+        x_min = y_min = z_min = 0
+        x_max = y_max = z_max = 0
+        for position in model['vertex_data']['position']:
+            x_min = min(x_min, position[0])
+            x_max = max(x_max, position[0])
+            y_min = min(y_min, position[1])
+            y_max = max(y_max, position[1])
+            z_min = min(z_min, position[2])
+            z_max = max(z_max, position[2])
 
+        model['bounding_box'] = [x_min, y_min, z_min, x_max, y_max, z_max]
 
-
+    # Setup path
+    working_directory = os.path.dirname(filename)
 
     # Write sgi
-    # TODO currently no animations, add them
-
+    # TODO currently no animations, add them to sgi and sgm
     with open(filename, 'wb') as f:
         write_pascal_string(f, "2.0")
         f.write(struct.pack('>Q', len(models)))
@@ -115,6 +150,48 @@ def save(operator, context, filename=""):
             n_of_animations = 0
             f.write(struct.pack('>Q', n_of_animations))
     # Write sgm
+    # Currently no data for sgs in the vertex data (the joints?)
+    for key, model in models.items():
+        with open(os.path.join(working_directory, model['shape_name'] + '.sgm.msb'), 'wb') as f:
+            # Write header data
+            write_pascal_string(f, "2.0")
+            write_pascal_string(f, model['texture_name'])
+            # 13 unknown floats, seems to be the same in every file
+            f.write(struct.pack('>fffffffffffff', 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 90))
+            # Write rest of header
+            write_pascal_string(f, "float p[3],n[3],uv[2]; uchar4 c;")  # TODO Doesn't work for files with sgs
+            f.write(struct.pack('>Q', 36))  # TODO doesn't work for files with sgs
+            f.write(struct.pack('>Q', len(model['vertex_data']['pos'])))  # Write number of vertices
+            f.write(struct.pack('>Q', len(model['index_buffer'])))  # Write number of triangles (loops)
+            f.write(struct.pack('>Q', 0))  # TODO doesn't work for sgs files
+            for vertex_index in range(len(model['vertex_data']['position'])):
+                # Write vertex data
+                f.write(struct.pack('>f', model['vertex_data']['position'][vertex_index][0]))
+                f.write(struct.pack('>f', model['vertex_data']['position'][vertex_index][1]))
+                f.write(struct.pack('>f', model['vertex_data']['position'][vertex_index][2]))
+
+                f.write(struct.pack('>f', model['vertex_data']['normals'][vertex_index][0]))
+                f.write(struct.pack('>f', model['vertex_data']['normals'][vertex_index][1]))
+                f.write(struct.pack('>f', model['vertex_data']['normals'][vertex_index][2]))
+
+                f.write(struct.pack('>f', model['vertex_data']['uv'][vertex_index][0]))
+                f.write(struct.pack('>f', model['vertex_data']['uv'][vertex_index][1]))
+
+                f.write(struct.pack('>B', model['vertex_data']['vertex_color'][vertex_index][0]))
+                f.write(struct.pack('>B', model['vertex_data']['vertex_color'][vertex_index][1]))
+                f.write(struct.pack('>B', model['vertex_data']['vertex_color'][vertex_index][2]))
+                f.write(struct.pack('>B', model['vertex_data']['vertex_color'][vertex_index][3]))
+            for triangle in model['index_buffer']:
+                # Write index buffer
+                for i in range(3):
+                    f.write(struct.pack('>H', triangle[i]))
+            # Write the bounding box data TODO check if anything changes with files with a sgs
+            for i in range(6):
+                f.write(struct.pack('>f', model['vertex_data']['bounding_box'][i]))
+            # TODO no sgs is currently written
+            # Write bone names
+            # Write bone data
+
     # Write sga
     # Write sgs
 
