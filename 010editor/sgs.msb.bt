@@ -1,10 +1,9 @@
 //--------------------------------------
-// Skullgirls level, shape? file
+// Skullgirls level, skeleton file
 // 
-// File: Skullgirls Shape? file (.sgs.msb)
+// File: Skullgirls Skeleton file (.sgs.msb)
 // Author: 0xFAIL
-// Revision: 0.1
-// Purpose: Non nefarious :-) just for a level editor
+// Revision: 1.0
 // Comment: Array optimisation is broken? has to be disabled when using Pascal64String arrays
 //--------------------------------------
 BigEndian();

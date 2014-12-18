@@ -3,8 +3,7 @@
 // 
 // File: Skullgirls Index files (.sgi.msb)
 // Author: 0xFAIL
-// Revision: 0.5
-// Purpose: Non nefarious :-) just for a level editor
+// Revision: 1.0
 // Comment: Array optimisation is broken? has to be disabled when using Pascal64String arrays
 //--------------------------------------
 BigEndian();
@@ -22,8 +21,9 @@ struct FILE{
     struct ELEMENT{
         Pascal64String elementName <bgcolor=cGreen,hidden=true>;
         Pascal64String shapeName <fgcolor=cGreen>;
-        float unknown[16];
-        char unknown2[2];
+        float world_matrix[16];
+        char isVisible;
+        char unknown;
 
         uint64 nOfAnimations <fgcolor=cGreen,hidden=true>;
         struct ANIMATION{

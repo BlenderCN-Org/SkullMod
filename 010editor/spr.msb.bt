@@ -1,3 +1,11 @@
+//--------------------------------------
+// Skullgirls level, shape? file
+//
+// File: Skullgirls Sprite file (.spr.msb)
+// Author: 0xFAIL
+// Revision: 1.0
+// Comment: Array optimisation is broken? has to be disabled when using Pascal64String arrays
+//--------------------------------------
 BigEndian();
 
 typedef struct{

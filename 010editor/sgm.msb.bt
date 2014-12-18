@@ -3,10 +3,9 @@
 //
 // File: Skullgirls Model files (.sgm.msb)
 // Author: 0xFAIL
-// Revision: 0.8
-// Purpose: Non nefarious :-) just for a level editor
+// Revision: 1.0
 // Comment: Array optimisation is broken? has to be disabled when using Pascal64String arrays
-// Note: uchar4 is a vec4 part?
+// Note: uchar4 is rgba
 //--------------------------------------
 BigEndian();
 
@@ -23,26 +22,26 @@ struct FILE{
     float unknown1[13] <fgcolor=cLtGray>;
     Pascal64String dataFormat <bgcolor=cYellow>;
     uint64 dataFormatLengthPerPolygon <fgcolor=cYellow>;
-    uint64 nOfPolygons;
+    uint64 nOfVertices;
     uint64 nOfTriangles <fgcolor=cLtRed>;
     uint64 nOfBones <fgcolor=cLtRed>;
     struct POLYGON{
         uchar data[dataFormatLengthPerPolygon] <fgcolor=cGray>;
-    }polygon[nOfPolygons];
+    }polygon[nOfVertices];
     struct TRIANGLE{
         short firstPolygonIndex <fgcolor=cLtRed>;
         short secondPolygonIndex <fgcolor=cLtGreen>;
         short thirdPolygonIndex <fgcolor=cLtBlue>;
     }triangle[nOfTriangles];
-    struct maybeModelDataOrBoundingBoxForSorting{
-        float xPos <bgcolor=cLtGray,fgcolor=cLtRed>;
-        float yPos <bgcolor=cLtGray,fgcolor=cLtGreen>;
-        float zPos <bgcolor=cLtGray,fgcolor=cLtBlue>;
+    struct BOUNDINGBOX{
+        float xMin <bgcolor=cLtGray,fgcolor=cLtRed>;
+        float yMin <bgcolor=cLtGray,fgcolor=cLtGreen>;
+        float zMin <bgcolor=cLtGray,fgcolor=cLtBlue>;
 
-        float xRot <bgcolor=cLtGray,fgcolor=cLtRed>;
-        float yRot <bgcolor=cLtGray,fgcolor=cLtGreen>;
-        float zRot <bgcolor=cLtGray,fgcolor=cLtBlue>;
-    }model_data;
+        float xMax <bgcolor=cLtGray,fgcolor=cLtRed>;
+        float yMax <bgcolor=cLtGray,fgcolor=cLtGreen>;
+        float zMax <bgcolor=cLtGray,fgcolor=cLtBlue>;
+    }bounding_box;
     struct BONE_NAMES{
         Pascal64String boneName[nOfBones] <bgcolor=cYellow,optimize=false>;
     }bone_name;

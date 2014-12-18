@@ -3,8 +3,7 @@
 // 
 // File: Skullgirls Animation files (.sga.msb)
 // Author: 0xFAIL
-// Revision: 0.3
-// Purpose: Non nefarious :-) just for a level editor
+// Revision: 0.5
 // Comment: Array optimisation is broken? has to be disabled when using Pascal64String arrays
 //--------------------------------------
 BigEndian();
