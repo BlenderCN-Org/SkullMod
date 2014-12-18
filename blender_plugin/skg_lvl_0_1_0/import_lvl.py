@@ -88,6 +88,7 @@ def load_lvl(file_path):
             g = struct.unpack('>B', vertex[33:34])[0]
             b = struct.unpack('>B', vertex[34:35])[0]
             a = struct.unpack('>B', vertex[35:36])[0]
+            # Blender wants the vertex color channels to be between 0 and 1
             vertex_colors.append([r/255.0, g/255.0, b/255.0, a/255.0])
 
         n_of_vertices += len(vertex_list)
@@ -255,11 +256,10 @@ class SGM(Reader):
             triangles.append([self.read_int(2), self.read_int(2), self.read_int(2)])
         sgm_data['index_buffer'] = triangles
 
-        # Object pos/rot
-        # TODO make a for out of it
-        sgm_data['pos_xyz'] = [self.read_float() for _ in range(0, 3)]
-        sgm_data['rot_xyz'] = [self.read_float() for _ in range(0, 3)]
-        # JOINTS
+        # Bounding box, we don't need it for Blender, skipping it
+        # Skip 6*4 bytes = 24 bytes
+        self.skip_bytes(24)
+        # Skeleton
         joints = []
         for _ in range(0, number_of_joints):
             joints.append([self.read_pascal_string()])

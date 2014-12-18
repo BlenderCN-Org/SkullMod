@@ -161,7 +161,7 @@ def save(operator, context, filename=""):
             # Write rest of header
             write_pascal_string(f, "float p[3],n[3],uv[2]; uchar4 c;")  # TODO Doesn't work for files with sgs
             f.write(struct.pack('>Q', 36))  # TODO doesn't work for files with sgs
-            f.write(struct.pack('>Q', len(model['vertex_data']['pos'])))  # Write number of vertices
+            f.write(struct.pack('>Q', len(model['vertex_data']['position'])))  # Write number of vertices
             f.write(struct.pack('>Q', len(model['index_buffer'])))  # Write number of triangles (loops)
             f.write(struct.pack('>Q', 0))  # TODO doesn't work for sgs files
             for vertex_index in range(len(model['vertex_data']['position'])):
@@ -187,7 +187,7 @@ def save(operator, context, filename=""):
                     f.write(struct.pack('>H', triangle[i]))
             # Write the bounding box data TODO check if anything changes with files with a sgs
             for i in range(6):
-                f.write(struct.pack('>f', model['vertex_data']['bounding_box'][i]))
+                f.write(struct.pack('>f', model['bounding_box'][i]))
             # TODO no sgs is currently written
             # Write bone names
             # Write bone data

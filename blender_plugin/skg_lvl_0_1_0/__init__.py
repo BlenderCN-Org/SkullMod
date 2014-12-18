@@ -52,8 +52,8 @@ class ExportLVL(bpy.types.Operator, ExportHelper):
     bl_idname = "export_mesh.skglvl"
     bl_label = "Export sgi"
 
-    filename_ext = ".sgi"
-    filter_glob = StringProperty(default="*.sgi", options={'HIDDEN'})
+    filename_ext = ".sgi.msb"
+    filter_glob = StringProperty(default="*.sgi.msb", options={'HIDDEN'})
 
     def execute(self, context):
         filepath = self.filepath
@@ -67,7 +67,7 @@ def menu_func_import(self, context):
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportLVL.bl_idname, text="SkullGirls stage info (.sgi)")
+    self.layout.operator(ExportLVL.bl_idname, text="SkullGirls stage info (.sgi.msb)")
 
 
 def register():
