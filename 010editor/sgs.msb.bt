@@ -17,15 +17,12 @@ string Pascal64String_Read(Pascal64String &v){ return v.chars; }
 
 struct FILE{
     Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
-    uint64 nOfBones;
+    uint64 nOfBones <hidden=true>;
     
     struct BONE{
-        Pascal64String name;
-        
-        uint32 parentBone; //Root bone has 0xFFFFFFFF
-        
-        float boneBaseMatrix[16];
-               
+        Pascal64String name;        
+        int32 parentBone; //Root bone has 0xFFFFFFFF
+        float boneBaseMatrix[16];       
     }bone[nOfBones] <read=BONE_read,optimize=false>;
 } file <read=FILE_read>;
 

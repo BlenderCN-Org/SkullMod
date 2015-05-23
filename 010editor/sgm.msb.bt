@@ -10,7 +10,7 @@
 BigEndian();
 
 typedef struct{
-    uint64 count <hidden=true,fgcolor=cLtGray,bgcolor=cWhite>;
+    uint64 count <hidden=true,fgcolor=cLtGray, bgcolor=cWhite>;
     char chars[count] <hidden=true, optimize=false>;
 } Pascal64String <read=Pascal64String_Read>;
 
@@ -18,36 +18,39 @@ string Pascal64String_Read(Pascal64String &v){ return v.chars; }
 
 struct FILE{
     Pascal64String file_format_revision <bgcolor=cBlue,fgcolor=cWhite>;
-    Pascal64String textureName <bgcolor=cGreen>;
+    Pascal64String textureName <bgcolor=cYellow>;
     float unknown1[13] <fgcolor=cLtGray>;
     Pascal64String dataFormat <bgcolor=cYellow>;
-    uint64 dataFormatLengthPerPolygon <fgcolor=cYellow>;
-    uint64 nOfVertices;
-    uint64 nOfTriangles <fgcolor=cLtRed>;
-    uint64 nOfBones <fgcolor=cLtRed>;
-    struct POLYGON{
-        uchar data[dataFormatLengthPerPolygon] <fgcolor=cGray>;
-    }polygon[nOfVertices];
+    uint64 dataFormatLengthPerPolygon <fgcolor=cGreen>;
+    uint64 nOfVertices <fgcolor=cGreen>;
+    uint64 nOfTriangles <fgcolor=cGreen>;
+    uint64 nOfBones <fgcolor=cLtGreen>;
+    
+    struct VERTEX{
+        float position[3] <bgcolor=cRed>;
+        float normals[3] <bgcolor=cGreen>;
+        float uv[2] <bgcolor=cBlue>;
+        ubyte rgba[4] <bgcolor=cYellow>;
+        if(dataFormatLengthPerPolygon == 44){
+            // Joint ids
+            ubyte joint_id[4] <bgcolor=cLtGray>;
+            ubyte joint_weights[4] <bgcolor=cGray>;
+        }
+    }vertices[nOfVertices];
+
     struct TRIANGLE{
-        short firstPolygonIndex <fgcolor=cLtRed>;
-        short secondPolygonIndex <fgcolor=cLtGreen>;
-        short thirdPolygonIndex <fgcolor=cLtBlue>;
+        short indices[3] <fgcolor=cLtRed>;
     }triangle[nOfTriangles];
     struct BOUNDINGBOX{
-        float xMin <bgcolor=cLtGray,fgcolor=cLtRed>;
-        float yMin <bgcolor=cLtGray,fgcolor=cLtGreen>;
-        float zMin <bgcolor=cLtGray,fgcolor=cLtBlue>;
-
-        float xMax <bgcolor=cLtGray,fgcolor=cLtRed>;
-        float yMax <bgcolor=cLtGray,fgcolor=cLtGreen>;
-        float zMax <bgcolor=cLtGray,fgcolor=cLtBlue>;
+        float posMin[3] <bgcolor=cLtGray,fgcolor=cLtRed>;
+        float posMax[3] <bgcolor=cLtGray,fgcolor=cLtGreen>;
     }bounding_box;
     struct BONE_NAMES{
-        Pascal64String boneName[nOfBones] <bgcolor=cYellow,optimize=false>;
+        Pascal64String boneName[nOfBones] <bgcolor=cYellow, optimize=false>;
     }bone_name;
-    struct BONE_PROPERTIES{
-        float unknown3[16] <fgcolor=cGray>;
-    }bone_properties[nOfBones];
+    struct BONE_MATRICES{
+        float boneMat[16] <fgcolor=cGray>;
+    }bone_matrices[nOfBones];
 }file <read=FILE_read>;
 
 //http://www.intrepid-web.net/010-editor/
