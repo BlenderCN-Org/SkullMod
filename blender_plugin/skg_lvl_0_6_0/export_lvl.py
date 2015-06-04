@@ -5,18 +5,12 @@ import struct
 
 
 def save(operator, context, filename=""):
-    # Get all existing materials
-    # Get their textures
-    # TODO check and validate filename
-
-    # TODO check if all requirments are met
-    # Go through all models
     models = {}
 
     for o in bpy.data.objects:
         if o.type != 'MESH':
-            print("Skipped an object of type: " + o.type)
-            continue  # Skip it if it's not a mesh
+            print("Skipped object:", o.name, "of type:", o.type)
+            continue  # Skip if it's not a mesh
         print("Exporting object: " + o.name)
         models[o.name] = {}  # Each model is a dict
         # Python note: http://stackoverflow.com/questions/2465921/how-to-copy-a-dictionary-and-only-edit-the-copy
@@ -25,8 +19,8 @@ def save(operator, context, filename=""):
         mesh = o.data
         # Get texture name
         # blender.stackexchange.com/questions/5121/find-the-name-of-textures-linked-to-an-object-in-python
-        # TODO make this simpler and handle errors with more grace
         print("Reading material slots to find the texture")
+        # TODO not very robust, probably takes the last possible texture in the last material, beautify if needed
         for mat_slot in o.material_slots:
             for mtex_slot in mat_slot.material.texture_slots:
                 if mtex_slot:
@@ -34,15 +28,16 @@ def save(operator, context, filename=""):
                         model['texture_name'] = os.path.splitext(mtex_slot.texture.image.name)[0]
                         print("Found an image for material slot: " + mtex_slot.texture.image.name)
 
-        try:
-            print("Texture name: " + model['texture_name'])
-        except KeyError:
-            print("Missing texture for object: " + o.name)
-            raise KeyError
+        # If not a single texture was found in any of the materials assigned raise exception
+        if model['texture_name'] is None:
+            raise ValueError("No texture for assigned material found. ADD ONE! Object: " + o.name)
 
-        # Recalculate normals
-        mesh.calc_normals_split()  # Calculate split vertex normals, which preserve sharp edges TODO is this good?
-        # Since we changed the mesh, we should validate it
+        # Debug output
+        print("Texture name: " + model['texture_name'])
+
+        # Recalculate normals, TODO is this good or needed?
+        mesh.calc_normals_split()  # Calculate split vertex normals, which preserve sharp edges
+        # Since we changed the mesh, we have to validate it
         mesh.update()
         mesh.validate()
         # Get bmesh for detailed data
@@ -68,8 +63,17 @@ def save(operator, context, filename=""):
 
         # TODO it's the job of the artist to triangulate the models, should throw an exception
         uv_layer = bmesh_mesh.loops.layers.uv.active
-        vertex_color = bmesh_mesh.loops.layers.color['rgb']
-        vertex_alpha = bmesh_mesh.loops.layers.color['a']
+        # Check if vertex_color / _alpha exists
+        has_vertex_color = True
+        has_vertex_alpha = True
+        try:
+            vertex_color = bmesh_mesh.loops.layers.color['rgb']
+        except KeyError:
+            has_vertex_color = False
+        try:
+            vertex_alpha = bmesh_mesh.loops.layers.color['a']
+        except KeyError:
+            has_vertex_alpha = False
 
         print("Object has " + str(len(bmesh_mesh.faces)) + " faces")
         # Go through each face
@@ -77,28 +81,29 @@ def save(operator, context, filename=""):
         for i, face in enumerate(bmesh_mesh.faces):
             triangle_indices = []
             triangle = face.loops  # Loops ==> Triangles
+            # Check if loop is a triangle
+            if len(triangle) != 3:
+                raise ValueError("Loop != 3 vertices, triangulate / check for stray vertices; Meshname: " + model['shape_name'])
             # Go through each vertex in the face (l_i ==> loop_index)
             for l_i in range(3):
                 triangle_vertex = triangle[l_i]
-                x = triangle[l_i].vert.co[0]
-                y = triangle[l_i].vert.co[1]
-                z = triangle[l_i].vert.co[2]
+                x, y, z = triangle[l_i].vert.co[0:3]
                 uv_data = triangle_vertex[uv_layer].uv
-                u = uv_data[0]
-                v = uv_data[1]
-                nx = triangle[l_i].vert.normal[0]
-                ny = triangle[l_i].vert.normal[1]
-                nz = triangle[l_i].vert.normal[2]
+                u, v = uv_data[0:2]
+                nx, ny, nz = triangle[l_i].vert.normal[0:3]
                 # Optional data: If it doesn't exist will use default value 255
                 # TODO try except when we check for stuff (vertex_color / _alpha) to not check for EVERY SINGLE vertex
-                rgb_data = triangle_vertex[vertex_color]
-                r = rgb_data[0]
-                g = rgb_data[1]
-                b = rgb_data[2]
+                if has_vertex_color:
+                    rgb_data = triangle_vertex[vertex_color]
+                    r, g, b = rgb_data[0:3]
+                else:
+                    r = g = b = 255
 
-                a_data = triangle_vertex[vertex_alpha]
-                a = a_data[0]
-
+                if has_vertex_alpha:
+                    a_data = triangle_vertex[vertex_alpha]
+                    a = a_data[0]
+                else:
+                    a = 255
                 # -1 ==> no vertex found at the if below
                 found_vertex = -1
                 # Compare if its exact data is already used in vertex_data
@@ -108,18 +113,19 @@ def save(operator, context, filename=""):
                     pos = model['vertex_data']['position'][vertex_index]
                     uvs = model['vertex_data']['uv'][vertex_index]
                     normals = model['vertex_data']['normals'][vertex_index]
+
                     vertex_colors = model['vertex_data']['vertex_color'][vertex_index]
-                    # Check for all vertex attributes
+                    # Check if any of the vertex attributes is different
                     if pos[0] != x or pos[1] != y or pos[2] != z or uvs[0] != u or uvs[1] != v:
                         continue
                     if normals[0] != nx or normals[1] != ny or normals[2] != nz:
                         continue
                     if vertex_colors[0] != r or vertex_colors[1] != g or vertex_colors[2] != b or vertex_colors[3] != a:
                         continue
-                    # If we got this far we found a matching vertex
+                    # If we got this far we found a matching vertex we can reuse
                     found_vertex = vertex_index
                     n_of_shared_vertices += 1  # Used for debug output
-                    break  # End for loop because we already found one
+                    break  # End for-loop because we already found one
 
                 if found_vertex == -1:  # We have to create a new vertex in the list
                     model['vertex_data']['position'].append([x, y, z])
@@ -138,7 +144,7 @@ def save(operator, context, filename=""):
         print("The current model contains " + str(n_of_shared_vertices) + " shared vertices")
 
         # Write bounding box data
-        # Get x/y/z and min/max of the vertices
+        # Get minimal/maximal x/y/z positions
         x_min = y_min = z_min = 0
         x_max = y_max = z_max = 0
         for position in model['vertex_data']['position']:
@@ -202,7 +208,7 @@ def save(operator, context, filename=""):
 
                 f.write(struct.pack('>f', model['vertex_data']['uv'][vertex_index][0]))
                 f.write(struct.pack('>f', model['vertex_data']['uv'][vertex_index][1]))
-
+                # Range in Blender: 0.0 to 1.0, Range in sgm: 0 to 255
                 f.write(struct.pack('>B', round(model['vertex_data']['vertex_color'][vertex_index][0] * 255.0)))
                 f.write(struct.pack('>B', round(model['vertex_data']['vertex_color'][vertex_index][1] * 255.0)))
                 f.write(struct.pack('>B', round(model['vertex_data']['vertex_color'][vertex_index][2] * 255.0)))
