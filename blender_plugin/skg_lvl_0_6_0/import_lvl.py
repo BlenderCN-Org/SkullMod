@@ -209,11 +209,12 @@ def load_lvl(file_path):
             converted_bone_table = []
             for single_bone in bone_table:
                 (trans, rot, scale) = mathutils.Matrix(single_bone[2]).decompose()
-                print("==")
-                print(trans)
-                print(rot)
-                print(scale)
-                print("==")
+                # TODO debug stuff
+                #print("==")
+                #print(trans)
+                #print(rot)
+                #print(scale)
+                #print("==")
                 if single_bone[3] == -1:
                     converted_bone_table.append( (single_bone[0],None,(trans[0], trans[1], trans[2])) )
                 else:
@@ -235,14 +236,15 @@ def get_material(path, name):
     # If yes: Return the old one, else make new
     try:
         return bpy.data.materials[name]
-    except KeyError:  # Not found # TODO error handling?
+    except KeyError:  # Not found # TODO error handling!
         print("Material " + name + " not found, making a new one")
-    # Load image
-    texture_path = os.path.join(path, name + '.dds')
+    # Load image (you are expected to have levels-textures.gfs extracted)
+    texture_path = os.path.normpath(os.path.join(path, os.pardir, os.pardir, os.pardir, os.pardir,
+                                                 'levels-textures', 'temp', 'levels', 'textures', name + '.dds'))
     try:
         image = bpy.data.images.load(texture_path)
     except:
-        raise NameError("Can not load image")
+        raise NameError("Can not load image at path: " + texture_path)
     # Create image texture from image
     texture = bpy.data.textures.new(name=name, type='IMAGE')
     texture.image = image
