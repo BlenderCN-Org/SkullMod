@@ -1,0 +1,49 @@
+SkullMod
+========
+The MIT License (MIT)
+
+Copyright (c) 2014 0xFAIL
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+=====
+Icon by junglemoonicons.weebly.com/icons.html
+License: CC Attribution Non-Commerical Share Alike (see http://creativecommons.org/licenses/by-nc-sa/3.0/)
+=====
+These terms apply to the following files; they are referred to below as "Distributable Code":
+msvcp100.dll
+msvcr100.dll
+=LICENSE BEGIN=
+Copyright (c) Microsoft Corporation.
+
+The Distributable Code may be used and distributed only if you comply with the
+following terms:
+
+(i)   You may use, copy, and distribute the Distributable Code only as part of
+      this product;
+(ii)  You may not use the Distributable Code on a platform other than Windows;
+(iii) You may not alter any copyright, trademark or patent notice in the
+      Distributable Code;
+(iv)  You may not modify or distribute the source code of any Distributable
+      Code so that any part of the source code becomes subject to the MPL or
+      any other copyleft license;
+(v)   You must comply with any technical limitations in the Distributable Code
+      that only allow you to use it in certain ways; and
+(vi)  You must comply with all domestic and international export laws and
+      regulations that apply to the Distributable Code.
+=LICENSE END=

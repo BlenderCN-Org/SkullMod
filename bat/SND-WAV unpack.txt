@@ -1,0 +1,36 @@
+@echo off
+setlocal enabledelayedexpansion
+
+TITLE SkullMod - SND-WAV unpack
+echo SND-WAV unpack
+echo.
+
+
+set argCount=0
+set fileParams=-files
+REM A 'call' is required for the parameter to be evaluated correctly
+FOR %%p IN (%*) DO (
+    set /A argCount+=1
+    call :concat %%p
+)
+
+echo Number of files to process: %argCount%
+echo.
+
+if %argCount% == 0 (
+    echo No file given, drag and drop the .snd-wav file on this file
+    echo.
+) else (
+    REM change directory to local directory of bat file to start SkullMod
+    pushd "%~dp0"
+    SkullMod.exe -do unpack -sndwav %fileParams%
+    echo.
+)
+
+pause
+goto :eof
+
+:concat
+set fileParams=%fileParams% %1
+
+:eof

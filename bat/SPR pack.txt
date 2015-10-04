@@ -1,0 +1,30 @@
+@echo off
+setlocal enabledelayedexpansion
+
+echo SPR pack
+echo.
+
+set argCount=0
+set fileParams=-files
+REM A 'call' is required for the parameter to be evaluated correctly
+FOR %%p IN (%*) DO (
+    set /A argCount+=1
+    call :concat %%p
+)
+
+echo Number of files to process: %argCount%
+echo.
+
+if %argCount% == 0 (
+    echo No files given, drag and drop the first .png file of each animation on this file
+    echo For more info read the README.txt
+    echo.
+) else (
+    SkullMod -do pack -spr %fileParams%
+    echo.
+)
+
+pause
+
+:concat
+set fileParams=%fileParams% %1

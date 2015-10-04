@@ -1,0 +1,5 @@
+setuptools>=7.0
+colorama>=0.3.2
+py2exe>=0.9.2.2
+# msvcp100.dll and msvcr100.dll are required for the exe to be standalone
+# Or install MSVC++2010 redistributable (32-bit)
